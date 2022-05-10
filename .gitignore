@@ -1,0 +1,8 @@
+*.bat
+.gradle/
+.idea/
+out/
+*.iml
+*.ipr
+*.iws
+run/

@@ -1,0 +1,29 @@
+package com.glodblock.github.util;
+
+import com.glodblock.github.FluidCraft;
+
+public class NameConst {
+
+    public static final String BLOCK_FLUID_DISCRETIZER = "fluid_discretizer";
+    public static final String BLOCK_FLUID_PATTERN_ENCODER = "fluid_pattern_encoder";
+    public static final String BLOCK_FLUID_PACKET_DECODER = "fluid_packet_decoder";
+    public static final String BLOCK_FLUID_INTERFACE = "fluid_interface";
+
+    public static final String ITEM_FLUID_DROP = "fluid_drop";
+    public static final String ITEM_FLUID_ENCODED_PATTERN = "fluid_encoded_pattern";
+    public static final String ITEM_PART_FLUID_PATTERN_TERMINAL = "part_fluid_pattern_terminal";
+    public static final String ITEM_FLUID_PACKET = "fluid_packet";
+
+    public static final String TT_KEY = FluidCraft.MODID + ".tooltip.";
+    public static final String TT_INVALID_FLUID = TT_KEY + "invalid_fluid";
+    public static final String TT_FLUID_PACKET = TT_KEY + "fluid_packet";
+    public static final String TT_ENCODE_PATTERN = TT_KEY + "encode_pattern";
+
+    public static final String RES_KEY = FluidCraft.MODID + ":";
+
+    public static final String GUI_KEY = FluidCraft.MODID + ".gui.";
+    public static final String GUI_FLUID_PATTERN_TERMINAL = GUI_KEY + ITEM_PART_FLUID_PATTERN_TERMINAL;
+    public static final String GUI_FLUID_PATTERN_ENCODER = GUI_KEY + BLOCK_FLUID_PATTERN_ENCODER;
+    public static final String GUI_FLUID_PACKET_DECODER = GUI_KEY + BLOCK_FLUID_PACKET_DECODER;
+
+}

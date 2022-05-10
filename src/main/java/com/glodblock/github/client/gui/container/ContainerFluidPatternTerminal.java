@@ -1,0 +1,185 @@
+package com.glodblock.github.client.gui.container;
+
+import appeng.api.AEApi;
+import appeng.api.definitions.IDefinitions;
+import appeng.api.storage.ITerminalHost;
+import appeng.api.storage.data.IAEItemStack;
+import appeng.container.slot.SlotFakeCraftingMatrix;
+import appeng.container.slot.SlotPatternOutputs;
+import appeng.helpers.InventoryAction;
+import appeng.util.item.AEItemStack;
+import com.glodblock.github.common.item.ItemFluidDrop;
+import com.glodblock.github.common.item.ItemFluidEncodedPattern;
+import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.inventory.PatternConsumer;
+import com.glodblock.github.loader.ItemAndBlockHolder;
+import com.glodblock.github.util.FluidPatternDetails;
+import com.glodblock.github.util.Util;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidContainerItem;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class ContainerFluidPatternTerminal extends FCBasePartContainer implements PatternConsumer {
+
+    public ContainerFluidPatternTerminal(InventoryPlayer ip, ITerminalHost monitorable) {
+        super(ip, monitorable);
+    }
+
+    @Override
+    public void encode() {
+        if (!checkHasFluidPattern()) {
+            super.encode();
+            return;
+        }
+        ItemStack stack = this.patternSlotOUT.getStack();
+        if (stack == null) {
+            stack = this.patternSlotIN.getStack();
+            if (!isPattern(stack)) {
+                return;
+            }
+            if (stack.stackSize == 1) {
+                this.patternSlotIN.putStack(null);
+            } else {
+                stack.stackSize --;
+            }
+            encodeFluidPattern();
+        } else if (isPattern(stack)) {
+            encodeFluidPattern();
+        }
+    }
+
+    private static boolean isPattern(final ItemStack output) {
+        if (output == null) {
+            return false;
+        }
+        if (output.getItem() instanceof ItemFluidEncodedPattern) {
+            return true;
+        }
+        final IDefinitions defs = AEApi.instance().definitions();
+        return defs.items().encodedPattern().isSameAs(output) || defs.materials().blankPattern().isSameAs(output);
+    }
+
+    private boolean checkHasFluidPattern() {
+        if (this.craftingMode) {
+            return false;
+        }
+        boolean hasFluid = false, search = false;
+        for (Slot craftingSlot : this.craftingSlots) {
+            final ItemStack crafting = craftingSlot.getStack();
+            if (crafting == null) {
+                continue;
+            }
+            search = true;
+            if (crafting.getItem() instanceof ItemFluidPacket) {
+                hasFluid = true;
+                break;
+            }
+        }
+        if (!search) { // search=false -> inputs were empty
+            return false;
+        }
+        // `search` should be true at this point
+        for (Slot outputSlot : this.outputSlots) {
+            final ItemStack out = outputSlot.getStack();
+            if (out == null) {
+                continue;
+            }
+            search = false;
+            if (hasFluid) {
+                break;
+            } else if (out.getItem() instanceof ItemFluidPacket) {
+                hasFluid = true;
+                break;
+            }
+        }
+        return hasFluid && !search; // search=true -> outputs were empty
+    }
+
+    private void encodeFluidPattern() {
+        ItemStack patternStack = new ItemStack(ItemAndBlockHolder.PATTERN);
+        FluidPatternDetails pattern = new FluidPatternDetails(patternStack);
+        pattern.setInputs(collectInventory(craftingSlots));
+        pattern.setOutputs(collectInventory(outputSlots));
+        patternSlotOUT.putStack(pattern.writeToStack());
+    }
+
+    private static IAEItemStack[] collectInventory(Slot[] slots) {
+        // see note at top of FluidPatternDetails
+        List<IAEItemStack> acc = new ArrayList<>();
+        for (Slot slot : slots) {
+            ItemStack stack = slot.getStack();
+            if (stack == null) {
+                continue;
+            }
+            if (stack.getItem() instanceof ItemFluidPacket) {
+                IAEItemStack dropStack = ItemFluidDrop.newAeStack(ItemFluidPacket.getFluidStack(stack));
+                if (dropStack != null) {
+                    acc.add(dropStack);
+                    continue;
+                }
+            }
+            IAEItemStack aeStack = AEItemStack.create(stack);
+            acc.add(aeStack);
+        }
+        return acc.toArray(new IAEItemStack[0]);
+    }
+
+    @Override
+    public void acceptPattern(IAEItemStack[] inputs, IAEItemStack[] outputs) {
+        if (getPatternTerminal() != null) {
+            getPatternTerminal().onChangeCrafting(inputs, outputs);
+        }
+    }
+
+    @Override
+    public void doAction(EntityPlayerMP player, InventoryAction action, int slotId, long id) {
+        if (this.isCraftingMode()) {
+            super.doAction(player, action, slotId, id);
+            return;
+        }
+        if (slotId < 0 || slotId >= this.inventorySlots.size()) {
+            super.doAction(player, action, slotId, id);
+            return;
+        }
+        Slot slot = getSlot(slotId);
+        ItemStack stack = player.inventory.getItemStack();
+        if ((slot instanceof SlotFakeCraftingMatrix || slot instanceof SlotPatternOutputs) && stack != null
+            && (stack.getItem() instanceof IFluidContainerItem || FluidContainerRegistry.isContainer(stack))) {
+            FluidStack fluid = null;
+            switch (action) {
+                case PICKUP_OR_SET_DOWN:
+                    fluid = Util.getFluidFromItem(stack);
+                    slot.putStack(ItemFluidPacket.newStack(fluid));
+                    break;
+                case SPLIT_OR_PLACE_SINGLE:
+                    fluid = Util.getFluidFromItem(Util.copyStackWithSize(stack, 1));
+                    FluidStack origin = ItemFluidPacket.getFluidStack(slot.getStack());
+                    if (fluid != null && fluid.equals(origin)) {
+                        fluid.amount += origin.amount;
+                        if (fluid.amount <= 0) fluid = null;
+                    }
+                    slot.putStack(ItemFluidPacket.newStack(fluid));
+                    break;
+            }
+            if (fluid == null) {
+                super.doAction(player, action, slotId, id);
+                return;
+            }
+            return;
+        }
+        if (action == InventoryAction.SPLIT_OR_PLACE_SINGLE) {
+            if (stack == null && slot.getStack() != null && slot.getStack().getItem() instanceof ItemFluidPacket) {
+                return;
+            }
+        }
+        super.doAction(player, action, slotId, id);
+    }
+
+}
