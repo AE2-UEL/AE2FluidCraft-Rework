@@ -21,6 +21,7 @@ import net.minecraft.item.ItemStack;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -36,9 +37,9 @@ public class Ae2Reflect {
 
     static {
         try {
-            fInventory_container = reflectField(InventoryCrafting.class, "eventHandler");
-            fInventory_width = reflectField(InventoryCrafting.class, "inventoryWidth");
-            fInventory_stackList = reflectField(InventoryCrafting.class, "stackList");
+            fInventory_container = reflectField(InventoryCrafting.class, "eventHandler", "field_70465_c", "c");
+            fInventory_width = reflectField(InventoryCrafting.class, "inventoryWidth", "field_70464_b", "b");
+            fInventory_stackList = reflectField(InventoryCrafting.class, "stackList", "field_70466_a", "a");
             fAEContainer_upgradeable = reflectField(ContainerUpgradeable.class, "upgradeable");
             mItemSlot_setExtractable = reflectMethod(ItemSlot.class, "setExtractable", boolean.class);
             mTracker_isBusy = reflectMethod(MultiCraftingTracker.class, "isBusy", int.class);
@@ -54,8 +55,17 @@ public class Ae2Reflect {
         return m;
     }
 
-    public static Field reflectField(Class<?> owner, String name) throws NoSuchFieldException {
-        Field f = owner.getDeclaredField(name);
+    public static Field reflectField(Class<?> owner, String ...names) throws NoSuchFieldException {
+        Field f = null;
+        for (String name : names) {
+            try {
+                f = owner.getDeclaredField(name);
+                if (f != null) break;
+            }
+            catch (NoSuchFieldException ignore) {
+            }
+        }
+        if (f == null) throw new NoSuchFieldException("Can't find field from " + Arrays.toString(names));
         f.setAccessible(true);
         return f;
     }
@@ -144,8 +154,8 @@ public class Ae2Reflect {
             fGuiMEMonitorable_configSrc = Ae2Reflect.reflectField(GuiFCBaseMonitor.class, "configSrc");
             fGuiMEMonitorable_craftingStatusBtn = Ae2Reflect.reflectField(GuiFCBaseMonitor.class, "craftingStatusBtn");
             fGuiCPUStatus_icon = Ae2Reflect.reflectField(GuiCraftingStatus.class, "myIcon");
-            fGuiContainer_guiLeft = Ae2Reflect.reflectField(GuiContainer.class, "guiLeft");
-            fGuiContainer_guiTop = Ae2Reflect.reflectField(GuiContainer.class, "guiTop");
+            fGuiContainer_guiLeft = Ae2Reflect.reflectField(GuiContainer.class, "guiLeft", "field_147003_i", "i");
+            fGuiContainer_guiTop = Ae2Reflect.reflectField(GuiContainer.class, "guiTop", "field_147009_r", "r");
             fCPU_cpu = Ae2Reflect.reflectField(CraftingCPURecord.class, "cpu");
             fCPU_myName = Ae2Reflect.reflectField(CraftingCPURecord.class, "myName");
             fCPU_processors = Ae2Reflect.reflectField(CraftingCPURecord.class, "processors");

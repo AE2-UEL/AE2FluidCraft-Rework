@@ -35,6 +35,7 @@ import com.glodblock.github.common.parts.PartFluidPatternTerminal;
 import com.glodblock.github.network.CPacketInventoryAction;
 import com.glodblock.github.network.CPacketSetTargetItem;
 import com.glodblock.github.util.Ae2Reflect;
+import com.glodblock.github.util.ModAndClassUtil;
 import com.glodblock.github.util.NameConst;
 import com.google.common.base.Stopwatch;
 import net.minecraft.client.Minecraft;
@@ -161,7 +162,7 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
                 {
                     AEConfig.instance.settings.putSetting( iBtn.getSetting(), next );
                 }
-                else if( btn == this.searchStringSave )
+                else if( ModAndClassUtil.isSaveText && btn == this.searchStringSave )
                 {
                     AEConfig.instance.preserveSearchBar = next == YesNo.YES;
                 }
@@ -271,8 +272,10 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
         this.buttonList.add( this.searchBoxSettings = new GuiImgButton( this.guiLeft - 18, offset, Settings.SEARCH_MODE, AEConfig.instance.settings.getSetting( Settings.SEARCH_MODE ) ) );
         offset += 20;
 
-        this.buttonList.add( this.searchStringSave = new GuiImgButton( this.guiLeft - 18, offset, Settings.SAVE_SEARCH, AEConfig.instance.preserveSearchBar ? YesNo.YES : YesNo.NO ) );
-        offset += 20;
+        if (ModAndClassUtil.isSaveText) {
+            this.buttonList.add( this.searchStringSave = new GuiImgButton( this.guiLeft - 18, offset, Settings.SAVE_SEARCH, AEConfig.instance.preserveSearchBar ? YesNo.YES : YesNo.NO ) );
+            offset += 20;
+        }
 
         this.buttonList.add( this.terminalStyleBox = new GuiImgButton( this.guiLeft - 18, offset, Settings.TERMINAL_STYLE, AEConfig.instance.settings.getSetting( Settings.TERMINAL_STYLE ) ) );
         offset += 20;
@@ -282,11 +285,12 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
         this.searchField.setMaxStringLength( 25 );
         this.searchField.setTextColor( 0xFFFFFF );
         this.searchField.setVisible( true );
-        searchField.setMessage(ButtonToolTips.SearchStringTooltip.getLocal());
+        if (ModAndClassUtil.isSearchStringTooltip)
+            searchField.setMessage(ButtonToolTips.SearchStringTooltip.getLocal());
 
         if( this.viewCell)
         {
-            if (AEConfig.instance.getConfigManager().getSetting(Settings.CRAFTING_STATUS).equals(CraftingStatus.BUTTON)) {
+            if (ModAndClassUtil.isCraftStatus && AEConfig.instance.getConfigManager().getSetting(Settings.CRAFTING_STATUS).equals(CraftingStatus.BUTTON)) {
                 this.buttonList.add(this.craftingStatusImgBtn = new GuiImgButton(this.guiLeft - 18, offset, Settings.CRAFTING_STATUS, AEConfig.instance.settings.getSetting(Settings.CRAFTING_STATUS)));
             } else {
                 this.buttonList.add(this.craftingStatusBtn = new GuiTabButton(this.guiLeft + 170, this.guiTop - 4, 2 + 11 * 16, GuiText.CraftingStatus.getLocal(), itemRender));
@@ -298,7 +302,7 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
         final Enum setting = AEConfig.instance.settings.getSetting( Settings.SEARCH_MODE );
         this.searchField.setFocused( SearchBoxMode.AUTOSEARCH == setting || SearchBoxMode.NEI_AUTOSEARCH == setting );
 
-        if (AEConfig.instance.preserveSearchBar || this.isSubGui())
+        if (ModAndClassUtil.isSearchBar && (AEConfig.instance.preserveSearchBar || this.isSubGui()))
         {
             setSearchString(memoryText, false);
         }
@@ -740,7 +744,7 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
     @Override
     public void drawScreen( final int mouseX, final int mouseY, final float btn ) {
         super.drawScreen(mouseX, mouseY, btn);
-        if (AEConfig.instance.preserveSearchBar && searchField != null)
+        if (ModAndClassUtil.isSearchBar && AEConfig.instance.preserveSearchBar && searchField != null)
             handleTooltip(mouseX, mouseY, searchField.new TooltipProvider());
     }
     public boolean isOverSearchField(int x, int y)

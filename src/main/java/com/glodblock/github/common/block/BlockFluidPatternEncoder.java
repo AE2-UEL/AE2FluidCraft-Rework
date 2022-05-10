@@ -23,7 +23,7 @@ public class BlockFluidPatternEncoder extends FCBaseBlock {
     }
 
     @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int facing, float hitX, float hitY, float hitZ) {
+    public boolean onActivated(World world, int x, int y, int z, EntityPlayer player, int facing, float hitX, float hitY, float hitZ) {
         if (player.isSneaking()) {
             return false;
         }
