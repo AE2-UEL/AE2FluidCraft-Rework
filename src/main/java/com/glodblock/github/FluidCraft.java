@@ -16,7 +16,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import net.minecraft.util.ResourceLocation;
 
-@Mod(modid = FluidCraft.MODID, version = FluidCraft.VERSION)
+@Mod(modid = FluidCraft.MODID, version = FluidCraft.VERSION, name = FluidCraft.MODNAME)
 public class FluidCraft {
 
     public static final String MODID = "GRADLETOKEN_MODID";
