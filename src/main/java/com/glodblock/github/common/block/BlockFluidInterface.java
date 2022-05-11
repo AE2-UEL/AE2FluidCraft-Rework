@@ -14,6 +14,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -77,5 +78,12 @@ public class BlockFluidInterface extends FCBaseBlock {
         return this;
     }
 
+    public ItemStack stack(int size) {
+        return new ItemStack(this, size);
+    }
+
+    public ItemStack stack() {
+        return new ItemStack(this, 1);
+    }
 
 }

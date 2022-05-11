@@ -3,10 +3,7 @@ package com.glodblock.github;
 import appeng.api.AEApi;
 import com.glodblock.github.common.storage.FluidCellHandler;
 import com.glodblock.github.inventory.InventoryHandler;
-import com.glodblock.github.loader.ChannelLoader;
-import com.glodblock.github.loader.ItemAndBlockHolder;
-import com.glodblock.github.loader.ListenerLoader;
-import com.glodblock.github.loader.RenderLoader;
+import com.glodblock.github.loader.*;
 import com.glodblock.github.nei.recipes.DefaultExtractorLoader;
 import com.glodblock.github.proxy.CommonProxy;
 import com.glodblock.github.util.ModAndClassUtil;
@@ -52,6 +49,7 @@ public class FluidCraft {
     public static void postInit(FMLPostInitializationEvent event) {
         NetworkRegistry.INSTANCE.registerGuiHandler(FluidCraft.INSTANCE, new InventoryHandler());
         (new DefaultExtractorLoader()).run();
+        (new RecipeLoader()).run();
         proxy.postInit(event);
     }
 

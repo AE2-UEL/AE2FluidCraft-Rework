@@ -5,6 +5,7 @@ import com.glodblock.github.common.tile.TileFluidDiscretizer;
 import com.glodblock.github.util.NameConst;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.material.Material;
+import net.minecraft.item.ItemStack;
 
 public class BlockFluidDiscretizer extends FCBaseBlock {
 
@@ -19,6 +20,14 @@ public class BlockFluidDiscretizer extends FCBaseBlock {
         GameRegistry.registerBlock(this, AEBaseItemBlock.class, NameConst.BLOCK_FLUID_DISCRETIZER);
         GameRegistry.registerTileEntity(TileFluidDiscretizer.class, NameConst.BLOCK_FLUID_DISCRETIZER);
         return this;
+    }
+
+    public ItemStack stack(int size) {
+        return new ItemStack(this, size);
+    }
+
+    public ItemStack stack() {
+        return new ItemStack(this, 1);
     }
 
 }

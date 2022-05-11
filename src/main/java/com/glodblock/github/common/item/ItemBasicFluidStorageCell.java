@@ -96,6 +96,10 @@ public class ItemBasicFluidStorageCell extends AEBaseItem implements IStorageFlu
         }
     }
 
+    public ItemStack getComponent() {
+        return component.stack(1);
+    }
+
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
         return I18n.format("item.fluid_storage." + this.totalBytes / 1024 + ".name");
@@ -321,6 +325,14 @@ public class ItemBasicFluidStorageCell extends AEBaseItem implements IStorageFlu
     public ItemBasicFluidStorageCell register() {
         GameRegistry.registerItem(this, NameConst.ITEM_FLUID_STORAGE + this.totalBytes / 1024 , FluidCraft.MODID);
         return this;
+    }
+
+    public ItemStack stack(int size) {
+        return new ItemStack(this, size);
+    }
+
+    public ItemStack stack() {
+        return new ItemStack(this, 1);
     }
 
 }

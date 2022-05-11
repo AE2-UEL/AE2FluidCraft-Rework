@@ -50,4 +50,12 @@ public class ItemPartFluidInterface extends Item implements IPartItem {
         return 0;
     }
 
+    public ItemStack stack(int size) {
+        return new ItemStack(this, size);
+    }
+
+    public ItemStack stack() {
+        return new ItemStack(this, 1);
+    }
+
 }
