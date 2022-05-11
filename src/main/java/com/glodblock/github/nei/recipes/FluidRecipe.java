@@ -2,6 +2,7 @@ package com.glodblock.github.nei.recipes;
 
 import codechicken.nei.PositionedStack;
 import codechicken.nei.recipe.IRecipeHandler;
+import codechicken.nei.recipe.TemplateRecipeHandler;
 import com.glodblock.github.nei.object.IRecipeExtractor;
 import com.glodblock.github.nei.object.OrderStack;
 
@@ -19,19 +20,21 @@ public final class FluidRecipe {
     }
 
     public static List<OrderStack<?>> getPackageInputs(IRecipeHandler recipe, int index) {
-        if (recipe == null || !IdentifierMap.containsKey(recipe.getOverlayIdentifier())) return new ArrayList<>();
-        IRecipeExtractor extractor = IdentifierMap.get(recipe.getOverlayIdentifier());
+        TemplateRecipeHandler tRecipe = (TemplateRecipeHandler) recipe;
+        if (tRecipe == null || !IdentifierMap.containsKey(tRecipe.getOverlayIdentifier())) return new ArrayList<>();
+        IRecipeExtractor extractor = IdentifierMap.get(tRecipe.getOverlayIdentifier());
         if (extractor == null) return new ArrayList<>();
-        List<PositionedStack> tmp = new ArrayList<>(recipe.getIngredientStacks(index));
+        List<PositionedStack> tmp = new ArrayList<>(tRecipe.getIngredientStacks(index));
         return extractor.getInputIngredients(tmp);
     }
 
     public static List<OrderStack<?>> getPackageOutputs(IRecipeHandler recipe, int index, boolean useOther) {
-        if (recipe == null || !IdentifierMap.containsKey(recipe.getOverlayIdentifier())) return new ArrayList<>();
-        IRecipeExtractor extractor = IdentifierMap.get(recipe.getOverlayIdentifier());
+        TemplateRecipeHandler tRecipe = (TemplateRecipeHandler) recipe;
+        if (tRecipe == null || !IdentifierMap.containsKey(tRecipe.getOverlayIdentifier())) return new ArrayList<>();
+        IRecipeExtractor extractor = IdentifierMap.get(tRecipe.getOverlayIdentifier());
         if (extractor == null) return new ArrayList<>();
-        List<PositionedStack> tmp = new ArrayList<>(Collections.singleton(recipe.getResultStack(index)));
-        if (useOther) tmp.addAll(recipe.getOtherStacks(index));
+        List<PositionedStack> tmp = new ArrayList<>(Collections.singleton(tRecipe.getResultStack(index)));
+        if (useOther) tmp.addAll(tRecipe.getOtherStacks(index));
         return extractor.getOutputIngredients(tmp);
     }
 

@@ -2,6 +2,7 @@ package com.glodblock.github.nei;
 
 import codechicken.nei.api.IOverlayHandler;
 import codechicken.nei.recipe.IRecipeHandler;
+import codechicken.nei.recipe.TemplateRecipeHandler;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.gui.GuiFluidPatternTerminal;
 import com.glodblock.github.nei.object.OrderStack;
@@ -40,11 +41,13 @@ public class FluidPatternTerminalRecipeTransferHandler implements IOverlayHandle
     }
 
     private boolean notUseOther(IRecipeHandler recipeHandler) {
-        return notOtherSet.contains(recipeHandler.getOverlayIdentifier());
+        TemplateRecipeHandler tRecipe = (TemplateRecipeHandler) recipeHandler;
+        return notOtherSet.contains(tRecipe.getOverlayIdentifier());
     }
 
     private boolean shouldCraft(IRecipeHandler recipeHandler) {
-        return craftSet.contains(recipeHandler.getOverlayIdentifier());
+        TemplateRecipeHandler tRecipe = (TemplateRecipeHandler) recipeHandler;
+        return craftSet.contains(tRecipe.getOverlayIdentifier());
     }
 
 }
