@@ -1,6 +1,7 @@
 package com.glodblock.github;
 
 import appeng.api.AEApi;
+import com.glodblock.github.common.Config;
 import com.glodblock.github.common.storage.FluidCellHandler;
 import com.glodblock.github.inventory.InventoryHandler;
 import com.glodblock.github.loader.*;
@@ -31,6 +32,7 @@ public class FluidCraft {
 
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent event) {
+        Config.run();
         (new ChannelLoader()).run();
         proxy.preInit(event);
     }

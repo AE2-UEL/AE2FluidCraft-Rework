@@ -1,6 +1,7 @@
 package com.glodblock.github.common.item;
 
 import com.glodblock.github.FluidCraft;
+import com.glodblock.github.common.Config;
 import com.glodblock.github.util.NameConst;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -57,6 +58,7 @@ public class ItemBasicFluidStoragePart extends Item {
     }
 
     public ItemBasicFluidStoragePart register() {
+        if (!Config.fluidCells) return null;
         GameRegistry.registerItem(this, NameConst.ITEM_FLUID_PART, FluidCraft.MODID);
         return this;
     }

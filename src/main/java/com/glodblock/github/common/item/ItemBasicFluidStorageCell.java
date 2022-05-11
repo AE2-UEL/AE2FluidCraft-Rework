@@ -18,6 +18,7 @@ import appeng.items.contents.CellUpgrades;
 import appeng.util.InventoryAdaptor;
 import appeng.util.Platform;
 import com.glodblock.github.FluidCraft;
+import com.glodblock.github.common.Config;
 import com.glodblock.github.common.storage.CellType;
 import com.glodblock.github.common.storage.IFluidCellInventory;
 import com.glodblock.github.common.storage.IFluidCellInventoryHandler;
@@ -323,6 +324,7 @@ public class ItemBasicFluidStorageCell extends AEBaseItem implements IStorageFlu
     }
 
     public ItemBasicFluidStorageCell register() {
+        if (!Config.fluidCells) return null;
         GameRegistry.registerItem(this, NameConst.ITEM_FLUID_STORAGE + this.totalBytes / 1024 , FluidCraft.MODID);
         return this;
     }

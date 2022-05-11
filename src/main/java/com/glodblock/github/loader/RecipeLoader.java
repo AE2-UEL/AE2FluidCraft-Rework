@@ -1,5 +1,6 @@
 package com.glodblock.github.loader;
 
+import com.glodblock.github.common.Config;
 import com.glodblock.github.common.item.ItemBasicFluidStorageCell;
 import com.glodblock.github.common.storage.CellType;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -37,25 +38,27 @@ public class RecipeLoader implements Runnable {
         GameRegistry.addRecipe(new ShapedOreRecipe(ENCODER.stack(), "LPL", "IWI", "III", 'I', "ingotIron", 'L', "blockLapis", 'P', AE2_PROCESS_ENG, 'W', AE2_WORK_BENCH));
         GameRegistry.addShapelessRecipe(FLUID_TERMINAL.stack(), AE2_PATTERN_TERM, ENCODER);
 
-        OreDictionary.registerOre("anyCertusCrystal", AE2_PURE_CERTUS);
-        for (ItemStack it : OreDictionary.getOres("crystalCertusQuartz"))
-            OreDictionary.registerOre("anyCertusCrystal", it);
+        if (Config.fluidCells) {
+            OreDictionary.registerOre("anyCertusCrystal", AE2_PURE_CERTUS);
+            for (ItemStack it : OreDictionary.getOres("crystalCertusQuartz"))
+                OreDictionary.registerOre("anyCertusCrystal", it);
 
-        GameRegistry.addRecipe(new ShapedOreRecipe(CellType.Cell1kPart.stack(1), "DCD", "CEC", "DCD", 'D', "dyeBlue", 'C', "anyCertusCrystal", 'E', AE2_PROCESS_ENG));
-        GameRegistry.addRecipe(new ShapedOreRecipe(CellType.Cell4kPart.stack(1), "DPD", "CGC", "DCD", 'D', "dyeBlue", 'C', CellType.Cell1kPart.stack(1), 'P', AE2_PROCESS_CAL, 'G', AE2_QUARTZ_GLASS));
-        GameRegistry.addRecipe(new ShapedOreRecipe(CellType.Cell16kPart.stack(1), "DPD", "CGC", "DCD", 'D', "dyeBlue", 'C', CellType.Cell4kPart.stack(1), 'P', AE2_PROCESS_LOG, 'G', AE2_QUARTZ_GLASS));
-        GameRegistry.addRecipe(new ShapedOreRecipe(CellType.Cell64kPart.stack(1), "DPD", "CGC", "DCD", 'D', "dyeBlue", 'C', CellType.Cell16kPart.stack(1), 'P', AE2_PROCESS_ENG, 'G', AE2_QUARTZ_GLASS));
-        GameRegistry.addRecipe(new ShapedOreRecipe(CellType.Cell256kPart.stack(1), "DPD", "CGC", "DCD", 'D', "dyeBlue", 'C', CellType.Cell64kPart.stack(1), 'P', AE2_PROCESS_CAL, 'G', AE2_LAMP_GLASS));
-        GameRegistry.addRecipe(new ShapedOreRecipe(CellType.Cell1024kPart.stack(1), "DPD", "CGC", "DCD", 'D', "dyeBlue", 'C', CellType.Cell256kPart.stack(1), 'P', AE2_PROCESS_LOG, 'G', AE2_LAMP_GLASS));
-        GameRegistry.addRecipe(new ShapedOreRecipe(CellType.Cell4096kPart.stack(1), "DPD", "CGC", "DCD", 'D', "dyeBlue", 'C', CellType.Cell1024kPart.stack(1), 'P', AE2_PROCESS_ENG, 'G', AE2_LAMP_GLASS));
+            GameRegistry.addRecipe(new ShapedOreRecipe(CellType.Cell1kPart.stack(1), "DCD", "CEC", "DCD", 'D', "dyeBlue", 'C', "anyCertusCrystal", 'E', AE2_PROCESS_ENG));
+            GameRegistry.addRecipe(new ShapedOreRecipe(CellType.Cell4kPart.stack(1), "DPD", "CGC", "DCD", 'D', "dyeBlue", 'C', CellType.Cell1kPart.stack(1), 'P', AE2_PROCESS_CAL, 'G', AE2_QUARTZ_GLASS));
+            GameRegistry.addRecipe(new ShapedOreRecipe(CellType.Cell16kPart.stack(1), "DPD", "CGC", "DCD", 'D', "dyeBlue", 'C', CellType.Cell4kPart.stack(1), 'P', AE2_PROCESS_LOG, 'G', AE2_QUARTZ_GLASS));
+            GameRegistry.addRecipe(new ShapedOreRecipe(CellType.Cell64kPart.stack(1), "DPD", "CGC", "DCD", 'D', "dyeBlue", 'C', CellType.Cell16kPart.stack(1), 'P', AE2_PROCESS_ENG, 'G', AE2_QUARTZ_GLASS));
+            GameRegistry.addRecipe(new ShapedOreRecipe(CellType.Cell256kPart.stack(1), "DPD", "CGC", "DCD", 'D', "dyeBlue", 'C', CellType.Cell64kPart.stack(1), 'P', AE2_PROCESS_CAL, 'G', AE2_LAMP_GLASS));
+            GameRegistry.addRecipe(new ShapedOreRecipe(CellType.Cell1024kPart.stack(1), "DPD", "CGC", "DCD", 'D', "dyeBlue", 'C', CellType.Cell256kPart.stack(1), 'P', AE2_PROCESS_LOG, 'G', AE2_LAMP_GLASS));
+            GameRegistry.addRecipe(new ShapedOreRecipe(CellType.Cell4096kPart.stack(1), "DPD", "CGC", "DCD", 'D', "dyeBlue", 'C', CellType.Cell1024kPart.stack(1), 'P', AE2_PROCESS_ENG, 'G', AE2_LAMP_GLASS));
 
-        ItemBasicFluidStorageCell[] cells = new ItemBasicFluidStorageCell[]{
-            CELL1K, CELL4K, CELL16K, CELL64K, CELL256K, CELL1024K, CELL4096K
-        };
+            ItemBasicFluidStorageCell[] cells = new ItemBasicFluidStorageCell[]{
+                CELL1K, CELL4K, CELL16K, CELL64K, CELL256K, CELL1024K, CELL4096K
+            };
 
-        for (ItemBasicFluidStorageCell cell : cells) {
-            GameRegistry.addRecipe(new ShapedOreRecipe(cell, "GDG", "DCD", "III", 'D', "dustRedstone", 'G', AE2_QUARTZ_GLASS, 'C', cell.getComponent(), 'I', "ingotIron"));
-            GameRegistry.addRecipe(new ShapelessOreRecipe(cell, AE2_CELL_HOUSING, cell.getComponent()));
+            for (ItemBasicFluidStorageCell cell : cells) {
+                GameRegistry.addRecipe(new ShapedOreRecipe(cell, "GDG", "DCD", "III", 'D', "dustRedstone", 'G', AE2_QUARTZ_GLASS, 'C', cell.getComponent(), 'I', "ingotIron"));
+                GameRegistry.addRecipe(new ShapelessOreRecipe(cell, AE2_CELL_HOUSING, cell.getComponent()));
+            }
         }
 
     }

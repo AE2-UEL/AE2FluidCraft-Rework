@@ -1,5 +1,6 @@
 package com.glodblock.github.loader;
 
+import com.glodblock.github.common.Config;
 import com.glodblock.github.common.block.BlockFluidDiscretizer;
 import com.glodblock.github.common.block.BlockFluidInterface;
 import com.glodblock.github.common.block.BlockFluidPacketDecoder;
@@ -29,6 +30,7 @@ public class ItemAndBlockHolder {
     public static BlockFluidInterface INTERFACE = new BlockFluidInterface().register();
 
     public static void loadSetting() {
+        if (!Config.fluidCells) return;
         CellType.Cell1kPart.setItemInstance(CELL_PART);
         CellType.Cell4kPart.setItemInstance(CELL_PART);
         CellType.Cell16kPart.setItemInstance(CELL_PART);
