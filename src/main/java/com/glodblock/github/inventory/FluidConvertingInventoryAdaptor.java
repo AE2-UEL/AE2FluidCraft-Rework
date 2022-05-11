@@ -1,10 +1,12 @@
 package com.glodblock.github.inventory;
 
 import appeng.api.config.FuzzyMode;
+import appeng.tile.networking.TileCableBus;
 import appeng.util.InventoryAdaptor;
 import appeng.util.inv.IInventoryDestination;
 import appeng.util.inv.ItemSlot;
 import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.common.parts.PartFluidInterface;
 import com.glodblock.github.common.tile.TileFluidInterface;
 import com.glodblock.github.util.Ae2Reflect;
 import com.glodblock.github.util.Util;
@@ -27,7 +29,8 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
         // sometimes i wish 1.7.10 has cap system.
         ForgeDirection f = Util.from(face);
         TileEntity inter = capProvider.getWorldObj().getTileEntity(capProvider.xCoord + f.offsetX, capProvider.yCoord + f.offsetY, capProvider.zCoord + f.offsetZ);
-        if (!(inter instanceof TileFluidInterface)) return InventoryAdaptor.getAdaptor(capProvider, f);
+        if (!(inter instanceof TileFluidInterface || (inter instanceof TileCableBus && ((TileCableBus) inter).getPart(f.getOpposite()) instanceof PartFluidInterface)))
+            return InventoryAdaptor.getAdaptor(capProvider, f);
         IInventory item = capProvider instanceof IInventory ? (IInventory) capProvider : null;
         IFluidHandler fluid = capProvider instanceof IFluidHandler ? (IFluidHandler) capProvider : null;
         return new FluidConvertingInventoryAdaptor(item, fluid, face);

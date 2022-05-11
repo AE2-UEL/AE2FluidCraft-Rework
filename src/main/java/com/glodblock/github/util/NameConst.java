@@ -12,6 +12,7 @@ public class NameConst {
     public static final String ITEM_FLUID_DROP = "fluid_drop";
     public static final String ITEM_FLUID_ENCODED_PATTERN = "fluid_encoded_pattern";
     public static final String ITEM_PART_FLUID_PATTERN_TERMINAL = "part_fluid_pattern_terminal";
+    public static final String ITEM_PART_FLUID_INTERFACE = "part_fluid_interface";
     public static final String ITEM_FLUID_PACKET = "fluid_packet";
     public static final String ITEM_FLUID_STORAGE = "fluid_storage";
     public static final String ITEM_FLUID_PART = "fluid_part";

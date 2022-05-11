@@ -12,6 +12,7 @@ public final class ModAndClassUtil {
 
     public static boolean GT5 = false;
     public static boolean GT6 = false;
+    public static boolean EC2 = false;
 
     public static boolean isDoubleButton;
     public static boolean isSaveText;
@@ -65,6 +66,8 @@ public final class ModAndClassUtil {
             GT5 = true;
         if (Loader.isModLoaded("gregapi") && Loader.isModLoaded("gregapi_post"))
             GT6 = true;
+        if (Loader.isModLoaded("extracells"))
+            EC2 = true;
 
     }
 

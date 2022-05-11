@@ -12,7 +12,8 @@ public enum FCPartsTexture {
 
     PartFluidPatternTerminal_Bright("pattern_terminal_bright"), PartFluidPatternTerminal_Dark("pattern_terminal_dark"),
     PartFluidPatternTerminal_Colored("pattern_terminal_medium"), PartTerminalBroad("terminal_broad"),
-    BlockFluidInterfaceAlternate_Arrow("fluid_interface_arrow"), BlockInterfaceAlternate("fluid_interface_a");
+    BlockFluidInterfaceAlternate_Arrow("fluid_interface_arrow"), BlockInterfaceAlternate("fluid_interface_a"),
+    BlockInterface_Face("fluid_interface");
 
     private final String name;
     public net.minecraft.util.IIcon IIcon;

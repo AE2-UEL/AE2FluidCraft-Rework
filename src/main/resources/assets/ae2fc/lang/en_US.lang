@@ -1,6 +1,7 @@
 item.fluid_drop.name=drop of %s
 item.fluid_encoded_pattern.name=Encode Pattern
 item.part_fluid_pattern_terminal.name=ME Fluid Pattern Terminal
+item.part_fluid_interface.name=Fluid Interface
 item.fluid_packet.name=Fluid Packet
 item.fluid_storage.1.name=1k ME Fluid Storage Cell
 item.fluid_storage.4.name=4k ME Fluid Storage Cell
