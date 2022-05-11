@@ -69,6 +69,6 @@ E. Geng(@phantamanta44) and KilaBash (@Yefancy) - Their amazing origin work in 1
 
 ## To-Do
 
- -[ ] Port to 1.12, with supporting for PAE2
+ - [ ] Port to 1.12, with supporting for PAE2
 
- -[ ] Port to 1.16.5
+ - [ ] Port to 1.16.5

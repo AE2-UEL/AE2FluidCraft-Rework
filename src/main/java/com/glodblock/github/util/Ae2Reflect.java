@@ -2,6 +2,7 @@ package com.glodblock.github.util;
 
 import appeng.api.implementations.IUpgradeableHost;
 import appeng.api.networking.crafting.ICraftingCPU;
+import appeng.api.storage.IMEInventory;
 import appeng.client.gui.AEBaseGui;
 import appeng.client.gui.implementations.GuiCraftingStatus;
 import appeng.client.gui.widgets.GuiTabButton;
@@ -9,7 +10,10 @@ import appeng.client.render.AppEngRenderItem;
 import appeng.container.implementations.ContainerUpgradeable;
 import appeng.container.implementations.CraftingCPURecord;
 import appeng.helpers.MultiCraftingTracker;
+import appeng.me.storage.MEInventoryHandler;
+import appeng.me.storage.MEPassThrough;
 import appeng.util.inv.ItemSlot;
+import appeng.util.prioitylist.IPartitionList;
 import com.glodblock.github.client.gui.GuiBaseFluidPatternTerminal;
 import com.glodblock.github.client.gui.GuiFCBaseMonitor;
 import com.glodblock.github.client.gui.container.ContainerFluidPatternTerminal;
@@ -31,9 +35,9 @@ public class Ae2Reflect {
     private static final Field fInventory_width;
     private static final Field fInventory_stackList;
     private static final Field fAEContainer_upgradeable;
+    private static final Field fAEPass_internal;
+    private static final Field fAEInv_partitionList;
     private static final Method mItemSlot_setExtractable;
-    private static final Method mTracker_isBusy;
-    private static final Method mTracker_cancel;
 
     static {
         try {
@@ -41,9 +45,9 @@ public class Ae2Reflect {
             fInventory_width = reflectField(InventoryCrafting.class, "inventoryWidth", "field_70464_b", "b");
             fInventory_stackList = reflectField(InventoryCrafting.class, "stackList", "field_70466_a", "a");
             fAEContainer_upgradeable = reflectField(ContainerUpgradeable.class, "upgradeable");
+            fAEPass_internal = reflectField(MEPassThrough.class, "internal");
+            fAEInv_partitionList = reflectField(MEInventoryHandler.class, "myPartitionList");
             mItemSlot_setExtractable = reflectMethod(ItemSlot.class, "setExtractable", boolean.class);
-            mTracker_isBusy = reflectMethod(MultiCraftingTracker.class, "isBusy", int.class);
-            mTracker_cancel = reflectMethod(MultiCraftingTracker.class, "cancel");
         } catch (Exception e) {
             throw new IllegalStateException("Failed to initialize AE2 reflection hacks!", e);
         }
@@ -87,20 +91,12 @@ public class Ae2Reflect {
         }
     }
 
-    public static void doCancel(MultiCraftingTracker mct) {
-        try {
-            mTracker_cancel.invoke(mct);
-        } catch (Exception e) {
-            throw new IllegalStateException("Failed to invoke method: " + mTracker_cancel, e);
-        }
+    public static IPartitionList<?> getPartitionList(MEInventoryHandler<?> me) {
+        return Ae2Reflect.readField(me, fAEInv_partitionList);
     }
 
-    public static boolean getBusy(MultiCraftingTracker mct, int slot) {
-        try {
-            return (boolean) mTracker_isBusy.invoke(mct, slot);
-        } catch (Exception e) {
-            throw new IllegalStateException("Failed to invoke method: " + mTracker_isBusy, e);
-        }
+    public static IMEInventory<?> getInternal(MEPassThrough<?> me) {
+        return Ae2Reflect.readField(me, fAEPass_internal);
     }
 
     public static IUpgradeableHost getUpgrade(ContainerUpgradeable container) {

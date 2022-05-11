@@ -99,4 +99,9 @@ public final class Util {
         return stack != null && stack.getItem() instanceof ItemFluidPacket;
     }
 
+    public static FluidStack cloneFluidStack(FluidStack fluidStack) {
+        if (fluidStack != null) return fluidStack.copy();
+        return null;
+    }
+
 }

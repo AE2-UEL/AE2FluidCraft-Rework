@@ -1,7 +1,10 @@
 package com.glodblock.github;
 
+import appeng.api.AEApi;
+import com.glodblock.github.common.storage.FluidCellHandler;
 import com.glodblock.github.inventory.InventoryHandler;
 import com.glodblock.github.loader.ChannelLoader;
+import com.glodblock.github.loader.ItemAndBlockHolder;
 import com.glodblock.github.loader.ListenerLoader;
 import com.glodblock.github.loader.RenderLoader;
 import com.glodblock.github.nei.recipes.DefaultExtractorLoader;
@@ -40,6 +43,8 @@ public class FluidCraft {
         (new RenderLoader()).run();
         (new ListenerLoader()).run();
         ModAndClassUtil.init();
+        AEApi.instance().registries().cell().addCellHandler(new FluidCellHandler());
+        ItemAndBlockHolder.loadSetting();
         proxy.init(event);
     }
 
