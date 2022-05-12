@@ -23,6 +23,7 @@ import appeng.core.AELog;
 import appeng.util.Platform;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.common.parts.PartFluidPatternTerminal;
+import com.glodblock.github.common.parts.PartFluidPatternTerminalEx;
 import com.glodblock.github.inventory.InventoryHandler;
 import com.glodblock.github.inventory.gui.GuiType;
 import com.glodblock.github.network.SPacketMEInventoryUpdate;
@@ -298,6 +299,10 @@ public class ContainerFluidCraftConfirm extends AEBaseContainer {
         if( ah instanceof PartFluidPatternTerminal)
         {
             originalGui = GuiType.FLUID_PATTERN_TERMINAL;
+        }
+        if( ah instanceof PartFluidPatternTerminalEx)
+        {
+            originalGui = GuiType.FLUID_PATTERN_TERMINAL_EX;
         }
 
         if( this.result != null && !this.isSimulation() && getGrid() != null)
