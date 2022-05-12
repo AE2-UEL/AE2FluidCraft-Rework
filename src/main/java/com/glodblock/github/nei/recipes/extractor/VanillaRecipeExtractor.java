@@ -9,7 +9,7 @@ import java.util.List;
 
 public class VanillaRecipeExtractor implements IRecipeExtractor {
 
-    private boolean c;
+    private final boolean c;
 
     public VanillaRecipeExtractor(boolean isCraft) {
         c = isCraft;

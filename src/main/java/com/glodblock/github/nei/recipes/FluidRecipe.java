@@ -25,7 +25,7 @@ public final class FluidRecipe {
         IRecipeExtractor extractor = IdentifierMap.get(tRecipe.getOverlayIdentifier());
         if (extractor == null) return new ArrayList<>();
         List<PositionedStack> tmp = new ArrayList<>(tRecipe.getIngredientStacks(index));
-        return extractor.getInputIngredients(tmp);
+        return extractor.getInputIngredients(tmp, recipe, index);
     }
 
     public static List<OrderStack<?>> getPackageOutputs(IRecipeHandler recipe, int index, boolean useOther) {
@@ -35,7 +35,7 @@ public final class FluidRecipe {
         if (extractor == null) return new ArrayList<>();
         List<PositionedStack> tmp = new ArrayList<>(Collections.singleton(tRecipe.getResultStack(index)));
         if (useOther) tmp.addAll(tRecipe.getOtherStacks(index));
-        return extractor.getOutputIngredients(tmp);
+        return extractor.getOutputIngredients(tmp, recipe, index);
     }
 
     public static List<String> getSupportRecipes() {

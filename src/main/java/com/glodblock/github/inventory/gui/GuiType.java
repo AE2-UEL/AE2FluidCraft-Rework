@@ -6,7 +6,6 @@ import appeng.container.implementations.ContainerCraftingStatus;
 import com.glodblock.github.client.gui.*;
 import com.glodblock.github.client.gui.container.*;
 import com.glodblock.github.common.parts.FCBasePart;
-import com.glodblock.github.common.parts.PartFluidPatternTerminal;
 import com.glodblock.github.common.tile.TileFluidPacketDecoder;
 import com.glodblock.github.common.tile.TileFluidPatternEncoder;
 import com.google.common.collect.ImmutableList;

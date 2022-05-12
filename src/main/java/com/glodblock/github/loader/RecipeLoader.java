@@ -37,6 +37,7 @@ public class RecipeLoader implements Runnable {
         GameRegistry.addRecipe(new ShapedOreRecipe(DECODER.stack(), "IHI", "CFC", "IPI", 'I', "ingotIron", 'H', Blocks.hopper, 'C', AE2_GLASS_CABLE, 'F', INTERFACE, 'P', AE2_PROCESS_CAL));
         GameRegistry.addRecipe(new ShapedOreRecipe(ENCODER.stack(), "LPL", "IWI", "III", 'I', "ingotIron", 'L', "blockLapis", 'P', AE2_PROCESS_ENG, 'W', AE2_WORK_BENCH));
         GameRegistry.addShapelessRecipe(FLUID_TERMINAL.stack(), AE2_PATTERN_TERM, ENCODER);
+        GameRegistry.addShapelessRecipe(FLUID_TERMINAL_EX.stack(), FLUID_TERMINAL.stack(), AE2_PROCESS_CAL, AE2_PROCESS_ENG, AE2_PROCESS_LOG);
 
         if (Config.fluidCells) {
             OreDictionary.registerOre("anyCertusCrystal", AE2_PURE_CERTUS);
