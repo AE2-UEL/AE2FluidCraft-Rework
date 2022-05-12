@@ -14,6 +14,7 @@ public final class ModAndClassUtil {
     public static boolean GT6 = false;
     public static boolean EC2 = false;
     public static boolean EIO = false;
+    public static boolean FTR = false;
 
     public static boolean isDoubleButton;
     public static boolean isSaveText;
@@ -71,6 +72,8 @@ public final class ModAndClassUtil {
             EC2 = true;
         if (Loader.isModLoaded("EnderIO"))
             EIO = true;
+        if (Loader.isModLoaded("Forestry"))
+            FTR = true;
 
     }
 
