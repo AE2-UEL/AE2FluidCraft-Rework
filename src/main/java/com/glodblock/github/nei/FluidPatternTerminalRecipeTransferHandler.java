@@ -5,6 +5,7 @@ import codechicken.nei.recipe.IRecipeHandler;
 import codechicken.nei.recipe.TemplateRecipeHandler;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.gui.GuiFluidPatternTerminal;
+import com.glodblock.github.client.gui.GuiFluidPatternTerminalEx;
 import com.glodblock.github.nei.object.OrderStack;
 import com.glodblock.github.nei.recipes.FluidRecipe;
 import com.glodblock.github.network.CPacketTransferRecipe;
@@ -37,7 +38,7 @@ public class FluidPatternTerminalRecipeTransferHandler implements IOverlayHandle
     }
 
     private boolean isCorrectGui(GuiContainer firstGui) {
-        return firstGui instanceof GuiFluidPatternTerminal;
+        return firstGui instanceof GuiFluidPatternTerminal || firstGui instanceof GuiFluidPatternTerminalEx;
     }
 
     private boolean notUseOther(IRecipeHandler recipeHandler) {

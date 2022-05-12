@@ -2,6 +2,7 @@ package com.glodblock.github.network;
 
 import com.glodblock.github.client.gui.container.ContainerFluidCraftConfirm;
 import com.glodblock.github.client.gui.container.ContainerFluidPatternTerminal;
+import com.glodblock.github.client.gui.container.ContainerFluidPatternTerminalEx;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
@@ -57,13 +58,33 @@ public class CPacketFluidPatternTermBtns implements IMessage {
             String Name = message.Name;
             String Value = message.Value;
             final Container c = ctx.getServerHandler().playerEntity.openContainer;
-            if( Name.startsWith( "PatternTerminal." ) && c instanceof ContainerFluidPatternTerminal)
+            if( Name.startsWith( "PatternTerminal." ) && (c instanceof ContainerFluidPatternTerminal))
             {
                 final ContainerFluidPatternTerminal cpt = (ContainerFluidPatternTerminal) c;
                 switch (Name) {
                     case "PatternTerminal.CraftMode":
                         cpt.getPatternTerminal().setCraftingRecipe(Value.equals("1"));
                         break;
+                    case "PatternTerminal.Encode":
+                        if (Value.equals("2"))
+                            cpt.encodeAndMoveToInventory();
+                        else
+                            cpt.encode();
+                        break;
+                    case "PatternTerminal.Clear":
+                        cpt.clear();
+                        break;
+                    case "PatternTerminal.Substitute":
+                        cpt.getPatternTerminal().setSubstitution(Value.equals("1"));
+                        break;
+                    case "PatternTerminal.Double":
+                        cpt.doubleStacks(Value.equals("1"));
+                        break;
+                }
+            } else if( Name.startsWith( "PatternTerminal." ) && (c instanceof ContainerFluidPatternTerminalEx))
+            {
+                final ContainerFluidPatternTerminalEx cpt = (ContainerFluidPatternTerminalEx) c;
+                switch (Name) {
                     case "PatternTerminal.Encode":
                         if (Value.equals("2"))
                             cpt.encodeAndMoveToInventory();

@@ -4,10 +4,8 @@ import appeng.api.storage.ITerminalHost;
 import appeng.container.implementations.ContainerCraftAmount;
 import appeng.container.implementations.ContainerCraftingStatus;
 import com.glodblock.github.client.gui.*;
-import com.glodblock.github.client.gui.container.ContainerFluidCraftConfirm;
-import com.glodblock.github.client.gui.container.ContainerFluidPacketDecoder;
-import com.glodblock.github.client.gui.container.ContainerFluidPatternEncoder;
-import com.glodblock.github.client.gui.container.ContainerFluidPatternTerminal;
+import com.glodblock.github.client.gui.container.*;
+import com.glodblock.github.common.parts.FCBasePart;
 import com.glodblock.github.common.parts.PartFluidPatternTerminal;
 import com.glodblock.github.common.tile.TileFluidPacketDecoder;
 import com.glodblock.github.common.tile.TileFluidPatternEncoder;
@@ -19,14 +17,14 @@ import java.util.List;
 
 public enum GuiType {
 
-    FLUID_PAT_TERM_CRAFTING_STATUS(new PartGuiFactory<PartFluidPatternTerminal>(PartFluidPatternTerminal.class) {
+    FLUID_PAT_TERM_CRAFTING_STATUS(new PartGuiFactory<FCBasePart>(FCBasePart.class) {
         @Override
-        protected Object createServerGui(EntityPlayer player, PartFluidPatternTerminal inv) {
+        protected Object createServerGui(EntityPlayer player, FCBasePart inv) {
             return new ContainerCraftingStatus(player.inventory, inv);
         }
 
         @Override
-        protected Object createClientGui(EntityPlayer player, PartFluidPatternTerminal inv) {
+        protected Object createClientGui(EntityPlayer player, FCBasePart inv) {
             return new GuiFluidPatternTerminalCraftingStatus(player.inventory, inv);
         }
     }),
@@ -43,6 +41,18 @@ public enum GuiType {
         }
     }),
 
+    FLUID_PATTERN_TERMINAL_EX(new PartGuiFactory<ITerminalHost>(ITerminalHost.class) {
+        @Override
+        protected Object createServerGui(EntityPlayer player, ITerminalHost inv) {
+            return new ContainerFluidPatternTerminalEx(player.inventory, inv);
+        }
+
+        @Override
+        protected Object createClientGui(EntityPlayer player, ITerminalHost inv) {
+            return new GuiFluidPatternTerminalEx(player.inventory, inv);
+        }
+    }),
+
     FLUID_PATTERN_ENCODER(new TileGuiFactory<TileFluidPatternEncoder>(TileFluidPatternEncoder.class) {
         @Override
         protected Object createServerGui(EntityPlayer player, TileFluidPatternEncoder inv) {
@@ -55,26 +65,26 @@ public enum GuiType {
         }
     }),
 
-    FLUID_CRAFTING_CONFIRM(new PartGuiFactory<PartFluidPatternTerminal>(PartFluidPatternTerminal.class) {
+    FLUID_CRAFTING_CONFIRM(new PartGuiFactory<FCBasePart>(FCBasePart.class) {
         @Override
-        protected Object createServerGui(EntityPlayer player, PartFluidPatternTerminal inv) {
+        protected Object createServerGui(EntityPlayer player, FCBasePart inv) {
             return new ContainerFluidCraftConfirm(player.inventory, inv);
         }
 
         @Override
-        protected Object createClientGui(EntityPlayer player, PartFluidPatternTerminal inv) {
+        protected Object createClientGui(EntityPlayer player, FCBasePart inv) {
             return new GuiFluidCraftConfirm(player.inventory, inv);
         }
     }),
 
-    FLUID_CRAFTING_AMOUNT(new PartGuiFactory<PartFluidPatternTerminal>(PartFluidPatternTerminal.class) {
+    FLUID_CRAFTING_AMOUNT(new PartGuiFactory<FCBasePart>(FCBasePart.class) {
         @Override
-        protected Object createServerGui(EntityPlayer player, PartFluidPatternTerminal inv) {
+        protected Object createServerGui(EntityPlayer player, FCBasePart inv) {
             return new ContainerCraftAmount(player.inventory, inv);
         }
 
         @Override
-        protected Object createClientGui(EntityPlayer player, PartFluidPatternTerminal inv) {
+        protected Object createClientGui(EntityPlayer player, FCBasePart inv) {
             return new GuiFluidCraftAmount(player.inventory, inv);
         }
     }),

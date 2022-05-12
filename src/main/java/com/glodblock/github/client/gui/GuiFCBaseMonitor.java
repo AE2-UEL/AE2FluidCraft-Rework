@@ -32,17 +32,15 @@ import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.gui.container.FCBaseMonitorContain;
 import com.glodblock.github.client.gui.container.FCBasePartContainer;
 import com.glodblock.github.common.parts.PartFluidPatternTerminal;
+import com.glodblock.github.common.parts.PartFluidPatternTerminalEx;
 import com.glodblock.github.network.CPacketInventoryAction;
-import com.glodblock.github.network.CPacketSetTargetItem;
 import com.glodblock.github.util.Ae2Reflect;
 import com.glodblock.github.util.ModAndClassUtil;
 import com.glodblock.github.util.NameConst;
-import com.google.common.base.Stopwatch;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import org.lwjgl.input.Keyboard;
@@ -50,7 +48,6 @@ import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfigManagerHost
 {
@@ -62,10 +59,10 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
     private final ItemRepo repo;
     private final int offsetX = 9;
     private final int lowerTextureOffset = 0;
-    private final IConfigManager configSrc;
+    public IConfigManager configSrc;
     private final boolean viewCell;
     private final ItemStack[] myCurrentViewCells = new ItemStack[5];
-    private final FCBaseMonitorContain monitorableContainer;
+    public FCBaseMonitorContain monitorableContainer;
     private GuiTabButton craftingStatusBtn;
     private GuiImgButton craftingStatusImgBtn;
     private MEGuiTextField searchField;
@@ -88,7 +85,7 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
         this( inventoryPlayer, te, new FCBasePartContainer( inventoryPlayer, te ) );
     }
 
-    public GuiFCBaseMonitor( final InventoryPlayer inventoryPlayer, final ITerminalHost te, final FCBasePartContainer c )
+    public GuiFCBaseMonitor( final InventoryPlayer inventoryPlayer, final ITerminalHost te, final FCBaseMonitorContain c )
     {
 
         super( c );
@@ -115,6 +112,10 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
         if( te instanceof PartFluidPatternTerminal)
         {
             this.myName = NameConst.GUI_FLUID_PATTERN_TERMINAL;
+        }
+        if (te instanceof PartFluidPatternTerminalEx)
+        {
+            this.myName = NameConst.GUI_FLUID_PATTERN_TERMINAL_EX;
         }
     }
 

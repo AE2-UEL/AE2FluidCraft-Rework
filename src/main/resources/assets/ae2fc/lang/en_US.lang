@@ -1,6 +1,7 @@
 item.fluid_drop.name=drop of %s
 item.fluid_encoded_pattern.name=Encode Pattern
 item.part_fluid_pattern_terminal.name=ME Fluid Pattern Terminal
+item.part_fluid_pattern_terminal_ex.name=ME Fluid Processing Pattern Terminal
 item.part_fluid_interface.name=Fluid Interface
 item.fluid_packet.name=Fluid Packet
 item.fluid_storage.1.name=1k ME Fluid Storage Cell
@@ -28,5 +29,6 @@ ae2fc.tooltip.encode_pattern=Encode Patter
 ae2fc.tooltip.fluid_packet=Use a Fluid Packet Decoder to\nconvert this back into fluid.
 
 ae2fc.gui.part_fluid_pattern_terminal=Fluid Pattern Terminal
+ae2fc.gui.part_fluid_pattern_terminal_ex=Fluid Processing Pattern Terminal
 ae2fc.gui.fluid_pattern_encoder=Fluid Pattern Encoder
 ae2fc.gui.fluid_packet_decoder=ME Fluid Packet Decoder

@@ -3,6 +3,7 @@ package com.glodblock.github.nei.recipes.extractor;
 import codechicken.nei.PositionedStack;
 import com.glodblock.github.nei.object.IRecipeExtractor;
 import com.glodblock.github.nei.object.OrderStack;
+import gregtech.api.enums.ItemList;
 import gregtech.common.items.GT_FluidDisplayItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,8 +25,8 @@ public class GregTech5RecipeExtractor implements IRecipeExtractor {
 
     @Override
     public List<OrderStack<?>> getInputIngredients(List<PositionedStack> rawInputs) {
+        if (r) removeSpecial(rawInputs);
         List<PositionedStack> compressed = compress(rawInputs);
-        if (r) compressed.remove(compressed.size() - 1);
         List<OrderStack<?>> tmp = new LinkedList<>();
         for (int i = 0; i < compressed.size(); i ++) {
             if (compressed.get(i) == null) continue;
@@ -48,7 +49,6 @@ public class GregTech5RecipeExtractor implements IRecipeExtractor {
     @Override
     public List<OrderStack<?>> getOutputIngredients(List<PositionedStack> rawOutputs) {
         List<PositionedStack> compressed = compress(rawOutputs);
-        if (r) compressed.remove(compressed.size() - 1);
         List<OrderStack<?>> tmp = new LinkedList<>();
         for (int i = 0; i < compressed.size(); i ++) {
             if (compressed.get(i) == null) continue;
@@ -68,16 +68,27 @@ public class GregTech5RecipeExtractor implements IRecipeExtractor {
         return tmp;
     }
 
+    private void removeSpecial(List<PositionedStack> list) {
+        for (int i = list.size() - 1; i >= 0; i --) {
+            PositionedStack positionedStack = list.get(i);
+            if (positionedStack != null &&
+                (positionedStack.items[0].isItemEqual(ItemList.Tool_DataStick.get(1)) || positionedStack.items[0].isItemEqual(ItemList.Tool_DataOrb.get(1)))) {
+                list.remove(i);
+                break;
+            }
+        }
+    }
+
     private List<PositionedStack> compress(List<PositionedStack> list) {
         List<PositionedStack> comp = new LinkedList<>();
         for (PositionedStack positionedStack : list) {
             if (positionedStack == null) continue;
-            ItemStack currentStack = positionedStack.items[0];
+            ItemStack currentStack = positionedStack.items[0].copy();
             if (currentStack.stackSize == 0) continue;
             boolean find = false;
             for (PositionedStack storedStack : comp) {
                 if (storedStack == null) continue;
-                ItemStack firstStack = storedStack.items[0];
+                ItemStack firstStack = storedStack.items[0].copy();
                 boolean areItemStackEqual = firstStack.isItemEqual(currentStack) && ItemStack.areItemStackTagsEqual(firstStack, currentStack);
                 if (areItemStackEqual && (firstStack.stackSize + currentStack.stackSize) <= firstStack.getMaxStackSize()) {
                     find = true;

@@ -12,6 +12,7 @@ public class NameConst {
     public static final String ITEM_FLUID_DROP = "fluid_drop";
     public static final String ITEM_FLUID_ENCODED_PATTERN = "fluid_encoded_pattern";
     public static final String ITEM_PART_FLUID_PATTERN_TERMINAL = "part_fluid_pattern_terminal";
+    public static final String ITEM_PART_FLUID_PATTERN_TERMINAL_EX = "part_fluid_pattern_terminal_ex";
     public static final String ITEM_PART_FLUID_INTERFACE = "part_fluid_interface";
     public static final String ITEM_FLUID_PACKET = "fluid_packet";
     public static final String ITEM_FLUID_STORAGE = "fluid_storage";
@@ -26,6 +27,7 @@ public class NameConst {
 
     public static final String GUI_KEY = FluidCraft.MODID + ".gui.";
     public static final String GUI_FLUID_PATTERN_TERMINAL = GUI_KEY + ITEM_PART_FLUID_PATTERN_TERMINAL;
+    public static final String GUI_FLUID_PATTERN_TERMINAL_EX = GUI_KEY + ITEM_PART_FLUID_PATTERN_TERMINAL_EX;
     public static final String GUI_FLUID_PATTERN_ENCODER = GUI_KEY + BLOCK_FLUID_PATTERN_ENCODER;
     public static final String GUI_FLUID_PACKET_DECODER = GUI_KEY + BLOCK_FLUID_PACKET_DECODER;
 

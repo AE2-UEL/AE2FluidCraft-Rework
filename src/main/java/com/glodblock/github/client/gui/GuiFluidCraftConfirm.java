@@ -12,6 +12,7 @@ import appeng.util.Platform;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.gui.container.ContainerFluidCraftConfirm;
 import com.glodblock.github.common.parts.PartFluidPatternTerminal;
+import com.glodblock.github.common.parts.PartFluidPatternTerminalEx;
 import com.glodblock.github.inventory.gui.GuiType;
 import com.glodblock.github.network.CPacketFluidPatternTermBtns;
 import com.glodblock.github.network.CPacketSwitchGuis;
@@ -60,6 +61,10 @@ public class GuiFluidCraftConfirm extends AEBaseGui {
         if( te instanceof PartFluidPatternTerminal)
         {
             this.OriginalGui = GuiType.FLUID_PATTERN_TERMINAL;
+        }
+        if( te instanceof PartFluidPatternTerminalEx)
+        {
+            this.OriginalGui = GuiType.FLUID_PATTERN_TERMINAL_EX;
         }
     }
 

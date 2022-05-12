@@ -1,6 +1,7 @@
 package com.glodblock.github.network;
 
 import com.glodblock.github.client.gui.container.ContainerFluidPatternTerminal;
+import com.glodblock.github.client.gui.container.ContainerFluidPatternTerminalEx;
 import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.nei.object.OrderStack;
 import cpw.mods.fml.common.network.ByteBufUtils;
@@ -80,6 +81,48 @@ public class CPacketTransferRecipe implements IMessage {
             if (c instanceof ContainerFluidPatternTerminal) {
                 ContainerFluidPatternTerminal cf = (ContainerFluidPatternTerminal) c;
                 cf.getPatternTerminal().setCraftingRecipe(message.isCraft);
+                IInventory inputSlot = cf.getInventoryByName("crafting");
+                IInventory outputSlot = cf.getInventoryByName("output");
+                for (int i = 0; i < inputSlot.getSizeInventory(); i ++) {
+                    inputSlot.setInventorySlotContents(i, null);
+                }
+                for (int i = 0; i < outputSlot.getSizeInventory(); i ++) {
+                    outputSlot.setInventorySlotContents(i, null);
+                }
+                for (OrderStack<?> stack : message.inputs) {
+                    if (stack != null) {
+                        int index = stack.getIndex();
+                        ItemStack stack1;
+                        if (stack.getStack() instanceof ItemStack) {
+                            stack1 = ((ItemStack) stack.getStack()).copy();
+                        }
+                        else if (stack.getStack() instanceof FluidStack) {
+                            stack1 = ItemFluidPacket.newStack((FluidStack) stack.getStack());
+                        }
+                        else throw new UnsupportedOperationException("Trying to get an unsupported item!");
+                        if (index < inputSlot.getSizeInventory())
+                            inputSlot.setInventorySlotContents(index, stack1);
+                    }
+                }
+                for (OrderStack<?> stack : message.outputs) {
+                    if (stack != null) {
+                        int index = stack.getIndex();
+                        ItemStack stack1;
+                        if (stack.getStack() instanceof ItemStack) {
+                            stack1 = ((ItemStack) stack.getStack()).copy();
+                        }
+                        else if (stack.getStack() instanceof FluidStack) {
+                            stack1 = ItemFluidPacket.newStack((FluidStack) stack.getStack());
+                        }
+                        else throw new UnsupportedOperationException("Trying to get an unsupported item!");
+                        if (index < outputSlot.getSizeInventory())
+                            outputSlot.setInventorySlotContents(index, stack1);
+                    }
+                }
+                c.onCraftMatrixChanged(inputSlot);
+                c.onCraftMatrixChanged(outputSlot);
+            } else if (c instanceof ContainerFluidPatternTerminalEx) {
+                ContainerFluidPatternTerminalEx cf = (ContainerFluidPatternTerminalEx) c;
                 IInventory inputSlot = cf.getInventoryByName("crafting");
                 IInventory outputSlot = cf.getInventoryByName("output");
                 for (int i = 0; i < inputSlot.getSizeInventory(); i ++) {
