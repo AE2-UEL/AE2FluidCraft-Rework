@@ -48,7 +48,6 @@ public class FluidCraft {
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent event) {
         NetworkRegistry.INSTANCE.registerGuiHandler(FluidCraft.INSTANCE, new InventoryHandler());
-        (new DefaultExtractorLoader()).run();
         (new RecipeLoader()).run();
         proxy.postInit(event);
     }
