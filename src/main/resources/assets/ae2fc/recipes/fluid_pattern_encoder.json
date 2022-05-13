@@ -1,0 +1,30 @@
+{
+  "type": "forge:ore_shaped",
+  "result": {
+    "item": "ae2fc:fluid_pattern_encoder",
+    "count": 1
+  },
+  "pattern": [
+    "lpl",
+    "iwi",
+    "iii"
+  ],
+  "key": {
+    "l": {
+      "type": "forge:ore_dict",
+      "ore": "blockLapis"
+    },
+    "p": {
+      "type": "appliedenergistics2:part",
+      "part": "material.engineering_processor"
+    },
+    "i": {
+      "type": "forge:ore_dict",
+      "ore": "ingotIron"
+    },
+    "w": {
+      "type": "forge:ore_dict",
+      "ore": "workbench"
+    }
+  }
+}

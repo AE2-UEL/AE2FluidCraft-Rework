@@ -1,0 +1,78 @@
+buildscript {
+    repositories {
+        maven {
+            url 'https://maven.minecraftforge.net/'
+        }
+        maven {
+            name 'sonatype'
+            url 'https://oss.sonatype.org/content/repositories/snapshots/'
+        }
+        maven {
+            name 'Scala CI dependencies'
+            url 'https://repo1.maven.org/maven2/'
+        }
+        maven {
+            name 'jitpack'
+            url 'https://jitpack.io'
+        }
+        mavenLocal()
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+    }
+}
+
+apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'idea'
+
+version = "1.0.0"
+group = "ae2fc"
+archivesBaseName = "Fluid Craft for AE2"
+
+sourceCompatibility = targetCompatibility = '1.8'
+compileJava {
+    sourceCompatibility = targetCompatibility = '1.8'
+}
+
+repositories {
+    maven { url 'https://dvs1.progwml6.com/files/maven/' }
+    maven { url 'https://jitpack.io/' }
+    maven { url 'https://cfa2.cursemaven.com/' }
+}
+
+dependencies {
+    compile 'com.github.phantamanta44:jsr305:1.0.1'
+    deobfCompile 'mezz.jei:jei_1.12.2:4.15.0.293'
+    deobfCompile "curse.maven:ae2-extended-life-570458:2747063" // pae2
+    deobfCompile "curse.maven:packagedauto-308380:2977147" // 1.0.3.14
+    deobfCompile "curse.maven:modular-machinery-270790:2761302" // 1.11.1
+}
+
+minecraft {
+    version = "1.12.2-14.23.5.2847"
+    runDir = "run"
+    mappings = "stable_39"
+    useDepAts = true
+    makeObfSourceJar = false
+}
+
+jar {
+    manifest {
+        attributes 'FMLCorePluginContainsFMLMod': 'true'
+    }
+}
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+
+        expand 'version': project.version, 'mcversion': project.minecraft.version
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}

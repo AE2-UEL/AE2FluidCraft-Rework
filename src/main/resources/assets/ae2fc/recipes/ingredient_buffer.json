@@ -1,0 +1,37 @@
+{
+  "type": "forge:ore_shaped",
+  "result": {
+    "item": "ae2fc:ingredient_buffer",
+    "count": 1
+  },
+  "pattern": [
+    "ili",
+    "agf",
+    "isi"
+  ],
+  "key": {
+    "i": {
+      "type": "forge:ore_dict",
+      "ore": "ingotIron"
+    },
+    "g": {
+      "item": "appliedenergistics2:quartz_glass"
+    },
+    "l": {
+      "type": "appliedenergistics2:part",
+      "part": "material.cell1k_part"
+    },
+    "a": {
+      "type": "appliedenergistics2:part",
+      "part": "material.annihilation_core"
+    },
+    "f": {
+      "type": "appliedenergistics2:part",
+      "part": "material.formation_core"
+    },
+    "s": {
+      "type": "appliedenergistics2:part",
+      "part": "material.fluid_cell1k_part"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "type": "forge:ore_shaped",
+  "result": {
+    "item": "ae2fc:fluid_discretizer",
+    "count": 1
+  },
+  "pattern": [
+    "ipi",
+    "smt",
+    "ipi"
+  ],
+  "key": {
+    "i": {
+      "type": "forge:ore_dict",
+      "ore": "ingotIron"
+    },
+    "p": {
+      "type": "appliedenergistics2:part",
+      "part": "material.engineering_processor"
+    },
+    "s": {
+      "type": "appliedenergistics2:part",
+      "part": "part.fluid_storage_bus"
+    },
+    "m": {
+      "item": "appliedenergistics2:condenser"
+    },
+    "t": {
+      "type": "appliedenergistics2:part",
+      "part": "part.storage_bus"
+    }
+  }
+}

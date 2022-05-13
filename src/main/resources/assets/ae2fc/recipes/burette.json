@@ -1,0 +1,31 @@
+{
+  "type": "forge:ore_shaped",
+  "result": {
+    "item": "ae2fc:burette",
+    "count": 1
+  },
+  "pattern": [
+    "ihi",
+    "gbg",
+    "ici"
+  ],
+  "key": {
+    "i": {
+      "type": "forge:ore_dict",
+      "ore": "ingotIron"
+    },
+    "h": {
+      "item": "minecraft:hopper"
+    },
+    "g": {
+      "item": "appliedenergistics2:quartz_glass"
+    },
+    "b": {
+      "item": "minecraft:bucket"
+    },
+    "c": {
+      "type": "appliedenergistics2:part",
+      "part": "material.calculation_processor"
+    }
+  }
+}

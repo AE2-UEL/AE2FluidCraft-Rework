@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "normal": {
+      "model": "ae2fc:fluid_pattern_encoder"
+    }
+  }
+}

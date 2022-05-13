@@ -1,0 +1,18 @@
+[
+  {
+    "modid": "ae2fc",
+    "name": "AE2 Fluid Crafting",
+    "description": "Lets you do Crafting... with Fluids!",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "",
+    "updateUrl": "",
+    "authorList": ["GlodBlock"],
+    "credits":"phantamanta44",
+    "logoFile": "",
+    "screenshots": [],
+    "useDependencyInformation": true,
+    "dependencies": ["appliedenergistics2"],
+    "requiredMods": ["appliedenergistics2"]
+  }
+]

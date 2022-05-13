@@ -1,0 +1,32 @@
+{
+  "type": "forge:ore_shaped",
+  "result": {
+    "item": "ae2fc:fluid_packet_decoder",
+    "count": 1
+  },
+  "pattern": [
+    "ihi",
+    "cfc",
+    "ipi"
+  ],
+  "key": {
+    "i": {
+      "type": "forge:ore_dict",
+      "ore": "ingotIron"
+    },
+    "h": {
+      "item": "minecraft:hopper"
+    },
+    "c": {
+      "type": "appliedenergistics2:part",
+      "part": "cable_glass.fluix"
+    },
+    "f": {
+      "item": "appliedenergistics2:fluid_interface"
+    },
+    "p": {
+      "type": "appliedenergistics2:part",
+      "part": "material.calculation_processor"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "type": "appliedenergistics2:part",
+      "part": "part.pattern_terminal"
+    },
+    {
+      "item": "ae2fc:fluid_pattern_encoder"
+    }
+  ],
+  "result": {
+    "item": "ae2fc:part_fluid_pattern_terminal"
+  }
+}
