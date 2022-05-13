@@ -39,8 +39,6 @@ public class FluidCraft {
 
     @Mod.EventHandler
     public static void init(FMLInitializationEvent event) {
-        (new RenderLoader()).run();
-        (new ListenerLoader()).run();
         ModAndClassUtil.init();
         AEApi.instance().registries().cell().addCellHandler(new FluidCellHandler());
         ItemAndBlockHolder.loadSetting();
@@ -57,7 +55,6 @@ public class FluidCraft {
 
     @Mod.EventHandler
     public void onLoadComplete(FMLLoadCompleteEvent event) {
-
     }
 
     public static ResourceLocation resource(String path) {
