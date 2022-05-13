@@ -1,5 +1,7 @@
 package com.glodblock.github.proxy;
 
+import com.glodblock.github.loader.ListenerLoader;
+import com.glodblock.github.loader.RenderLoader;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -14,6 +16,8 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void init(FMLInitializationEvent event){
         super.init(event);
+        (new ListenerLoader()).run();
+        (new RenderLoader()).run();
     }
 
     @Override
