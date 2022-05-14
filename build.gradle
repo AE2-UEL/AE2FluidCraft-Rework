@@ -15,6 +15,10 @@ buildscript {
             name 'jitpack'
             url 'https://jitpack.io'
         }
+        maven {
+            name "forge"
+            url "http://files.minecraftforge.net/maven"
+        }
         mavenLocal()
     }
     dependencies {
@@ -37,15 +41,18 @@ compileJava {
 repositories {
     maven { url 'https://dvs1.progwml6.com/files/maven/' }
     maven { url 'https://jitpack.io/' }
-    maven { url 'https://cfa2.cursemaven.com/' }
+    maven { url 'https://cursemaven.com/' }
+    maven { url "https://minecraft.curseforge.com/api/maven/" }
 }
 
 dependencies {
     compile 'com.github.phantamanta44:jsr305:1.0.1'
-    deobfCompile 'mezz.jei:jei_1.12.2:4.15.0.293'
-    deobfCompile "curse.maven:ae2-extended-life-570458:2747063" // pae2
+    deobfCompile 'mezz.jei:jei_1.12.2:4.15.0.293' //jei
+    deobfCompile "curse.maven:ae2-extended-life-570458:3785381" // pae2
     deobfCompile "curse.maven:packagedauto-308380:2977147" // 1.0.3.14
     deobfCompile "curse.maven:modular-machinery-270790:2761302" // 1.11.1
+    deobfCompile "curse.maven:codechicken-lib-1-8-242818:2779848" //ccl
+    deobfCompile "gregtechce:gregtech:1.12.2:1.15.1.735" // gt
 }
 
 minecraft {

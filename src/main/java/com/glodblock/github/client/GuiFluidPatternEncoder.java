@@ -1,10 +1,11 @@
-package com.glodblock.github.client.container;
+package com.glodblock.github.client;
 
 import appeng.api.storage.data.IAEItemStack;
 import appeng.client.gui.AEBaseGui;
 import appeng.client.render.StackSizeRenderer;
 import appeng.core.localization.GuiText;
 import com.glodblock.github.FluidCraft;
+import com.glodblock.github.client.container.ContainerFluidPatternEncoder;
 import com.glodblock.github.client.render.FluidRenderUtils;
 import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.common.tile.TileFluidPatternEncoder;

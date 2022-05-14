@@ -1,6 +1,8 @@
 package com.glodblock.github.integration.jei;
 
 import appeng.api.storage.data.IAEItemStack;
+import appeng.core.sync.network.NetworkHandler;
+import appeng.core.sync.packets.PacketValueConfig;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.container.ContainerFluidPatternTerminal;
 import com.glodblock.github.common.part.PartFluidPatternTerminal;
@@ -10,12 +12,11 @@ import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
-import mezz.jei.transfer.RecipeTransferErrorTooltip;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.IOException;
 
 public class FluidPatternTerminalRecipeTransferHandler implements IRecipeTransferHandler<ContainerFluidPatternTerminal> {
 
@@ -35,13 +36,17 @@ public class FluidPatternTerminalRecipeTransferHandler implements IRecipeTransfe
     @Override
     public IRecipeTransferError transferRecipe(@Nonnull ContainerFluidPatternTerminal container, @Nonnull IRecipeLayout recipeLayout,
                                                @Nonnull EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
-        if (container.craftingMode) {
-            if (!recipeLayout.getRecipeCategory().getUid().equals(VanillaRecipeCategoryUid.CRAFTING)) {
-                return new RecipeTransferErrorTooltip(I18n.format(NameConst.TT_CRAFTING_RECIPE_ONLY));
+        try {
+            if (container.isCraftingMode() && !recipeLayout.getRecipeCategory().getUid().equals(VanillaRecipeCategoryUid.CRAFTING)) {
+                NetworkHandler.instance().sendToServer(new PacketValueConfig("PatternTerminal.CraftMode", "0"));
             }
-        } else if (recipeLayout.getRecipeCategory().getUid().equals(VanillaRecipeCategoryUid.CRAFTING)) {
-            return new RecipeTransferErrorTooltip(I18n.format(NameConst.TT_PROCESSING_RECIPE_ONLY));
+            else if (!container.isCraftingMode() && recipeLayout.getRecipeCategory().getUid().equals(VanillaRecipeCategoryUid.CRAFTING)) {
+                NetworkHandler.instance().sendToServer(new PacketValueConfig("PatternTerminal.CraftMode", "1"));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
         if (doTransfer && container.getPatternTerminal() instanceof PartFluidPatternTerminal) {
             PartFluidPatternTerminal tile = (PartFluidPatternTerminal)container.getPatternTerminal();
             IAEItemStack[] crafting = new IAEItemStack[tile.getInventoryByName("crafting").getSlots()];

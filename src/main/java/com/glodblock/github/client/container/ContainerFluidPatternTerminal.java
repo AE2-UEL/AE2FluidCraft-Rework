@@ -5,6 +5,9 @@ import appeng.api.definitions.IDefinitions;
 import appeng.api.storage.ITerminalHost;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.container.implementations.ContainerPatternTerm;
+import appeng.container.slot.SlotFakeCraftingMatrix;
+import appeng.container.slot.SlotPatternOutputs;
+import appeng.helpers.InventoryAction;
 import appeng.util.item.AEItemStack;
 import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidEncodedPattern;
@@ -14,9 +17,14 @@ import com.glodblock.github.interfaces.PatternConsumer;
 import com.glodblock.github.loader.FCItems;
 import com.glodblock.github.util.Ae2Reflect;
 import com.glodblock.github.util.FluidPatternDetails;
+import com.glodblock.github.util.Util;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -143,6 +151,50 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
         if (getPatternTerminal() instanceof PartFluidPatternTerminal) {
             ((PartFluidPatternTerminal)getPatternTerminal()).onChangeCrafting(inputs, outputs);
         }
+    }
+
+    @Override
+    public void doAction(EntityPlayerMP player, InventoryAction action, int slotId, long id) {
+        if (this.isCraftingMode()) {
+            super.doAction(player, action, slotId, id);
+            return;
+        }
+        if (slotId < 0 || slotId >= this.inventorySlots.size()) {
+            super.doAction(player, action, slotId, id);
+            return;
+        }
+        Slot slot = getSlot(slotId);
+        ItemStack stack = player.inventory.getItemStack();
+        if ((slot instanceof SlotFakeCraftingMatrix || slot instanceof SlotPatternOutputs) && !stack.isEmpty()
+                && stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
+            FluidStack fluid = null;
+            switch (action) {
+                case PICKUP_OR_SET_DOWN:
+                    fluid = Util.getFluidFromItem(stack);
+                    slot.putStack(ItemFluidPacket.newStack(fluid));
+                    break;
+                case SPLIT_OR_PLACE_SINGLE:
+                    fluid = Util.getFluidFromItem(ItemHandlerHelper.copyStackWithSize(stack, 1));
+                    FluidStack origin = ItemFluidPacket.getFluidStack(slot.getStack());
+                    if (fluid != null && fluid.equals(origin)) {
+                        fluid.amount += origin.amount;
+                        if (fluid.amount <= 0) fluid = null;
+                    }
+                    slot.putStack(ItemFluidPacket.newStack(fluid));
+                    break;
+            }
+            if (fluid == null) {
+                super.doAction(player, action, slotId, id);
+                return;
+            }
+            return;
+        }
+        if (action == InventoryAction.SPLIT_OR_PLACE_SINGLE) {
+            if (stack.isEmpty() && !slot.getStack().isEmpty() && slot.getStack().getItem() instanceof ItemFluidPacket) {
+                return;
+            }
+        }
+        super.doAction(player, action, slotId, id);
     }
 
 }
