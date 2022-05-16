@@ -1,0 +1,18 @@
+[
+  {
+    "modid": "ae2fc",
+    "name": "AE2 Fluid Crafting",
+    "description": "Lets you do Crafting... with Fluids!",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "https://github.com/GlodBlock/AE2FluidCraft-Rework",
+    "updateUrl": "",
+    "authorList": ["GlodBlock"],
+    "credits":"phantamanta44",
+    "logoFile": "assets/ae2fc/logo.png",
+    "screenshots": [],
+    "useDependencyInformation": true,
+    "dependencies": ["appliedenergistics2"],
+    "requiredMods": ["appliedenergistics2"]
+  }
+]
