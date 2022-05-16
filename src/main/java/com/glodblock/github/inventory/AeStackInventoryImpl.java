@@ -6,6 +6,7 @@ import appeng.tile.inventory.IAEAppEngInventory;
 import appeng.util.item.AEFluidStack;
 import appeng.util.item.AEItemStack;
 import com.glodblock.github.util.ObjectArrayIterator;
+import com.glodblock.github.util.Util;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
@@ -90,7 +91,7 @@ public class AeStackInventoryImpl <T extends IAEStack<T>> implements AeStackInve
                 inv[i] = stackTag == null ? null : (T) AEItemStack.loadItemStackFromNBT(stackTag);
             }
             else {
-                inv[i] = stackTag == null ? null : (T) AEFluidStack.loadFluidStackFromNBT(stackTag);
+                inv[i] = stackTag == null ? null : (T) Util.loadFluidStackFromNBT(stackTag);
             }
         }
     }

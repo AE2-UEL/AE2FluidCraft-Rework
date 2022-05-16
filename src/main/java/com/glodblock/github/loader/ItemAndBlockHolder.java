@@ -1,10 +1,7 @@
 package com.glodblock.github.loader;
 
 import com.glodblock.github.common.Config;
-import com.glodblock.github.common.block.BlockFluidDiscretizer;
-import com.glodblock.github.common.block.BlockFluidInterface;
-import com.glodblock.github.common.block.BlockFluidPacketDecoder;
-import com.glodblock.github.common.block.BlockFluidPatternEncoder;
+import com.glodblock.github.common.block.*;
 import com.glodblock.github.common.item.*;
 import com.glodblock.github.common.storage.CellType;
 
@@ -29,6 +26,7 @@ public class ItemAndBlockHolder {
     public static BlockFluidPatternEncoder ENCODER = new BlockFluidPatternEncoder().register();
     public static BlockFluidPacketDecoder DECODER = new BlockFluidPacketDecoder().register();
     public static BlockFluidInterface INTERFACE = new BlockFluidInterface().register();
+    public static BlockIngredientBuffer BUFFER = new BlockIngredientBuffer().register();
 
     public static void loadSetting() {
         if (!Config.fluidCells) return;

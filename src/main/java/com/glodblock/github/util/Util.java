@@ -6,14 +6,15 @@ import appeng.api.networking.IGridHost;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.security.ISecurityGrid;
 import appeng.api.parts.IPart;
+import appeng.api.storage.data.IAEFluidStack;
+import appeng.util.item.AEFluidStack;
 import com.glodblock.github.common.item.ItemFluidPacket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidContainerItem;
+import net.minecraftforge.fluids.*;
 
 public final class Util {
 
@@ -102,6 +103,17 @@ public final class Util {
     public static FluidStack cloneFluidStack(FluidStack fluidStack) {
         if (fluidStack != null) return fluidStack.copy();
         return null;
+    }
+
+    public static IAEFluidStack loadFluidStackFromNBT( final NBTTagCompound i )
+    {
+        //Fuck ae2
+        final FluidStack t = FluidRegistry.getFluidStack(i.getString("FluidName"), 1);
+        final AEFluidStack fluid = AEFluidStack.create( t );
+        fluid.setStackSize( i.getLong( "Cnt" ) );
+        fluid.setCountRequestable( i.getLong( "Req" ) );
+        fluid.setCraftable( i.getBoolean( "Craft" ) );
+        return fluid;
     }
 
 }

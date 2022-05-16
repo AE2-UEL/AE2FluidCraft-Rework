@@ -8,6 +8,7 @@ import com.glodblock.github.client.gui.container.*;
 import com.glodblock.github.common.parts.FCBasePart;
 import com.glodblock.github.common.tile.TileFluidPacketDecoder;
 import com.glodblock.github.common.tile.TileFluidPatternEncoder;
+import com.glodblock.github.common.tile.TileIngredientBuffer;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -15,6 +16,18 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public enum GuiType {
+
+    INGREDIENT_BUFFER(new TileGuiFactory<TileIngredientBuffer>(TileIngredientBuffer.class) {
+        @Override
+        protected Object createServerGui(EntityPlayer player, TileIngredientBuffer inv) {
+            return new ContainerIngredientBuffer(player.inventory, inv);
+        }
+
+        @Override
+        protected Object createClientGui(EntityPlayer player, TileIngredientBuffer inv) {
+            return new GuiIngredientBuffer(player.inventory, inv);
+        }
+    }),
 
     FLUID_PAT_TERM_CRAFTING_STATUS(new PartGuiFactory<FCBasePart>(FCBasePart.class) {
         @Override

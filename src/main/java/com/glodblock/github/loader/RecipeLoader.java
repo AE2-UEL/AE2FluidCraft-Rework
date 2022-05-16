@@ -5,6 +5,7 @@ import com.glodblock.github.common.item.ItemBasicFluidStorageCell;
 import com.glodblock.github.common.storage.CellType;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -27,6 +28,9 @@ public class RecipeLoader implements Runnable {
     public final static ItemStack AE2_QUARTZ_GLASS = GameRegistry.findItemStack("appliedenergistics2", "tile.BlockQuartzGlass", 1);
     public final static ItemStack AE2_LAMP_GLASS = GameRegistry.findItemStack("appliedenergistics2", "tile.BlockQuartzLamp", 1);
     public final static ItemStack AE2_CELL_HOUSING = new ItemStack(GameRegistry.findItem("appliedenergistics2", "item.ItemMultiMaterial"), 1, 39);
+    public final static ItemStack AE2_CELL_1K = new ItemStack(GameRegistry.findItem("appliedenergistics2", "item.ItemMultiMaterial"), 1, 35);
+    public final static ItemStack AE2_CORE_ANN = new ItemStack(GameRegistry.findItem("appliedenergistics2", "item.ItemMultiMaterial"), 1, 44);
+    public final static ItemStack AE2_CORE_FOM = new ItemStack(GameRegistry.findItem("appliedenergistics2", "item.ItemMultiMaterial"), 1, 43);
 
     @Override
     public void run() {
@@ -38,6 +42,7 @@ public class RecipeLoader implements Runnable {
         GameRegistry.addRecipe(new ShapedOreRecipe(ENCODER.stack(), "LPL", "IWI", "III", 'I', "ingotIron", 'L', "blockLapis", 'P', AE2_PROCESS_ENG, 'W', AE2_WORK_BENCH));
         GameRegistry.addShapelessRecipe(FLUID_TERMINAL.stack(), AE2_PATTERN_TERM, ENCODER);
         GameRegistry.addShapelessRecipe(FLUID_TERMINAL_EX.stack(), FLUID_TERMINAL.stack(), AE2_PROCESS_CAL, AE2_PROCESS_ENG, AE2_PROCESS_LOG);
+        GameRegistry.addRecipe(new ShapedOreRecipe(BUFFER.stack(), "ILI", "AGF", "IBI", 'I', "ingotIron", 'G', AE2_QUARTZ_GLASS, 'L', AE2_CELL_1K, 'A', AE2_CORE_ANN, 'F', AE2_CORE_FOM, 'B', Items.bucket));
 
         if (Config.fluidCells) {
             OreDictionary.registerOre("anyCertusCrystal", AE2_PURE_CERTUS);
