@@ -114,7 +114,7 @@ public class GuiBaseFluidPatternTerminalEx extends GuiFCBaseMonitor {
     @Override
     protected String getBackground()
     {
-        return "guis/pattern3.png";
+        return "gui/pattern3.png";
     }
 
     @Override

@@ -142,9 +142,9 @@ public class GuiBaseFluidPatternTerminal extends GuiFCBaseMonitor {
     {
         if( this.container.isCraftingMode() )
         {
-            return "guis/pattern.png";
+            return "gui/pattern.png";
         }
-        return "guis/pattern2.png";
+        return "gui/pattern2.png";
     }
 
     @Override

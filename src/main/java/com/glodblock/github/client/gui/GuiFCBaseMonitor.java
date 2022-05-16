@@ -16,6 +16,7 @@ import appeng.container.AEBaseContainer;
 import appeng.container.slot.*;
 import appeng.core.AEConfig;
 import appeng.core.AELog;
+import appeng.core.AppEng;
 import appeng.core.localization.ButtonToolTips;
 import appeng.core.localization.GuiText;
 import appeng.core.sync.GuiBridge;
@@ -43,6 +44,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -577,11 +579,17 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
         memoryText = this.searchField.getText();
     }
 
+    public void bindTextureBack( final String file )
+    {
+        final ResourceLocation loc = new ResourceLocation( FluidCraft.MODID, "textures/" + file );
+        this.mc.getTextureManager().bindTexture( loc );
+    }
+
     @Override
     public void drawBG( final int offsetX, final int offsetY, final int mouseX, final int mouseY )
     {
 
-        this.bindTexture( this.getBackground() );
+        this.bindTextureBack( this.getBackground() );
         final int x_width = 197;
         this.drawTexturedModalRect( offsetX, offsetY, 0, 0, x_width, 18 );
 
@@ -624,7 +632,7 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
 
     protected String getBackground()
     {
-        return "guis/terminal.png";
+        return "gui/terminal.png";
     }
 
     @Override
