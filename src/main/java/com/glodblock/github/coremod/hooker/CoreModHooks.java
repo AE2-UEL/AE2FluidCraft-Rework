@@ -17,7 +17,6 @@ import com.glodblock.github.util.Util;
 import com.google.common.collect.Sets;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import javax.annotation.Nullable;

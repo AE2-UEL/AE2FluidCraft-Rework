@@ -16,7 +16,6 @@ import appeng.container.AEBaseContainer;
 import appeng.container.slot.*;
 import appeng.core.AEConfig;
 import appeng.core.AELog;
-import appeng.core.AppEng;
 import appeng.core.localization.ButtonToolTips;
 import appeng.core.localization.GuiText;
 import appeng.core.sync.GuiBridge;

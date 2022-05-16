@@ -1,7 +1,6 @@
 package com.glodblock.github.common.block;
 
 import appeng.block.AEBaseItemBlock;
-import com.glodblock.github.FluidCraft;
 import com.glodblock.github.common.tile.TileFluidPatternEncoder;
 import com.glodblock.github.inventory.InventoryHandler;
 import com.glodblock.github.inventory.gui.GuiType;

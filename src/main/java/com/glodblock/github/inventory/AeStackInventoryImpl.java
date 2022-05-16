@@ -3,7 +3,6 @@ package com.glodblock.github.inventory;
 import appeng.api.storage.StorageChannel;
 import appeng.api.storage.data.IAEStack;
 import appeng.tile.inventory.IAEAppEngInventory;
-import appeng.util.item.AEFluidStack;
 import appeng.util.item.AEItemStack;
 import com.glodblock.github.util.ObjectArrayIterator;
 import com.glodblock.github.util.Util;

@@ -25,7 +25,7 @@ public class FCClassTransformer implements IClassTransformer {
                 break;
             /*case "appeng.container.implementations.ContainerInterfaceTerminal":
                 tform = ContainerInterfaceTerminalTransformer.INSTANCE;
-                break;*/ //unfinished
+                break;*/ //To-Do
             default:
                 return code;
         }

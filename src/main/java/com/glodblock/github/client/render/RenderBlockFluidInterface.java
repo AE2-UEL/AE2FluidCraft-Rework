@@ -2,7 +2,6 @@ package com.glodblock.github.client.render;
 
 import appeng.client.render.BaseBlockRender;
 import appeng.client.render.BlockRenderInfo;
-import appeng.client.texture.ExtraBlockTextures;
 import appeng.tile.misc.TileInterface;
 import com.glodblock.github.client.textures.FCPartsTexture;
 import com.glodblock.github.common.block.BlockFluidInterface;

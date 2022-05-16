@@ -2,7 +2,6 @@ package com.glodblock.github.inventory.gui;
 
 import com.glodblock.github.util.Ae2Reflect;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.util.ResourceLocation;
 
@@ -13,11 +12,9 @@ import java.util.List;
 public class MouseRegionManager {
     private final GuiContainer gui;
     private final List<Region> regions = new ArrayList<>();
-    private final FontRenderer font;
 
-    public MouseRegionManager(GuiContainer gui, FontRenderer font) {
+    public MouseRegionManager(GuiContainer gui) {
         this.gui = gui;
-        this.font = font;
     }
 
     public void addRegion(int x, int y, int width, int height, Handler handler) {

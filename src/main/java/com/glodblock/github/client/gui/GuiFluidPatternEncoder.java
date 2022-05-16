@@ -14,7 +14,6 @@ import com.glodblock.github.inventory.slot.SlotSingleItem;
 import com.glodblock.github.network.CPacketEncodePattern;
 import com.glodblock.github.util.Ae2Reflect;
 import com.glodblock.github.util.NameConst;
-import com.glodblock.github.util.Util;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -33,7 +32,7 @@ public class GuiFluidPatternEncoder extends AEBaseGui {
     private static final ResourceLocation TEX_BG = FluidCraft.resource("textures/gui/fluid_pattern_encoder.png");
 
     private final ContainerFluidPatternEncoder cont;
-    private final MouseRegionManager mouseRegions = new MouseRegionManager(this, fontRendererObj);
+    private final MouseRegionManager mouseRegions = new MouseRegionManager(this);
     private final AppEngRenderItem stackSizeRenderer = Ae2Reflect.getStackSizeRenderer(this);
 
     public GuiFluidPatternEncoder(InventoryPlayer ipl, TileFluidPatternEncoder tile) {

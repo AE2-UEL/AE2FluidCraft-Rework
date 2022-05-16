@@ -31,7 +31,7 @@ public class GuiIngredientBuffer extends AEBaseGui {
     private static final int TANK_WIDTH = 16, TANK_HEIGHT = 74;
 
     private final ContainerIngredientBuffer cont;
-    private final MouseRegionManager mouseRegions = new MouseRegionManager(this, this.fontRendererObj);
+    private final MouseRegionManager mouseRegions = new MouseRegionManager(this);
 
     public GuiIngredientBuffer(InventoryPlayer ipl, TileIngredientBuffer tile) {
         super(new ContainerIngredientBuffer(ipl, tile));
