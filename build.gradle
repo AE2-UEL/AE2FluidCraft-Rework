@@ -66,6 +66,7 @@ minecraft {
 jar {
     manifest {
         attributes 'FMLCorePluginContainsFMLMod': 'true'
+        attributes 'FMLCorePlugin' : 'com.glodblock.github.coremod.FCCoreMod'
     }
 }
 

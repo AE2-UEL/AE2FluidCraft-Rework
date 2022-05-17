@@ -5,11 +5,14 @@ import appeng.api.networking.IGridHost;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.IMachineSet;
 import appeng.api.storage.data.IAEItemStack;
+import appeng.items.misc.ItemEncodedPattern;
 import appeng.me.MachineSet;
 import appeng.parts.misc.PartInterface;
 import appeng.tile.misc.TileInterface;
 import appeng.util.InventoryAdaptor;
+import appeng.util.inv.filter.IAEItemFilter;
 import com.glodblock.github.common.item.ItemFluidDrop;
+import com.glodblock.github.common.item.ItemFluidEncodedPattern;
 import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.common.part.PartDualInterface;
 import com.glodblock.github.common.tile.TileDualInterface;
@@ -20,6 +23,7 @@ import com.glodblock.github.loader.FCItems;
 import com.glodblock.github.util.Ae2Reflect;
 import com.glodblock.github.util.SetBackedMachineSet;
 import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -99,6 +103,19 @@ public class CoreModHooks {
             a.forEach(union::add);
             b.forEach(union::add);
             return new SetBackedMachineSet(TileInterface.class, union);
+        }
+    }
+
+    public static class FluidPatternSlotFilter implements IAEItemFilter {
+        public FluidPatternSlotFilter() {
+        }
+
+        public boolean allowExtract(IItemHandler inv, int slot, int amount) {
+            return true;
+        }
+
+        public boolean allowInsert(IItemHandler inv, int slot, ItemStack stack) {
+            return !stack.isEmpty() && (stack.getItem() instanceof ItemEncodedPattern || stack.getItem() instanceof ItemFluidEncodedPattern);
         }
     }
 

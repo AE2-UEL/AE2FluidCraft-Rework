@@ -1,7 +1,11 @@
 package com.glodblock.github;
 
+import appeng.api.config.Upgrades;
+import com.glodblock.github.loader.FCBlocks;
+import com.glodblock.github.loader.FCItems;
 import com.glodblock.github.proxy.CommonProxy;
 import com.glodblock.github.util.ModAndClassUtil;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -34,6 +38,10 @@ public class FluidCraft {
 
     @Mod.EventHandler
     public void onPostInit(FMLPostInitializationEvent event) {
+        Upgrades.PATTERN_EXPANSION.registerItem(new ItemStack(FCBlocks.DUAL_INTERFACE), 3 );
+        Upgrades.CRAFTING.registerItem(new ItemStack(FCBlocks.DUAL_INTERFACE), 1 );
+        Upgrades.PATTERN_EXPANSION.registerItem(new ItemStack(FCItems.PART_DUAL_INTERFACE), 3 );
+        Upgrades.CRAFTING.registerItem(new ItemStack(FCItems.PART_DUAL_INTERFACE), 1 );
         proxy.postInit(event);
     }
 
