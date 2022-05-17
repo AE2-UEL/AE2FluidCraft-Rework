@@ -158,6 +158,10 @@ public class FluidPatternDetails implements ICraftingPatternDetails, Comparable<
         NBTTagCompound tag = new NBTTagCompound();
         tag.setTag("Inputs", writeStackArray(checkInitialized(inputs)));
         tag.setTag("Outputs", writeStackArray(checkInitialized(outputs)));
+        //horrible shit.
+        //I have to keep both to maintain the back capacity.
+        tag.setTag("in", writeStackArray(checkInitialized(inputs)));
+        tag.setTag("out", writeStackArray(checkInitialized(outputs)));
         patternStack.setTagCompound(tag);
         patternStackAe = Objects.requireNonNull(AEItemStack.fromItemStack(patternStack));
         return patternStack;
