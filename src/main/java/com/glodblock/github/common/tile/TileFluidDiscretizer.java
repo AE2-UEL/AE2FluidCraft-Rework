@@ -5,10 +5,7 @@ import appeng.api.config.Actionable;
 import appeng.api.networking.GridFlags;
 import appeng.api.networking.crafting.ICraftingGrid;
 import appeng.api.networking.energy.IEnergyGrid;
-import appeng.api.networking.events.MENetworkCellArrayUpdate;
-import appeng.api.networking.events.MENetworkChannelsChanged;
-import appeng.api.networking.events.MENetworkEventSubscribe;
-import appeng.api.networking.events.MENetworkPowerStatusChange;
+import appeng.api.networking.events.*;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.networking.storage.IBaseMonitor;
 import appeng.api.networking.storage.IStorageGrid;
@@ -88,6 +85,11 @@ public class TileFluidDiscretizer extends AENetworkTile implements ICellContaine
 
     @MENetworkEventSubscribe
     public void onChannelUpdate(MENetworkChannelsChanged event) {
+        updateState();
+    }
+
+    @MENetworkEventSubscribe
+    public void onStorageUpdate(MENetworkStorageEvent event) {
         updateState();
     }
 
@@ -207,8 +209,15 @@ public class TileFluidDiscretizer extends AENetworkTile implements ICellContaine
             try {
                 List<IAEItemStack> mappedChanges = new ArrayList<>();
                 for (IAEFluidStack fluidStack : change) {
+                    boolean isNg = false;
+                    System.out.print(fluidStack + "\n");
+                    if (fluidStack.getStackSize() < 0) {
+                        isNg = true;
+                        fluidStack.setStackSize( - fluidStack.getStackSize());
+                    }
                     IAEItemStack itemStack = ItemFluidDrop.newAeStack(fluidStack);
                     if (itemStack != null) {
+                        if (isNg) itemStack.setStackSize( - itemStack.getStackSize());
                         mappedChanges.add(itemStack);
                     }
                 }
