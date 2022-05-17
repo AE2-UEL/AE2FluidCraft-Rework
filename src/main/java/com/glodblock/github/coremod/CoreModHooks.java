@@ -10,6 +10,7 @@ import appeng.me.MachineSet;
 import appeng.parts.misc.PartInterface;
 import appeng.tile.misc.TileInterface;
 import appeng.util.InventoryAdaptor;
+import appeng.util.inv.BlockingInventoryAdaptor;
 import appeng.util.inv.filter.IAEItemFilter;
 import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidEncodedPattern;
@@ -17,6 +18,7 @@ import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.common.part.PartDualInterface;
 import com.glodblock.github.common.tile.TileDualInterface;
 import com.glodblock.github.handler.FluidConvertingItemHandler;
+import com.glodblock.github.inventory.BlockingFluidInventoryAdaptor;
 import com.glodblock.github.inventory.FluidConvertingInventoryAdaptor;
 import com.glodblock.github.inventory.FluidConvertingInventoryCrafting;
 import com.glodblock.github.loader.FCItems;
@@ -56,6 +58,11 @@ public class CoreModHooks {
     @Nullable
     public static InventoryAdaptor wrapInventory(@Nullable TileEntity tile, EnumFacing face) {
         return tile != null ? FluidConvertingInventoryAdaptor.wrap(tile, face) : null;
+    }
+
+    @Nullable
+    public static BlockingInventoryAdaptor wrapBlockInventory(@Nullable TileEntity tile, EnumFacing face) {
+        return tile != null ? BlockingFluidInventoryAdaptor.getAdaptor(tile, face) : null;
     }
 
     public static long getCraftingByteCost(IAEItemStack stack) {
@@ -103,19 +110,6 @@ public class CoreModHooks {
             a.forEach(union::add);
             b.forEach(union::add);
             return new SetBackedMachineSet(TileInterface.class, union);
-        }
-    }
-
-    public static class FluidPatternSlotFilter implements IAEItemFilter {
-        public FluidPatternSlotFilter() {
-        }
-
-        public boolean allowExtract(IItemHandler inv, int slot, int amount) {
-            return true;
-        }
-
-        public boolean allowInsert(IItemHandler inv, int slot, ItemStack stack) {
-            return !stack.isEmpty() && (stack.getItem() instanceof ItemEncodedPattern || stack.getItem() instanceof ItemFluidEncodedPattern);
         }
     }
 

@@ -31,6 +31,8 @@ public class DualityInterfaceTransformer extends FCClassTransformer.ClassMapper 
                 case "pushPattern":
                 case "isBusy":
                     return new TransformInvAdaptorCalls(api, super.visitMethod(access, name, desc, signature, exceptions));
+                case "isCustomInvBlocking":
+                    return new TransformBlockAdaptorCalls(api, super.visitMethod(access, name, desc, signature, exceptions));
                 default:
                     return super.visitMethod(access, name, desc, signature, exceptions);
             }
@@ -51,6 +53,27 @@ public class DualityInterfaceTransformer extends FCClassTransformer.ClassMapper 
                         "com/glodblock/github/coremod/CoreModHooks",
                         "wrapInventory",
                         "(Lnet/minecraft/tileentity/TileEntity;Lnet/minecraft/util/EnumFacing;)Lappeng/util/InventoryAdaptor;",
+                        false);
+            } else {
+                super.visitMethodInsn(opcode, owner, name, desc, itf);
+            }
+        }
+
+    }
+
+    private static class TransformBlockAdaptorCalls extends MethodVisitor {
+
+        TransformBlockAdaptorCalls(int api, MethodVisitor mv) {
+            super(api, mv);
+        }
+
+        @Override
+        public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
+            if (opcode == Opcodes.INVOKESTATIC && owner.equals("appeng/util/inv/BlockingInventoryAdaptor") && name.equals("getAdaptor")) {
+                super.visitMethodInsn(Opcodes.INVOKESTATIC,
+                        "com/glodblock/github/coremod/CoreModHooks",
+                        "wrapBlockInventory",
+                        "(Lnet/minecraft/tileentity/TileEntity;Lnet/minecraft/util/EnumFacing;)Lappeng/util/inv/BlockingInventoryAdaptor;",
                         false);
             } else {
                 super.visitMethodInsn(opcode, owner, name, desc, itf);

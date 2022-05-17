@@ -25,6 +25,7 @@ This is a rework and ported version of [ae2-fluid-crafting](https://github.com/p
  - [1.12.2] Fix the fluid amount display error when removing fluid.
  - [1.12.2] Upgrade cards can be inserted in Dual Interface.
  - [1.12.2] Fluid pattern is searchable in interface terminal.
+ - [1.12.2] Fix crash when using block mode, fluid will also be considered as blockable.
 
 ## Installation
 
@@ -35,6 +36,8 @@ Any version of AE2(Both Official AE2 and GTNH edition AE2 works).
 
 ### 1.12.2
 Unofficial AE2([PAE2](https://www.curseforge.com/minecraft/mc-mods/ae2-extended-life)).
+
+You can directly upgrade origin AE2FC2 in your old save.
 
 Official AE2 isn't supported, you can use origin [AE2FC](https://github.com/phantamanta44/ae2-fluid-crafting) if you are playing with Official AE2.
 

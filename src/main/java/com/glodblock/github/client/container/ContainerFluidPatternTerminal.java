@@ -315,7 +315,7 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
             }
             else if (!slot.getStack().isEmpty()) {
                 ItemStack stack = slot.getStack();
-                stack.setCount(stack.getCount() * divide);
+                stack.setCount(stack.getCount() / divide);
             }
         }
     }
