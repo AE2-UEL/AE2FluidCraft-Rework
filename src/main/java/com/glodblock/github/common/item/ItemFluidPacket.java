@@ -91,4 +91,8 @@ public class ItemFluidPacket extends Item implements HasCustomModel {
         return NameConst.MODEL_FLUID_PACKET;
     }
 
+    public static boolean isFluidPacket(ItemStack is) {
+        return !is.isEmpty() && is.getItem() instanceof ItemFluidPacket;
+    }
+
 }

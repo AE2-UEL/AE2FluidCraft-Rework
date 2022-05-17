@@ -28,6 +28,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ContainerFluidPatternTerminal extends ContainerPatternTerm implements PatternConsumer {
 
@@ -166,7 +167,7 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
         Slot slot = getSlot(slotId);
         ItemStack stack = player.inventory.getItemStack();
         if ((slot instanceof SlotFakeCraftingMatrix || slot instanceof SlotPatternOutputs) && !stack.isEmpty()
-                && stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
+                && stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null) && Util.getFluidFromItem(stack) != null) {
             FluidStack fluid = null;
             switch (action) {
                 case PICKUP_OR_SET_DOWN:
@@ -191,10 +192,250 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
         }
         if (action == InventoryAction.SPLIT_OR_PLACE_SINGLE) {
             if (stack.isEmpty() && !slot.getStack().isEmpty() && slot.getStack().getItem() instanceof ItemFluidPacket) {
-                return;
+                FluidStack fluid = ItemFluidPacket.getFluidStack(slot.getStack());
+                if (fluid != null && fluid.amount - 1000 >= 1) {
+                    fluid.amount -= 1000;
+                    slot.putStack(ItemFluidPacket.newStack(fluid));
+                }
             }
         }
         super.doAction(player, action, slotId, id);
+    }
+
+    @Override
+    public void multiply(int multiple) {
+        for (Slot slot : this.craftingSlots) {
+            if (ItemFluidPacket.isFluidPacket(slot.getStack()) && ItemFluidPacket.getFluidStack(slot.getStack()) != null) {
+                long amt = Objects.requireNonNull(ItemFluidPacket.getFluidStack(slot.getStack())).amount;
+                if (amt * multiple > Integer.MAX_VALUE) {
+                    return;
+                }
+            }
+            else if (!slot.getStack().isEmpty()) {
+                long amt = slot.getStack().getCount();
+                if (amt * multiple > slot.getStack().getMaxStackSize()) {
+                    return;
+                }
+            }
+        }
+
+        for (Slot slot : this.outputSlots) {
+            if (ItemFluidPacket.isFluidPacket(slot.getStack()) && ItemFluidPacket.getFluidStack(slot.getStack()) != null) {
+                long amt = Objects.requireNonNull(ItemFluidPacket.getFluidStack(slot.getStack())).amount;
+                if (amt * multiple > Integer.MAX_VALUE) {
+                    return;
+                }
+            }
+            else if (!slot.getStack().isEmpty()) {
+                long amt = slot.getStack().getCount();
+                if (amt * multiple > slot.getStack().getMaxStackSize()) {
+                    return;
+                }
+            }
+        }
+
+        for (Slot slot : this.craftingSlots) {
+            if (ItemFluidPacket.isFluidPacket(slot.getStack()) && ItemFluidPacket.getFluidStack(slot.getStack()) != null) {
+                FluidStack fluid = Objects.requireNonNull(ItemFluidPacket.getFluidStack(slot.getStack()));
+                fluid.amount *= multiple;
+                ItemStack packet = ItemFluidPacket.newStack(fluid);
+                slot.putStack(packet);
+            }
+            else if (!slot.getStack().isEmpty()) {
+                ItemStack stack = slot.getStack();
+                stack.setCount(stack.getCount() * multiple);
+            }
+        }
+
+        for (Slot slot : this.outputSlots) {
+            if (ItemFluidPacket.isFluidPacket(slot.getStack()) && ItemFluidPacket.getFluidStack(slot.getStack()) != null) {
+                FluidStack fluid = Objects.requireNonNull(ItemFluidPacket.getFluidStack(slot.getStack()));
+                fluid.amount *= multiple;
+                ItemStack packet = ItemFluidPacket.newStack(fluid);
+                slot.putStack(packet);
+            }
+            else if (!slot.getStack().isEmpty()) {
+                ItemStack stack = slot.getStack();
+                stack.setCount(stack.getCount() * multiple);
+            }
+        }
+    }
+
+    @Override
+    public void divide(int divide) {
+        for (Slot slot : this.craftingSlots) {
+            if (ItemFluidPacket.isFluidPacket(slot.getStack()) && ItemFluidPacket.getFluidStack(slot.getStack()) != null) {
+                long amt = Objects.requireNonNull(ItemFluidPacket.getFluidStack(slot.getStack())).amount;
+                if (amt % divide != 0) {
+                    return;
+                }
+            }
+            else if (!slot.getStack().isEmpty()) {
+                long amt = slot.getStack().getCount();
+                if (amt % divide != 0) {
+                    return;
+                }
+            }
+        }
+
+        for (Slot slot : this.outputSlots) {
+            if (ItemFluidPacket.isFluidPacket(slot.getStack()) && ItemFluidPacket.getFluidStack(slot.getStack()) != null) {
+                long amt = Objects.requireNonNull(ItemFluidPacket.getFluidStack(slot.getStack())).amount;
+                if (amt % divide != 0) {
+                    return;
+                }
+            }
+            else if (!slot.getStack().isEmpty()) {
+                long amt = slot.getStack().getCount();
+                if (amt % divide != 0) {
+                    return;
+                }
+            }
+        }
+
+        for (Slot slot : this.craftingSlots) {
+            if (ItemFluidPacket.isFluidPacket(slot.getStack()) && ItemFluidPacket.getFluidStack(slot.getStack()) != null) {
+                FluidStack fluid = Objects.requireNonNull(ItemFluidPacket.getFluidStack(slot.getStack()));
+                fluid.amount /= divide;
+                ItemStack packet = ItemFluidPacket.newStack(fluid);
+                slot.putStack(packet);
+            }
+            else if (!slot.getStack().isEmpty()) {
+                ItemStack stack = slot.getStack();
+                stack.setCount(stack.getCount() / divide);
+            }
+        }
+
+        for (Slot slot : this.outputSlots) {
+            if (ItemFluidPacket.isFluidPacket(slot.getStack()) && ItemFluidPacket.getFluidStack(slot.getStack()) != null) {
+                FluidStack fluid = Objects.requireNonNull(ItemFluidPacket.getFluidStack(slot.getStack()));
+                fluid.amount /= divide;
+                ItemStack packet = ItemFluidPacket.newStack(fluid);
+                slot.putStack(packet);
+            }
+            else if (!slot.getStack().isEmpty()) {
+                ItemStack stack = slot.getStack();
+                stack.setCount(stack.getCount() * divide);
+            }
+        }
+    }
+
+    @Override
+    public void increase(int increase) {
+        for (Slot slot : this.craftingSlots) {
+            if (ItemFluidPacket.isFluidPacket(slot.getStack()) && ItemFluidPacket.getFluidStack(slot.getStack()) != null) {
+                long amt = Objects.requireNonNull(ItemFluidPacket.getFluidStack(slot.getStack())).amount;
+                if (amt + increase * 1000 > Integer.MAX_VALUE) {
+                    return;
+                }
+            }
+            else if (!slot.getStack().isEmpty()) {
+                long amt = slot.getStack().getCount();
+                if (amt + increase > slot.getStack().getMaxStackSize()) {
+                    return;
+                }
+            }
+        }
+
+        for (Slot slot : this.outputSlots) {
+            if (ItemFluidPacket.isFluidPacket(slot.getStack()) && ItemFluidPacket.getFluidStack(slot.getStack()) != null) {
+                long amt = Objects.requireNonNull(ItemFluidPacket.getFluidStack(slot.getStack())).amount;
+                if (amt + increase * 1000 > Integer.MAX_VALUE) {
+                    return;
+                }
+            }
+            else if (!slot.getStack().isEmpty()) {
+                long amt = slot.getStack().getCount();
+                if (amt + increase > slot.getStack().getMaxStackSize()) {
+                    return;
+                }
+            }
+        }
+
+        for (Slot slot : this.craftingSlots) {
+            if (ItemFluidPacket.isFluidPacket(slot.getStack()) && ItemFluidPacket.getFluidStack(slot.getStack()) != null) {
+                FluidStack fluid = Objects.requireNonNull(ItemFluidPacket.getFluidStack(slot.getStack()));
+                fluid.amount += increase * 1000;
+                ItemStack packet = ItemFluidPacket.newStack(fluid);
+                slot.putStack(packet);
+            }
+            else if (!slot.getStack().isEmpty()) {
+                ItemStack stack = slot.getStack();
+                stack.setCount(stack.getCount() + increase);
+            }
+        }
+
+        for (Slot slot : this.outputSlots) {
+            if (ItemFluidPacket.isFluidPacket(slot.getStack()) && ItemFluidPacket.getFluidStack(slot.getStack()) != null) {
+                FluidStack fluid = Objects.requireNonNull(ItemFluidPacket.getFluidStack(slot.getStack()));
+                fluid.amount += increase * 1000;
+                ItemStack packet = ItemFluidPacket.newStack(fluid);
+                slot.putStack(packet);
+            }
+            else if (!slot.getStack().isEmpty()) {
+                ItemStack stack = slot.getStack();
+                stack.setCount(stack.getCount() + increase);
+            }
+        }
+    }
+
+    @Override
+    public void decrease(int decrease) {
+        for (Slot slot : this.craftingSlots) {
+            if (ItemFluidPacket.isFluidPacket(slot.getStack()) && ItemFluidPacket.getFluidStack(slot.getStack()) != null) {
+                long amt = Objects.requireNonNull(ItemFluidPacket.getFluidStack(slot.getStack())).amount;
+                if (amt - decrease * 1000 < 1) {
+                    return;
+                }
+            }
+            else if (!slot.getStack().isEmpty()) {
+                long amt = slot.getStack().getCount();
+                if (amt - decrease < 1) {
+                    return;
+                }
+            }
+        }
+
+        for (Slot slot : this.outputSlots) {
+            if (ItemFluidPacket.isFluidPacket(slot.getStack()) && ItemFluidPacket.getFluidStack(slot.getStack()) != null) {
+                long amt = Objects.requireNonNull(ItemFluidPacket.getFluidStack(slot.getStack())).amount;
+                if (amt - decrease * 1000 < 1) {
+                    return;
+                }
+            }
+            else if (!slot.getStack().isEmpty()) {
+                long amt = slot.getStack().getCount();
+                if (amt - decrease < 1) {
+                    return;
+                }
+            }
+        }
+
+        for (Slot slot : this.craftingSlots) {
+            if (ItemFluidPacket.isFluidPacket(slot.getStack()) && ItemFluidPacket.getFluidStack(slot.getStack()) != null) {
+                FluidStack fluid = Objects.requireNonNull(ItemFluidPacket.getFluidStack(slot.getStack()));
+                fluid.amount -= decrease * 1000;
+                ItemStack packet = ItemFluidPacket.newStack(fluid);
+                slot.putStack(packet);
+            }
+            else if (!slot.getStack().isEmpty()) {
+                ItemStack stack = slot.getStack();
+                stack.setCount(stack.getCount() - decrease);
+            }
+        }
+
+        for (Slot slot : this.outputSlots) {
+            if (ItemFluidPacket.isFluidPacket(slot.getStack()) && ItemFluidPacket.getFluidStack(slot.getStack()) != null) {
+                FluidStack fluid = Objects.requireNonNull(ItemFluidPacket.getFluidStack(slot.getStack()));
+                fluid.amount -= decrease * 1000;
+                ItemStack packet = ItemFluidPacket.newStack(fluid);
+                slot.putStack(packet);
+            }
+            else if (!slot.getStack().isEmpty()) {
+                ItemStack stack = slot.getStack();
+                stack.setCount(stack.getCount() - decrease);
+            }
+        }
     }
 
 }
