@@ -29,7 +29,7 @@ public class ForestryRecipeExtractor implements IRecipeExtractorLegacy {
 
     @Override
     public String getClassName() {
-        return handler.getHandlerId();
+        return handler.getClass().getName();
     }
 
     @Override

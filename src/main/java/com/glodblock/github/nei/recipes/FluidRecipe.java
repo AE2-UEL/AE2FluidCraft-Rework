@@ -50,16 +50,16 @@ public final class FluidRecipe {
     }
 
     public static List<OrderStack<?>> getPackageInputsLegacy(IRecipeHandler recipe, int index) {
-        if (recipe == null || !IdentifierMapLegacy.containsKey(recipe.getHandlerId())) return new ArrayList<>();
-        IRecipeExtractor extractor = IdentifierMapLegacy.get(recipe.getHandlerId());
+        if (recipe == null || !IdentifierMapLegacy.containsKey(recipe.getClass().getName())) return new ArrayList<>();
+        IRecipeExtractor extractor = IdentifierMapLegacy.get(recipe.getClass().getName());
         if (extractor == null) return new ArrayList<>();
         List<PositionedStack> tmp = new ArrayList<>(recipe.getIngredientStacks(index));
         return extractor.getInputIngredients(tmp, recipe, index);
     }
 
     public static List<OrderStack<?>> getPackageOutputsLegacy(IRecipeHandler recipe, int index, boolean useOther) {
-        if (recipe == null || !IdentifierMapLegacy.containsKey(recipe.getHandlerId())) return new ArrayList<>();
-        IRecipeExtractor extractor = IdentifierMapLegacy.get(recipe.getHandlerId());
+        if (recipe == null || !IdentifierMapLegacy.containsKey(recipe.getClass().getName())) return new ArrayList<>();
+        IRecipeExtractor extractor = IdentifierMapLegacy.get(recipe.getClass().getName());
         if (extractor == null) return new ArrayList<>();
         List<PositionedStack> tmp = new ArrayList<>(Collections.singleton(recipe.getResultStack(index)));
         if (useOther) tmp.addAll(recipe.getOtherStacks(index));
