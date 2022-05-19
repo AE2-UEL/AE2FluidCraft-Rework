@@ -16,6 +16,7 @@ import com.glodblock.github.common.parts.PartFluidPatternTerminalEx;
 import com.glodblock.github.inventory.gui.GuiType;
 import com.glodblock.github.network.CPacketFluidPatternTermBtns;
 import com.glodblock.github.network.CPacketSwitchGuis;
+import com.glodblock.github.util.ModAndClassUtil;
 import com.google.common.base.Joiner;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -530,6 +531,22 @@ public class GuiFluidCraftConfirm extends AEBaseGui {
             {
                 AELog.debug( e );
             }
+        }
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    protected void addItemTooltip(ItemStack is, List<String> lineList)
+    {
+        if (isShiftKeyDown())
+        {
+            List l = is.getTooltip(this.mc.thePlayer, this.mc.gameSettings.advancedItemTooltips);
+            if (!l.isEmpty())
+                l.remove(0);
+            lineList.addAll(l);
+        }
+        else if (ModAndClassUtil.isShiftTooltip)
+        {
+            lineList.add(GuiText.HoldShiftForTooltip.getLocal());
         }
     }
 

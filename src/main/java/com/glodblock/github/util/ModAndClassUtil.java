@@ -4,6 +4,7 @@ import appeng.api.config.ActionItems;
 import appeng.api.config.Settings;
 import appeng.core.AEConfig;
 import appeng.core.localization.ButtonToolTips;
+import appeng.core.localization.GuiText;
 import cpw.mods.fml.common.Loader;
 
 import java.lang.reflect.Field;
@@ -21,8 +22,18 @@ public final class ModAndClassUtil {
     public static boolean isSearchStringTooltip;
     public static boolean isCraftStatus;
     public static boolean isSearchBar;
+    public static boolean isShiftTooltip;
 
+    @SuppressWarnings("all")
     public static void init() {
+
+        try {
+            Field d = GuiText.class.getDeclaredField("HoldShiftForTooltip");
+            if (d == null) isShiftTooltip = false;
+            isShiftTooltip = true;
+        } catch (NoSuchFieldException e) {
+            isShiftTooltip = false;
+        }
 
         try {
             Field d = AEConfig.instance.getClass().getDeclaredField("preserveSearchBar");
