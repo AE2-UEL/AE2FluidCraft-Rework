@@ -1,13 +1,18 @@
 package com.glodblock.github.coremod.hooker;
 
+import appeng.api.networking.IGrid;
+import appeng.api.networking.IGridHost;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.IMachineSet;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.me.MachineSet;
+import appeng.parts.misc.PartInterface;
 import appeng.tile.misc.TileInterface;
 import appeng.util.InventoryAdaptor;
 import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.common.parts.PartFluidInterface;
+import com.glodblock.github.common.tile.TileFluidInterface;
 import com.glodblock.github.inventory.FluidConvertingInventoryAdaptor;
 import com.glodblock.github.inventory.FluidConvertingInventoryCrafting;
 import com.glodblock.github.loader.ItemAndBlockHolder;
@@ -58,15 +63,15 @@ public class CoreModHooks {
         return stacks;
     }
 
-    /*public static IMachineSet getMachines(IGrid grid, Class<? extends IGridHost> c) {
+    public static IMachineSet getMachines(IGrid grid, Class<? extends IGridHost> c) {
         if (c == TileInterface.class) {
-            return unionMachineSets(grid.getMachines(c), grid.getMachines(TileDualInterface.class));
+            return unionMachineSets(grid.getMachines(c), grid.getMachines(TileFluidInterface.class));
         } else if (c == PartInterface.class) {
-            return unionMachineSets(grid.getMachines(c), grid.getMachines(PartDualInterface.class));
+            return unionMachineSets(grid.getMachines(c), grid.getMachines(PartFluidInterface.class));
         } else {
             return grid.getMachines(c);
         }
-    }*/ //unfinished
+    }
 
     private static IMachineSet unionMachineSets(IMachineSet a, IMachineSet b) {
         if (a.isEmpty()) {

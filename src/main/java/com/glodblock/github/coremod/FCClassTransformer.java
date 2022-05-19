@@ -1,5 +1,6 @@
 package com.glodblock.github.coremod;
 
+import com.glodblock.github.coremod.transform.ContainerInterfaceTerminalTransformer;
 import com.glodblock.github.coremod.transform.CraftingCpuTransformer;
 import com.glodblock.github.coremod.transform.CraftingTreeNodeTransformer;
 import com.glodblock.github.coremod.transform.DualityInterfaceTransformer;
@@ -23,9 +24,9 @@ public class FCClassTransformer implements IClassTransformer {
             case "appeng.helpers.DualityInterface":
                 tform = DualityInterfaceTransformer.INSTANCE;
                 break;
-            /*case "appeng.container.implementations.ContainerInterfaceTerminal":
+            case "appeng.container.implementations.ContainerInterfaceTerminal":
                 tform = ContainerInterfaceTerminalTransformer.INSTANCE;
-                break;*/ //To-Do
+                break;
             default:
                 return code;
         }
