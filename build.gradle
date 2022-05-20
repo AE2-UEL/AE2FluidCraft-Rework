@@ -606,44 +606,8 @@ publishing {
 // Updating
 task updateBuildScript {
     doLast {
-        if (performBuildScriptUpdate(projectDir.toString())) return
-
         print("Build script already up-to-date!")
     }
-}
-
-if (isNewBuildScriptVersionAvailable(projectDir.toString())) {
-    if (autoUpdateBuildScript.toBoolean()) {
-        performBuildScriptUpdate(projectDir.toString())
-    } else {
-        out.style(Style.SuccessHeader).println("Build script update available! Run 'gradle updateBuildScript'")
-    }
-}
-
-static URL availableBuildScriptUrl() {
-    new URL("https://raw.githubusercontent.com/GTNewHorizons/ExampleMod1.7.10/main/build.gradle")
-}
-
-boolean performBuildScriptUpdate(String projectDir) {
-    if (isNewBuildScriptVersionAvailable(projectDir)) {
-        def buildscriptFile = getFile("build.gradle")
-        availableBuildScriptUrl().withInputStream { i -> buildscriptFile.withOutputStream { it << i } }
-        out.style(Style.Success).print("Build script updated. Please REIMPORT the project or RESTART your IDE!")
-        return true
-    }
-    return false
-}
-
-boolean isNewBuildScriptVersionAvailable(String projectDir) {
-    Map parameters = ["connectTimeout": 2000, "readTimeout": 2000]
-
-    String currentBuildScript = getFile("build.gradle").getText()
-    String currentBuildScriptHash = getVersionHash(currentBuildScript)
-    String availableBuildScript = availableBuildScriptUrl().newInputStream(parameters).getText()
-    String availableBuildScriptHash = getVersionHash(availableBuildScript)
-
-    boolean isUpToDate = currentBuildScriptHash.empty || availableBuildScriptHash.empty || currentBuildScriptHash == availableBuildScriptHash
-    return !isUpToDate
 }
 
 static String getVersionHash(String buildScriptContent) {
