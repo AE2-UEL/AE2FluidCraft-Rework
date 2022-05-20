@@ -17,6 +17,7 @@ public final class NameConst {
     public static final String ITEM_DENSE_ENCODED_PATTERN = "dense_encoded_pattern";
     public static final String ITEM_PART_DUAL_INTERFACE = "part_dual_interface";
     public static final String ITEM_PART_FLUID_PATTERN_TERMINAL = "part_fluid_pattern_terminal";
+    public static final String ITEM_PART_EXTENDED_FLUID_PATTERN_TERMINAL = "part_fluid_pattern_ex_terminal";
 
     public static final String TT_KEY = FluidCraft.MODID + ".tooltip.";
     public static final String TT_FLUID_PACKET = TT_KEY + "fluid_packet";

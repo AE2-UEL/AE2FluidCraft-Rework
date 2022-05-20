@@ -1,0 +1,25 @@
+{
+  "type": "appliedenergistics2:part_shaped",
+  "result": {
+    "item": "ae2fc:part_fluid_pattern_ex_terminal",
+    "count": 1
+  },
+  "pattern": [
+    "c c",
+    "tft",
+    "c c"
+  ],
+  "key": {
+    "f": {
+      "type": "appliedenergistics2:part",
+      "part": "cable_glass.fluix"
+    },
+    "t": {
+      "item": "ae2fc:part_fluid_pattern_terminal"
+    },
+    "c": {
+      "type": "appliedenergistics2:part",
+      "part": "material.calculation_processor"
+    }
+  }
+}

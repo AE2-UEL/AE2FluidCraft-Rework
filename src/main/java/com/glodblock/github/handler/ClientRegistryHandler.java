@@ -5,6 +5,7 @@ import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.model.DenseEncodedPatternModel;
 import com.glodblock.github.client.model.FluidPacketModel;
 import com.glodblock.github.common.part.PartDualInterface;
+import com.glodblock.github.common.part.PartExtendedFluidPatternTerminal;
 import com.glodblock.github.common.part.PartFluidPatternTerminal;
 import com.glodblock.github.interfaces.HasCustomModel;
 import net.minecraft.block.Block;
@@ -30,6 +31,7 @@ public class ClientRegistryHandler extends RegistryHandler {
         }
         AEApi.instance().registries().partModels().registerModels(PartDualInterface.MODELS);
         AEApi.instance().registries().partModels().registerModels(PartFluidPatternTerminal.MODELS);
+        AEApi.instance().registries().partModels().registerModels(PartExtendedFluidPatternTerminal.MODELS);
     }
 
     private static void registerModel(String key, Item item) {

@@ -55,7 +55,7 @@ public class ClientProxy extends CommonProxy {
             return fluid != null ? fluid.getFluid().getColor(fluid) : -1;
         }, FCItems.FLUID_PACKET);
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler((s, i) -> AEColor.TRANSPARENT.getVariantByTintIndex(i), FCItems.PART_FLUID_PATTERN_TERMINAL);
-
+        Minecraft.getMinecraft().getItemColors().registerItemColorHandler((s, i) -> AEColor.TRANSPARENT.getVariantByTintIndex(i), FCItems.PART_EXTENDED_FLUID_PATTERN_TERMINAL);
     }
 
     @Override

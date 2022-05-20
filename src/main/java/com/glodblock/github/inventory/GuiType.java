@@ -12,6 +12,7 @@ import appeng.container.implementations.ContainerPriority;
 import appeng.fluids.container.ContainerFluidInterface;
 import appeng.fluids.helper.IFluidInterfaceHost;
 import appeng.helpers.IInterfaceHost;
+import appeng.parts.reporting.AbstractPartTerminal;
 import com.glodblock.github.client.*;
 import com.glodblock.github.client.container.*;
 import com.glodblock.github.common.part.PartFluidPatternTerminal;
@@ -106,14 +107,14 @@ public enum GuiType {
         }
     }),
 
-    FLUID_PAT_TERM_CRAFTING_STATUS(new PartGuiFactory<PartFluidPatternTerminal>(PartFluidPatternTerminal.class) {
+    FLUID_PAT_TERM_CRAFTING_STATUS(new PartGuiFactory<AbstractPartTerminal>(AbstractPartTerminal.class) {
         @Override
-        protected Object createServerGui(EntityPlayer player, PartFluidPatternTerminal inv) {
+        protected Object createServerGui(EntityPlayer player, AbstractPartTerminal inv) {
             return new ContainerCraftingStatus(player.inventory, inv);
         }
 
         @Override
-        protected Object createClientGui(EntityPlayer player, PartFluidPatternTerminal inv) {
+        protected Object createClientGui(EntityPlayer player, AbstractPartTerminal inv) {
             return new GuiFluidPatternTerminalCraftingStatus(player.inventory, inv);
         }
     }),
@@ -127,6 +128,18 @@ public enum GuiType {
         @Override
         protected Object createClientGui(EntityPlayer player, ITerminalHost inv) {
             return new GuiFluidPatternTerminal(player.inventory, inv);
+        }
+    }),
+
+    FLUID_EXTENDED_PATTERN_TERMINAL(new PartGuiFactory<ITerminalHost>(ITerminalHost.class) {
+        @Override
+        protected Object createServerGui(EntityPlayer player, ITerminalHost inv) {
+            return new ContainerExtendedFluidPatternTerminal(player.inventory, inv);
+        }
+
+        @Override
+        protected Object createClientGui(EntityPlayer player, ITerminalHost inv) {
+            return new GuiExtendedFluidPatternTerminal(player.inventory, inv);
         }
     }),
 

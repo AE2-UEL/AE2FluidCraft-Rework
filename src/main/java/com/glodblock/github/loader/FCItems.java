@@ -27,6 +27,8 @@ public class FCItems {
     public static ItemPartDualInterface PART_DUAL_INTERFACE;
     @GameRegistry.ObjectHolder(FluidCraft.MODID + ":" + NameConst.ITEM_PART_FLUID_PATTERN_TERMINAL)
     public static ItemPartFluidPatternTerminal PART_FLUID_PATTERN_TERMINAL;
+    @GameRegistry.ObjectHolder(FluidCraft.MODID + ":" + NameConst.ITEM_PART_EXTENDED_FLUID_PATTERN_TERMINAL)
+    public static ItemPartExtendedFluidPatternTerminal PART_EXTENDED_FLUID_PATTERN_TERMINAL;
 
     public static void init(RegistryHandler regHandler) {
         regHandler.item(NameConst.ITEM_FLUID_DROP, new ItemFluidDrop());
@@ -34,6 +36,7 @@ public class FCItems {
         regHandler.item(NameConst.ITEM_DENSE_ENCODED_PATTERN, new ItemFluidEncodedPattern());
         regHandler.item(NameConst.ITEM_PART_DUAL_INTERFACE, new ItemPartDualInterface());
         regHandler.item(NameConst.ITEM_PART_FLUID_PATTERN_TERMINAL, new ItemPartFluidPatternTerminal());
+        regHandler.item(NameConst.ITEM_PART_EXTENDED_FLUID_PATTERN_TERMINAL, new ItemPartExtendedFluidPatternTerminal());
     }
 
 }

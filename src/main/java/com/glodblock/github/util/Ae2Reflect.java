@@ -1,6 +1,7 @@
 package com.glodblock.github.util;
 
 import appeng.api.definitions.IItemDefinition;
+import appeng.container.implementations.ContainerExpandedProcessingPatternTerm;
 import appeng.container.implementations.ContainerPatternTerm;
 import appeng.container.slot.OptionalSlotFake;
 import appeng.container.slot.SlotFakeCraftingMatrix;
@@ -23,6 +24,10 @@ public class Ae2Reflect {
     private static final Field fContainerPatternTerm_outputSlots;
     private static final Field fContainerPatternTerm_patternSlotIN;
     private static final Field fContainerPatternTerm_patternSlotOUT;
+    private static final Field fContainerExPatternTerm_craftingSlots;
+    private static final Field fContainerExPatternTerm_outputSlots;
+    private static final Field fContainerExPatternTerm_patternSlotIN;
+    private static final Field fContainerExPatternTerm_patternSlotOUT;
     private static final Field fInventory_container;
 
     static {
@@ -34,6 +39,10 @@ public class Ae2Reflect {
             fContainerPatternTerm_outputSlots = reflectField(ContainerPatternTerm.class, "outputSlots");
             fContainerPatternTerm_patternSlotIN = reflectField(ContainerPatternTerm.class, "patternSlotIN");
             fContainerPatternTerm_patternSlotOUT = reflectField(ContainerPatternTerm.class, "patternSlotOUT");
+            fContainerExPatternTerm_craftingSlots = reflectField(ContainerExpandedProcessingPatternTerm.class, "gridSlots");
+            fContainerExPatternTerm_outputSlots = reflectField(ContainerExpandedProcessingPatternTerm.class, "outputSlots");
+            fContainerExPatternTerm_patternSlotIN = reflectField(ContainerExpandedProcessingPatternTerm.class, "patternSlotIN");
+            fContainerExPatternTerm_patternSlotOUT = reflectField(ContainerExpandedProcessingPatternTerm.class, "patternSlotOUT");
         } catch (Exception e) {
             throw new IllegalStateException("Failed to initialize AE2 reflection hacks!", e);
         }
@@ -107,6 +116,22 @@ public class Ae2Reflect {
 
     public static SlotRestrictedInput getPatternSlotOut(ContainerPatternTerm cont) {
         return readField(cont, fContainerPatternTerm_patternSlotOUT);
+    }
+
+    public static SlotFakeCraftingMatrix[] getExCraftingSlots(ContainerExpandedProcessingPatternTerm cont) {
+        return readField(cont, fContainerExPatternTerm_craftingSlots);
+    }
+
+    public static OptionalSlotFake[] getExOutputSlots(ContainerExpandedProcessingPatternTerm cont) {
+        return readField(cont, fContainerExPatternTerm_outputSlots);
+    }
+
+    public static SlotRestrictedInput getExPatternSlotIn(ContainerExpandedProcessingPatternTerm cont) {
+        return readField(cont, fContainerExPatternTerm_patternSlotIN);
+    }
+
+    public static SlotRestrictedInput getExPatternSlotOut(ContainerExpandedProcessingPatternTerm cont) {
+        return readField(cont, fContainerExPatternTerm_patternSlotOUT);
     }
 
 }

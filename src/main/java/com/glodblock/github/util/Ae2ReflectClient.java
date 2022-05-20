@@ -5,6 +5,7 @@ import appeng.client.gui.implementations.*;
 import appeng.client.gui.widgets.GuiTabButton;
 import appeng.client.render.StackSizeRenderer;
 import appeng.fluids.client.gui.GuiFluidInterface;
+import com.glodblock.github.client.container.ContainerExtendedFluidPatternTerminal;
 import com.glodblock.github.client.container.ContainerFluidPatternTerminal;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -71,6 +72,11 @@ public class Ae2ReflectClient {
 
     public static void setGuiContainer(GuiPatternTerm instance, ContainerFluidPatternTerminal container) {
         Ae2Reflect.writeField(instance, fGuiPatternTerm_container, container);
+        Ae2Reflect.writeField(instance, fGuiMEMonitorable_monitorableContainer, container);
+        Ae2Reflect.writeField(instance, fGuiMEMonitorable_configSrc, container.getConfigManager());
+    }
+
+    public static void setGuiExContainer(GuiExpandedProcessingPatternTerm instance, ContainerExtendedFluidPatternTerminal container) {
         Ae2Reflect.writeField(instance, fGuiMEMonitorable_monitorableContainer, container);
         Ae2Reflect.writeField(instance, fGuiMEMonitorable_configSrc, container.getConfigManager());
     }

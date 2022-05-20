@@ -1,0 +1,9 @@
+{
+  "parent": "appliedenergistics2:item/part/display",
+  "textures": {
+    "front": "appliedenergistics2:items/part/expanded_processing_pattern_terminal",
+    "front_bright": "ae2fc:parts/pattern_terminal_ex_bright",
+    "front_medium": "ae2fc:parts/pattern_terminal_ex_medium",
+    "front_dark": "ae2fc:parts/pattern_terminal_ex_dark"
+  }
+}
