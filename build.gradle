@@ -180,11 +180,6 @@ catch (Exception ignored) {
 }
 
 // Pulls version first from the VERSION env and then git tag
-String identifiedVersion
-String versionOverride = System.getenv("VERSION") ?: null
-try {
-    identifiedVersion = versionOverride == null ? gitVersion() : versionOverride
-}
 catch (Exception ignored) {
     out.style(Style.Failure).text(
         'This mod must be version controlled by Git AND the repository must provide at least one tag,\n' +
@@ -192,15 +187,11 @@ catch (Exception ignored) {
         'clone the repository, see ').style(Style.Info).text('https://gtnh.miraheze.org/wiki/Development').style(Style.SuccessHeader).println(' for details.)'
     )
     versionOverride = 'NO-GIT-TAG-SET'
-    identifiedVersion = versionOverride
 }
-version = minecraftVersion + '-' + identifiedVersion
+String versionTag = gitVersion().split("-")[gitVersion().split("-").length - 1]
+version = minecraftVersion + '-' + versionTag
 ext {
-    modVersion = identifiedVersion
-}
-
-if(identifiedVersion == versionOverride) {
-    out.style(Style.Failure).text('Override version to ').style(Style.Identifier).text(modVersion).style(Style.Failure).println('!\7')
+    modVersion = versionTag
 }
 
 group = modGroup
@@ -569,7 +560,7 @@ publishing {
             groupId = System.getenv("ARTIFACT_GROUP_ID") ?: "com.github.GTNewHorizons"
             artifactId = System.getenv("ARTIFACT_ID") ?: project.name
             // Using the identified version, not project.version as it has the prepended 1.7.10
-            version = System.getenv("RELEASE_VERSION") ?: identifiedVersion
+            version = System.getenv("RELEASE_VERSION") ?: versionTag
 
             // remove extra garbage from minecraft and minecraftDeps configuration
             pom.withXml {
