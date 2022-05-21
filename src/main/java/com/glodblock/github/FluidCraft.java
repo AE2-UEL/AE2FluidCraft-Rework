@@ -1,11 +1,13 @@
 package com.glodblock.github;
 
 import appeng.api.AEApi;
+import appeng.api.config.Upgrades;
 import com.glodblock.github.common.Config;
 import com.glodblock.github.common.storage.FluidCellHandler;
 import com.glodblock.github.inventory.InventoryHandler;
-import com.glodblock.github.loader.*;
-import com.glodblock.github.nei.recipes.DefaultExtractorLoader;
+import com.glodblock.github.loader.ChannelLoader;
+import com.glodblock.github.loader.ItemAndBlockHolder;
+import com.glodblock.github.loader.RecipeLoader;
 import com.glodblock.github.proxy.CommonProxy;
 import com.glodblock.github.util.ModAndClassUtil;
 import cpw.mods.fml.common.Mod;
@@ -15,6 +17,7 @@ import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 @Mod(modid = FluidCraft.MODID, version = FluidCraft.VERSION, name = FluidCraft.MODNAME)
@@ -49,6 +52,10 @@ public class FluidCraft {
     public static void postInit(FMLPostInitializationEvent event) {
         NetworkRegistry.INSTANCE.registerGuiHandler(FluidCraft.INSTANCE, new InventoryHandler());
         (new RecipeLoader()).run();
+        Upgrades.PATTERN_CAPACITY.registerItem(new ItemStack(ItemAndBlockHolder.FLUID_INTERFACE), 3 );
+        Upgrades.CRAFTING.registerItem(new ItemStack(ItemAndBlockHolder.FLUID_INTERFACE), 1 );
+        Upgrades.PATTERN_CAPACITY.registerItem(new ItemStack(ItemAndBlockHolder.INTERFACE), 3 );
+        Upgrades.CRAFTING.registerItem(new ItemStack(ItemAndBlockHolder.INTERFACE), 1 );
         proxy.postInit(event);
     }
 
