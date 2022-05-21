@@ -35,6 +35,7 @@ import com.glodblock.github.common.parts.PartFluidPatternTerminal;
 import com.glodblock.github.common.parts.PartFluidPatternTerminalEx;
 import com.glodblock.github.network.CPacketInventoryAction;
 import com.glodblock.github.util.Ae2Reflect;
+import com.glodblock.github.util.Ae2ReflectClient;
 import com.glodblock.github.util.ModAndClassUtil;
 import com.glodblock.github.util.NameConst;
 import net.minecraft.client.Minecraft;
@@ -387,7 +388,7 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
         {
             final InventoryAction action = ctrlDown == 1 ? InventoryAction.SPLIT_OR_PLACE_SINGLE : InventoryAction.PICKUP_OR_SET_DOWN;
 
-            if( Ae2Reflect.getDragClick(this).size() > 1 )
+            if( Ae2ReflectClient.getDragClick(this).size() > 1 )
             {
                 return;
             }
@@ -448,7 +449,7 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
                     stack = ( (SlotME) slot ).getAEStack();
                 }
 
-                int slotNum = Ae2Reflect.getInventorySlots(this).size();
+                int slotNum = Ae2ReflectClient.getInventorySlots(this).size();
 
                 if( !( slot instanceof SlotME ) && slot != null )
                 {
@@ -464,7 +465,7 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
 
         if( slot instanceof SlotDisconnected)
         {
-            if( Ae2Reflect.getDragClick(this).size() > 1 )
+            if( Ae2ReflectClient.getDragClick(this).size() > 1 )
             {
                 return;
             }
@@ -555,12 +556,12 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
 
             if (action == InventoryAction.AUTO_CRAFT) {
                 ((AEBaseContainer) this.inventorySlots).setTargetStack( stack );
-                FluidCraft.proxy.netHandler.sendToServer(new CPacketInventoryAction(action, Ae2Reflect.getInventorySlots(this).size(), 0, stack));
+                FluidCraft.proxy.netHandler.sendToServer(new CPacketInventoryAction(action, Ae2ReflectClient.getInventorySlots(this).size(), 0, stack));
             }
             else if( action != null )
             {
                 ( (AEBaseContainer) this.inventorySlots ).setTargetStack( stack );
-                final PacketInventoryAction p = new PacketInventoryAction( action, Ae2Reflect.getInventorySlots(this).size(), 0 );
+                final PacketInventoryAction p = new PacketInventoryAction( action, Ae2ReflectClient.getInventorySlots(this).size(), 0 );
                 NetworkHandler.instance.sendToServer( p );
             }
 

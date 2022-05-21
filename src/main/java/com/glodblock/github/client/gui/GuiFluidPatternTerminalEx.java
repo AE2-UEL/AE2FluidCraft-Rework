@@ -12,6 +12,7 @@ import com.glodblock.github.inventory.InventoryHandler;
 import com.glodblock.github.inventory.gui.GuiType;
 import com.glodblock.github.inventory.slot.SlotSingleItem;
 import com.glodblock.github.util.Ae2Reflect;
+import com.glodblock.github.util.Ae2ReflectClient;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
@@ -19,7 +20,7 @@ import net.minecraft.inventory.Slot;
 public class GuiFluidPatternTerminalEx extends GuiBaseFluidPatternTerminalEx {
 
     private GuiTabButton craftingStatusBtn;
-    private final AppEngRenderItem stackSizeRenderer = Ae2Reflect.getStackSizeRenderer(this);
+    private final AppEngRenderItem stackSizeRenderer = Ae2ReflectClient.getStackSizeRenderer(this);
 
     public GuiFluidPatternTerminalEx(InventoryPlayer inventoryPlayer, ITerminalHost te) {
         super(inventoryPlayer, te);
@@ -34,7 +35,7 @@ public class GuiFluidPatternTerminalEx extends GuiBaseFluidPatternTerminalEx {
     @Override
     public void initGui() {
         super.initGui();
-        craftingStatusBtn = Ae2Reflect.getCraftingStatusButton(this);
+        craftingStatusBtn = Ae2ReflectClient.getCraftingStatusButton(this);
     }
 
     @Override

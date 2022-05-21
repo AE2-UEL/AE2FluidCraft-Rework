@@ -11,6 +11,7 @@ import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.gui.container.FCBasePartContainerEx;
 import com.glodblock.github.network.CPacketFluidPatternTermBtns;
 import com.glodblock.github.util.Ae2Reflect;
+import com.glodblock.github.util.Ae2ReflectClient;
 import com.glodblock.github.util.ModAndClassUtil;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -36,7 +37,7 @@ public class GuiBaseFluidPatternTerminalEx extends GuiFCBaseMonitor {
     {
         super( inventoryPlayer, te, new FCBasePartContainerEx( inventoryPlayer, te ) );
         this.container = (FCBasePartContainerEx) this.inventorySlots;
-        Ae2Reflect.setReservedSpace(this, 81);
+        Ae2ReflectClient.setReservedSpace(this, 81);
     }
 
     @Override
@@ -108,7 +109,7 @@ public class GuiBaseFluidPatternTerminalEx extends GuiFCBaseMonitor {
         }
 
         super.drawFG( offsetX, offsetY, mouseX, mouseY );
-        this.fontRendererObj.drawString( GuiText.PatternTerminal.getLocal(), 8, this.ySize - 96 + 2 - Ae2Reflect.getReservedSpace(this), 4210752 );
+        this.fontRendererObj.drawString( GuiText.PatternTerminal.getLocal(), 8, this.ySize - 96 + 2 - Ae2ReflectClient.getReservedSpace(this), 4210752 );
     }
 
     @Override

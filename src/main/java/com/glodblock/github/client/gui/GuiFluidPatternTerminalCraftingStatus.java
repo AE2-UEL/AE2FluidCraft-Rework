@@ -9,6 +9,7 @@ import com.glodblock.github.inventory.InventoryHandler;
 import com.glodblock.github.inventory.gui.GuiType;
 import com.glodblock.github.loader.ItemAndBlockHolder;
 import com.glodblock.github.util.Ae2Reflect;
+import com.glodblock.github.util.Ae2ReflectClient;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
@@ -26,11 +27,11 @@ public class GuiFluidPatternTerminalCraftingStatus extends GuiCraftingStatus {
     @Override
     public void initGui() {
         if (host instanceof PartFluidPatternTerminal)
-            Ae2Reflect.rewriteIcon(this, new ItemStack(ItemAndBlockHolder.FLUID_TERMINAL, 1));
+            Ae2ReflectClient.rewriteIcon(this, new ItemStack(ItemAndBlockHolder.FLUID_TERMINAL, 1));
         else if (host instanceof PartFluidPatternTerminalEx)
-            Ae2Reflect.rewriteIcon(this, new ItemStack(ItemAndBlockHolder.FLUID_TERMINAL_EX, 1));
+            Ae2ReflectClient.rewriteIcon(this, new ItemStack(ItemAndBlockHolder.FLUID_TERMINAL_EX, 1));
         super.initGui();
-        originalGuiBtn = Ae2Reflect.getOriginalGuiButton(this);
+        originalGuiBtn = Ae2ReflectClient.getOriginalGuiButton(this);
     }
 
     @Override
