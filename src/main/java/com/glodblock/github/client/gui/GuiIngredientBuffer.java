@@ -10,7 +10,6 @@ import com.glodblock.github.inventory.IAEFluidTank;
 import com.glodblock.github.inventory.gui.ButtonMouseHandler;
 import com.glodblock.github.inventory.gui.MouseRegionManager;
 import com.glodblock.github.inventory.gui.TankMouseHandler;
-import com.glodblock.github.util.GlStateManager;
 import com.glodblock.github.util.NameConst;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
@@ -62,7 +61,7 @@ public class GuiIngredientBuffer extends AEBaseGui {
     public void drawFG(int offsetX, int offsetY, int mouseX, int mouseY) {
         fontRendererObj.drawString(getGuiDisplayName(I18n.format(NameConst.GUI_INGREDIENT_BUFFER)), 8, 6, 0x404040);
         fontRendererObj.drawString(GuiText.inventory.getLocal(), 8, ySize - 94, 0x404040);
-        GlStateManager.color(1F, 1F, 1F, 1F);
+        GL11.glColor4f(1F, 1F, 1F, 1F);
 
         IAEFluidTank fluidInv = cont.getTile().getFluidInventory();
         mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
@@ -71,7 +70,7 @@ public class GuiIngredientBuffer extends AEBaseGui {
             renderFluidIntoGui(tess, TANK_X + i * TANK_X_OFF, TANK_Y, TANK_WIDTH, TANK_HEIGHT,
                 fluidInv.getFluidInSlot(i), fluidInv.getTankInfo(ForgeDirection.UNKNOWN)[i].capacity);
         }
-        GlStateManager.color(1F, 1F, 1F, 1F);
+        GL11.glColor4f(1F, 1F, 1F, 1F);
 
         mouseRegions.render(mouseX, mouseY);
     }
