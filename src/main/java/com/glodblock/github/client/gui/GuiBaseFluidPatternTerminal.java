@@ -14,10 +14,12 @@ import com.glodblock.github.network.CPacketFluidPatternTermBtns;
 import com.glodblock.github.util.Ae2Reflect;
 import com.glodblock.github.util.Ae2ReflectClient;
 import com.glodblock.github.util.ModAndClassUtil;
+import com.glodblock.github.util.NameConst;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.StatCollector;
 import org.lwjgl.input.Keyboard;
 
 public class GuiBaseFluidPatternTerminal extends GuiFCBaseMonitor {
@@ -135,7 +137,7 @@ public class GuiBaseFluidPatternTerminal extends GuiFCBaseMonitor {
         }
 
         super.drawFG( offsetX, offsetY, mouseX, mouseY );
-        this.fontRendererObj.drawString( GuiText.PatternTerminal.getLocal(), 8, this.ySize - 96 + 2 - Ae2ReflectClient.getReservedSpace(this), 4210752 );
+        this.fontRendererObj.drawString(StatCollector.translateToLocal(NameConst.GUI_FLUID_PATTERN_TERMINAL), 8, this.ySize - 96 + 2 - Ae2ReflectClient.getReservedSpace(this), 4210752 );
     }
 
     @Override

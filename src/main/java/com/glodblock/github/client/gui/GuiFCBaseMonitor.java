@@ -34,7 +34,6 @@ import com.glodblock.github.client.gui.container.FCBasePartContainer;
 import com.glodblock.github.common.parts.PartFluidPatternTerminal;
 import com.glodblock.github.common.parts.PartFluidPatternTerminalEx;
 import com.glodblock.github.network.CPacketInventoryAction;
-import com.glodblock.github.util.Ae2Reflect;
 import com.glodblock.github.util.Ae2ReflectClient;
 import com.glodblock.github.util.ModAndClassUtil;
 import com.glodblock.github.util.NameConst;
@@ -67,8 +66,7 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
     public FCBaseMonitorContain monitorableContainer;
     private GuiTabButton craftingStatusBtn;
     private GuiImgButton craftingStatusImgBtn;
-    private MEGuiTextField searchField;
-    private String myName;
+    private FCGuiTextField searchField;
     private int perRow = 9;
     private int reservedSpace = 0;
     private boolean customSortOrder = true;
@@ -111,14 +109,6 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
 
         this.viewCell = te instanceof IViewCellStorage;
 
-        if( te instanceof PartFluidPatternTerminal)
-        {
-            this.myName = NameConst.GUI_FLUID_PATTERN_TERMINAL;
-        }
-        if (te instanceof PartFluidPatternTerminalEx)
-        {
-            this.myName = NameConst.GUI_FLUID_PATTERN_TERMINAL_EX;
-        }
     }
 
     public void postUpdate( final List<IAEItemStack> list )
@@ -283,7 +273,7 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
         this.buttonList.add( this.terminalStyleBox = new GuiImgButton( this.guiLeft - 18, offset, Settings.TERMINAL_STYLE, AEConfig.instance.settings.getSetting( Settings.TERMINAL_STYLE ) ) );
         offset += 20;
 
-        this.searchField = new MEGuiTextField( this.fontRendererObj, this.guiLeft + Math.max( 80, this.offsetX ), this.guiTop + 4, 90, 12 );
+        this.searchField = new FCGuiTextField( this.fontRendererObj, this.guiLeft + Math.max( 80, this.offsetX ), this.guiTop + 4, 90, 12 );
         this.searchField.setEnableBackgroundDrawing( false );
         this.searchField.setMaxStringLength( 25 );
         this.searchField.setTextColor( 0xFFFFFF );

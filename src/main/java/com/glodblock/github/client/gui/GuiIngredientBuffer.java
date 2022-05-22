@@ -65,9 +65,8 @@ public class GuiIngredientBuffer extends AEBaseGui {
 
         IAEFluidTank fluidInv = cont.getTile().getFluidInventory();
         mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
-        Tessellator tess = Tessellator.instance;
         for (int i = 0; i < 4; i++) {
-            renderFluidIntoGui(tess, TANK_X + i * TANK_X_OFF, TANK_Y, TANK_WIDTH, TANK_HEIGHT,
+            renderFluidIntoGui(TANK_X + i * TANK_X_OFF, TANK_Y, TANK_WIDTH, TANK_HEIGHT,
                 fluidInv.getFluidInSlot(i), fluidInv.getTankInfo(ForgeDirection.UNKNOWN)[i].capacity);
         }
         GL11.glColor4f(1F, 1F, 1F, 1F);
@@ -75,8 +74,8 @@ public class GuiIngredientBuffer extends AEBaseGui {
         mouseRegions.render(mouseX, mouseY);
     }
 
-    public void renderFluidIntoGui(Tessellator tess, int x, int y, int width, int height,
-                                          @Nullable IAEFluidStack aeFluidStack, int capacity) {
+    public void renderFluidIntoGui(int x, int y, int width, int height,
+                                   @Nullable IAEFluidStack aeFluidStack, int capacity) {
         if (aeFluidStack != null) {
             GL11.glDisable(2896);
             GL11.glColor3f(1.0F, 1.0F, 1.0F);
