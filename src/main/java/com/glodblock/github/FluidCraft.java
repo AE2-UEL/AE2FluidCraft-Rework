@@ -1,5 +1,6 @@
 package com.glodblock.github;
 
+import appeng.api.AEApi;
 import appeng.api.config.Upgrades;
 import com.glodblock.github.loader.FCBlocks;
 import com.glodblock.github.loader.FCItems;
@@ -42,6 +43,7 @@ public class FluidCraft {
         Upgrades.CRAFTING.registerItem(new ItemStack(FCBlocks.DUAL_INTERFACE), 1 );
         Upgrades.PATTERN_EXPANSION.registerItem(new ItemStack(FCItems.PART_DUAL_INTERFACE), 3 );
         Upgrades.CRAFTING.registerItem(new ItemStack(FCItems.PART_DUAL_INTERFACE), 1 );
+        Upgrades.CRAFTING.registerItem( AEApi.instance().definitions().parts().fluidExportBus(), 1 );
         proxy.postInit(event);
     }
 

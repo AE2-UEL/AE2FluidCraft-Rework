@@ -5,6 +5,7 @@ import appeng.util.InventoryAdaptor;
 import appeng.util.inv.AdaptorItemHandler;
 import appeng.util.inv.IInventoryDestination;
 import appeng.util.inv.ItemSlot;
+import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.util.Ae2Reflect;
 import net.minecraft.item.ItemStack;
@@ -48,9 +49,13 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
 
     @Override
     public ItemStack addItems(ItemStack toBeAdded) {
-        if (toBeAdded.getItem() instanceof ItemFluidPacket) {
+        if (toBeAdded.getItem() instanceof ItemFluidPacket || toBeAdded.getItem() instanceof ItemFluidDrop) {
             if (invFluids != null) {
-                FluidStack fluid = ItemFluidPacket.getFluidStack(toBeAdded);
+                FluidStack fluid;
+                if(toBeAdded.getItem() instanceof ItemFluidPacket)
+                    fluid = ItemFluidPacket.getFluidStack(toBeAdded);
+                else
+                    fluid = ItemFluidDrop.getFluidStack(toBeAdded);
                 if (fluid != null) {
                     int filled = invFluids.fill(fluid, true);
                     if (filled > 0) {
@@ -66,9 +71,13 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
 
     @Override
     public ItemStack simulateAdd(ItemStack toBeSimulated) {
-        if (toBeSimulated.getItem() instanceof ItemFluidPacket) {
+        if (toBeSimulated.getItem() instanceof ItemFluidPacket || toBeSimulated.getItem() instanceof ItemFluidDrop) {
             if (invFluids != null) {
-                FluidStack fluid = ItemFluidPacket.getFluidStack(toBeSimulated);
+                FluidStack fluid;
+                if(toBeSimulated.getItem() instanceof ItemFluidPacket)
+                    fluid = ItemFluidPacket.getFluidStack(toBeSimulated);
+                else
+                    fluid = ItemFluidDrop.getFluidStack(toBeSimulated);
                 if (fluid != null) {
                     int filled = invFluids.fill(fluid, false);
                     if (filled > 0) {

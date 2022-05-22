@@ -21,6 +21,9 @@ public class FCClassTransformer implements IClassTransformer {
             case "appeng.me.cluster.implementations.CraftingCPUCluster":
                 tform = CraftingCpuTransformer.INSTANCE;
                 break;
+            case "appeng.items.parts.PartType":
+                tform = PartTypeTransformer.INSTANCE;
+                break;
             case "thelm.packagedauto.integration.appeng.recipe.PackageCraftingPatternHelper":
                 tform = PautoCraftingPatternHelperTransformer.TFORM_INPUTS;
                 break;
