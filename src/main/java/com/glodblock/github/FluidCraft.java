@@ -14,6 +14,8 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
+import org.apache.logging.log4j.Logger;
+
 @Mod(modid = FluidCraft.MODID, version = FluidCraft.VERSION, useMetadata = true)
 public class FluidCraft {
 
@@ -26,8 +28,11 @@ public class FluidCraft {
     @SidedProxy(clientSide = "com.glodblock.github.proxy.ClientProxy", serverSide = "com.glodblock.github.proxy.CommonProxy")
     public static CommonProxy proxy;
 
+    public static Logger log;
+
     @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent event) {
+        log = event.getModLog();
         ModAndClassUtil.init();
         proxy.preInit(event);
     }

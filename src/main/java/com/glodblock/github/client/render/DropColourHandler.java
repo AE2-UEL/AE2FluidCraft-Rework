@@ -1,5 +1,7 @@
 package com.glodblock.github.client.render;
 
+import com.glodblock.github.util.ModAndClassUtil;
+import gregtech.api.unification.material.Materials;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -24,7 +26,9 @@ public class DropColourHandler {
     public int getColour(FluidStack fluidStack) {
         Fluid fluid = fluidStack.getFluid();
         int colour = fluid.getColor(fluidStack);
-        return colour != -1 ? colour : getColour(fluid);
+        if (ModAndClassUtil.GT && colour == 0xFFFFFFFF)
+            return runBidAidFix(fluidStack);
+        return colour != 0xFFFFFFFF ? colour : getColour(fluid);
     }
 
     public int getColour(Fluid fluid) {
@@ -33,7 +37,7 @@ public class DropColourHandler {
             return cached;
         }
         int colour = fluid.getColor();
-        if (colour == -1) {
+        if (colour == 0xFFFFFFFF) {
             TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks()
                     .getTextureExtry(fluid.getStill().toString());
             if (sprite != null && sprite.getFrameCount() > 0) {
@@ -57,6 +61,14 @@ public class DropColourHandler {
         }
         colourCache.put(fluid.getName(), colour);
         return colour;
+    }
+
+    //Need to find a better way to replace this.
+    private int runBidAidFix(FluidStack fluidStack) {
+        if (fluidStack.isFluidEqual(Materials.Helium.getFluid(1))) {
+            return 0xFFFCFF90;
+        }
+        return getColour(fluidStack.getFluid());
     }
 
 }

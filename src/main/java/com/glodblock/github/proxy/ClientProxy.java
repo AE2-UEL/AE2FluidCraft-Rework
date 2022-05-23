@@ -45,14 +45,14 @@ public class ClientProxy extends CommonProxy {
         super.init(event);
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler((s, i) -> {
             FluidStack fluid = ItemFluidDrop.getFluidStack(s);
-            return fluid != null ? dropColourHandler.getColour(fluid) : -1;
+            return fluid != null ? dropColourHandler.getColour(fluid) : 0xFFFFFFFF;
         }, FCItems.FLUID_DROP);
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler((s, i) -> {
             if (i == 0) {
-                return -1;
+                return 0xFFFFFFFF;
             }
             FluidStack fluid = ItemFluidPacket.getFluidStack(s);
-            return fluid != null ? fluid.getFluid().getColor(fluid) : -1;
+            return fluid != null ? fluid.getFluid().getColor(fluid) : 0xFFFFFFFF;
         }, FCItems.FLUID_PACKET);
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler((s, i) -> AEColor.TRANSPARENT.getVariantByTintIndex(i), FCItems.PART_FLUID_PATTERN_TERMINAL);
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler((s, i) -> AEColor.TRANSPARENT.getVariantByTintIndex(i), FCItems.PART_EXTENDED_FLUID_PATTERN_TERMINAL);
