@@ -29,6 +29,8 @@ import appeng.util.Platform;
 import appeng.util.item.AEItemStack;
 import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.inventory.FluidConvertingInventoryAdaptor;
+import com.glodblock.github.inventory.GuiType;
+import com.glodblock.github.inventory.InventoryHandler;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -83,8 +85,10 @@ public class PartFluidExportBus extends PartSharedFluidBus implements ICraftingR
 
     @Override
     public boolean onPartActivate(EntityPlayer player, EnumHand hand, Vec3d pos) {
+        TileEntity te = this.getTile();
+        BlockPos tePos = te.getPos();
         if (Platform.isServer()) {
-            Platform.openGUI(player, this.getHost().getTile(), this.getSide(), GuiBridge.GUI_BUS_FLUID);
+            InventoryHandler.openGui(player, te.getWorld(), tePos, this.getSide().getFacing(), GuiType.FLUID_EXPORT_BUS);
         }
         return true;
     }
@@ -141,18 +145,20 @@ public class PartFluidExportBus extends PartSharedFluidBus implements ICraftingR
                         if( fluid != null )
                         {
 
+                            boolean isAllowed = true;
+
                             final IAEFluidStack toExtract = fluid.copy();
 
                             toExtract.setStackSize( this.calculateAmountToSend() );
 
                             if( this.craftOnly() )
                             {
-                                this.craftingTracker.handleCrafting( i, toExtract.getStackSize(), ItemFluidDrop.newAeStack(toExtract), destination, this.getTile().getWorld(), this.getProxy().getGrid(), cg, this.source );
+                                isAllowed = this.craftingTracker.handleCrafting( i, toExtract.getStackSize(), ItemFluidDrop.newAeStack(toExtract), destination, this.getTile().getWorld(), this.getProxy().getGrid(), cg, this.source );
                             }
 
                             final IAEFluidStack out = inv.extractItems( toExtract, Actionable.SIMULATE, this.source );
 
-                            if( out != null )
+                            if( out != null && isAllowed )
                             {
                                 int wasInserted = fh.fill( out.getFluidStack(), true );
 

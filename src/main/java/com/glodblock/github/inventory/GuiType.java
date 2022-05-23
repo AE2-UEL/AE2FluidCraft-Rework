@@ -15,7 +15,7 @@ import appeng.helpers.IInterfaceHost;
 import appeng.parts.reporting.AbstractPartTerminal;
 import com.glodblock.github.client.*;
 import com.glodblock.github.client.container.*;
-import com.glodblock.github.common.part.PartFluidPatternTerminal;
+import com.glodblock.github.common.part.PartFluidExportBus;
 import com.glodblock.github.common.tile.TileBurette;
 import com.glodblock.github.common.tile.TileFluidPacketDecoder;
 import com.glodblock.github.common.tile.TileFluidPatternEncoder;
@@ -34,6 +34,18 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public enum GuiType {
+
+    FLUID_EXPORT_BUS(new PartOrTileGuiFactory<PartFluidExportBus>(PartFluidExportBus.class) {
+        @Override
+        protected Object createServerGui(EntityPlayer player, PartFluidExportBus inv) {
+            return new ContainerFluidExportBus(player.inventory, inv);
+        }
+
+        @Override
+        protected Object createClientGui(EntityPlayer player, PartFluidExportBus inv) {
+            return new GuiFluidExportBus(player.inventory, inv);
+        }
+    }),
 
     INGREDIENT_BUFFER(new TileGuiFactory<TileIngredientBuffer>(TileIngredientBuffer.class) {
         @Override
