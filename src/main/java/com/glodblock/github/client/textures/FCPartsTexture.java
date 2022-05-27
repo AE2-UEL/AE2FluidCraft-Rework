@@ -12,6 +12,7 @@ public enum FCPartsTexture {
 
     PartFluidPatternTerminal_Bright("pattern_terminal_bright"), PartFluidPatternTerminal_Dark("pattern_terminal_dark"),
     PartFluidPatternTerminal_Colored("pattern_terminal_medium"), PartTerminalBroad("terminal_broad"),
+    PartFluidImportBus("fluid_import_face"), PartFluidExportBus("fluid_export_face"),
     BlockFluidInterfaceAlternate_Arrow("fluid_interface_arrow"), BlockInterfaceAlternate("fluid_interface_a"),
     BlockInterface_Face("fluid_interface");
 

@@ -6,6 +6,7 @@ import cpw.mods.fml.relauncher.Side;
 
 public class ChannelLoader implements Runnable {
     @Override
+    @SuppressWarnings("all")
     public void run() {
         int id = 0;
         FluidCraft.proxy.netHandler.registerMessage(new CPacketSwitchGuis.Handler(), CPacketSwitchGuis.class, id ++, Side.SERVER);
@@ -19,5 +20,6 @@ public class ChannelLoader implements Runnable {
         FluidCraft.proxy.netHandler.registerMessage(new CPacketTransferRecipe.Handler(), CPacketTransferRecipe.class, id ++, Side.SERVER);
         FluidCraft.proxy.netHandler.registerMessage(new CPacketDumpTank.Handler(), CPacketDumpTank.class, id ++, Side.SERVER);
         FluidCraft.proxy.netHandler.registerMessage(new SPacketFluidUpdate.Handler(), SPacketFluidUpdate.class, id ++, Side.CLIENT);
+        FluidCraft.proxy.netHandler.registerMessage(new CPacketFluidUpdate.Handler(), CPacketFluidUpdate.class, id ++, Side.SERVER);
     }
 }

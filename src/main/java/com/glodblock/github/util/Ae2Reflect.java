@@ -1,11 +1,13 @@
 package com.glodblock.github.util;
 
+import appeng.api.implementations.IUpgradeableHost;
 import appeng.api.networking.crafting.ICraftingCPU;
 import appeng.api.storage.IMEInventory;
 import appeng.client.gui.AEBaseGui;
 import appeng.client.gui.implementations.GuiCraftingStatus;
 import appeng.client.gui.widgets.GuiTabButton;
 import appeng.client.render.AppEngRenderItem;
+import appeng.container.implementations.ContainerUpgradeable;
 import appeng.container.implementations.CraftingCPURecord;
 import appeng.me.storage.MEInventoryHandler;
 import appeng.me.storage.MEPassThrough;
@@ -29,6 +31,7 @@ import java.util.Set;
 public class Ae2Reflect {
 
     private static final Field fInventory_container;
+    private static final Field fInventory_containerUpgrade;
     private static final Field fInventory_width;
     private static final Field fAEPass_internal;
     private static final Field fAEInv_partitionList;
@@ -41,6 +44,7 @@ public class Ae2Reflect {
     static {
         try {
             fInventory_container = reflectField(InventoryCrafting.class, "eventHandler", "field_70465_c", "c");
+            fInventory_containerUpgrade = reflectField(ContainerUpgradeable.class, "upgradeable");
             fInventory_width = reflectField(InventoryCrafting.class, "inventoryWidth", "field_70464_b", "b");
             fAEPass_internal = reflectField(MEPassThrough.class, "internal");
             fAEInv_partitionList = reflectField(MEInventoryHandler.class, "myPartitionList");
@@ -130,6 +134,10 @@ public class Ae2Reflect {
 
     public static long getSize(CraftingCPURecord cpu) {
         return Ae2Reflect.readField(cpu, fCPU_size);
+    }
+
+    public static IUpgradeableHost getUpgradeList(ContainerUpgradeable container) {
+        return Ae2Reflect.readField(container, fInventory_containerUpgrade);
     }
 
 }
