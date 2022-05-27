@@ -3,6 +3,7 @@ package com.glodblock.github.common.item;
 import appeng.api.AEApi;
 import appeng.api.parts.IPartItem;
 import com.glodblock.github.FluidCraft;
+import com.glodblock.github.common.Config;
 import com.glodblock.github.common.parts.PartFluidExportBus;
 import com.glodblock.github.util.NameConst;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -36,6 +37,7 @@ public class ItemFluidExportBus extends Item implements IPartItem {
     }
 
     public ItemFluidExportBus register() {
+        if (!Config.fluidIOBus) return null;
         GameRegistry.registerItem(this, NameConst.ITEM_PART_FLUID_EXPORT, FluidCraft.MODID);
         return this;
     }
