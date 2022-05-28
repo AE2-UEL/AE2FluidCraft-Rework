@@ -1,11 +1,11 @@
 package com.glodblock.github.client.render;
 
 import com.glodblock.github.util.ModAndClassUtil;
-import gregtech.api.unification.material.Materials;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -65,7 +65,7 @@ public class DropColourHandler {
 
     //Need to find a better way to replace this.
     private int runBidAidFix(FluidStack fluidStack) {
-        if (fluidStack.isFluidEqual(Materials.Helium.getFluid(1))) {
+        if (fluidStack.isFluidEqual(FluidRegistry.getFluidStack("helium", 1))) {
             return 0xFFFCFF90;
         }
         return getColour(fluidStack.getFluid());
