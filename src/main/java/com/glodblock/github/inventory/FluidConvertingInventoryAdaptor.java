@@ -105,7 +105,7 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
 
     @Override
     public boolean containsItems() {
-        if (invFluids != null) {
+        if (invFluids != null && invFluids.getTankInfo(side) != null) {
             for (FluidTankInfo tank : invFluids.getTankInfo(side)) {
                 FluidStack fluid = tank.fluid;
                 if (fluid != null && fluid.amount > 0) {
