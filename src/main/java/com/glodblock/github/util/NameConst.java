@@ -11,6 +11,7 @@ public final class NameConst {
     public static final String BLOCK_INGREDIENT_BUFFER = "ingredient_buffer";
     public static final String BLOCK_BURETTE = "burette";
     public static final String BLOCK_DUAL_INTERFACE = "dual_interface";
+    public static final String BLOCK_FLUID_LEVEL_MAINTAINER = "fluid_level_maintainer";
 
     public static final String ITEM_FLUID_DROP = "fluid_drop";
     public static final String ITEM_FLUID_PACKET = "fluid_packet";
@@ -35,6 +36,7 @@ public final class NameConst {
     public static final String GUI_FLUID_PACKET_DECODER = GUI_KEY + BLOCK_FLUID_PACKET_DECODER;
     public static final String GUI_INGREDIENT_BUFFER = GUI_KEY + BLOCK_INGREDIENT_BUFFER;
     public static final String GUI_BURETTE = GUI_KEY + BLOCK_BURETTE;
+    public static final String GUI_FLUID_LEVEL_MAINTAINER = GUI_KEY + BLOCK_FLUID_LEVEL_MAINTAINER;
 
     public static final ResourceLocation MODEL_DENSE_ENCODED_PATTERN = FluidCraft.resource("builtin/dense_encoded_pattern");
     public static final ResourceLocation MODEL_FLUID_PACKET = FluidCraft.resource("builtin/fluid_packet");

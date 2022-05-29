@@ -21,7 +21,7 @@ import net.minecraft.util.ResourceLocation;
 
 import java.io.IOException;
 
-public class GuiIngredientBuffer  extends AEBaseGui {
+public class GuiIngredientBuffer extends AEBaseGui {
 
     private static final ResourceLocation TEX_BG = FluidCraft.resource("textures/gui/ingredient_buffer.png");
     private static final int TANK_X = 47, TANK_X_OFF = 22, TANK_Y = 18;
@@ -32,7 +32,7 @@ public class GuiIngredientBuffer  extends AEBaseGui {
 
     public GuiIngredientBuffer(InventoryPlayer ipl, TileIngredientBuffer tile) {
         super(new ContainerIngredientBuffer(ipl, tile));
-        this.cont = (ContainerIngredientBuffer)inventorySlots;
+        this.cont = (ContainerIngredientBuffer) inventorySlots;
         this.ySize = 222;
         for (int i = 0; i < 4; i++) {
             mouseRegions.addRegion(TANK_X + TANK_X_OFF * i, TANK_Y, TANK_WIDTH, TANK_HEIGHT,

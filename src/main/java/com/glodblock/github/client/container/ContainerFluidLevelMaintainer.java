@@ -1,0 +1,64 @@
+package com.glodblock.github.client.container;
+
+import appeng.api.storage.data.IAEItemStack;
+import appeng.container.AEBaseContainer;
+import appeng.container.slot.SlotFake;
+import com.glodblock.github.common.item.ItemFluidDrop;
+import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.common.tile.TileFluidLevelMaintainer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.items.IItemHandler;
+
+import java.util.Objects;
+
+public class ContainerFluidLevelMaintainer extends AEBaseContainer {
+
+    private final TileFluidLevelMaintainer tile;
+
+    public ContainerFluidLevelMaintainer(InventoryPlayer ip, TileFluidLevelMaintainer tile) {
+        super(ip, tile);
+        this.tile = tile;
+        IItemHandler inv = tile.getInventoryHandler();
+        for (int i = 0; i < 5; i++) {
+            addSlotToContainer(new DisplayFluidSlot(inv, i, 17, 19 + i * 20));
+        }
+        bindPlayerInventory(ip, 0, 132);
+    }
+
+    public TileFluidLevelMaintainer getTile() {
+        return tile;
+    }
+
+    private static class DisplayFluidSlot extends SlotFake {
+
+        IItemHandler icv;
+
+        public DisplayFluidSlot(IItemHandler inv, int idx, int x, int y) {
+            super(inv, idx, x, y);
+            this.icv = inv;
+        }
+
+        public void putStack(ItemStack is) {
+            if (is.isEmpty()) {
+                super.putStack(is);
+                return;
+            }
+            if (is.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
+                IFluidTankProperties[] tanks = Objects.requireNonNull(
+                        is.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null))
+                        .getTankProperties();
+                for (IFluidTankProperties tank : tanks) {
+                    ItemStack drops = ItemFluidDrop.newStack(tank.getContents());
+                    super.putStack(drops);
+                    return;
+                }
+            }
+            super.putStack(ItemStack.EMPTY);
+        }
+
+    }
+
+}
