@@ -2,16 +2,19 @@ package com.glodblock.github.client.container;
 
 import appeng.container.AEBaseContainer;
 import appeng.container.slot.SlotFake;
-import com.glodblock.github.common.item.ItemFluidDrop;
+import appeng.helpers.InventoryAction;
+import appeng.tile.inventory.AppEngInternalAEInventory;
 import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.common.tile.TileFluidLevelMaintainer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.IItemHandler;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 public class ContainerFluidLevelMaintainer extends AEBaseContainer {
@@ -32,16 +35,33 @@ public class ContainerFluidLevelMaintainer extends AEBaseContainer {
         return tile;
     }
 
-    private static class DisplayFluidSlot extends SlotFake {
+    @Override
+    public void doAction(EntityPlayerMP player, InventoryAction action, int slotId, long id) {
+        Slot slot = getSlot(slotId);
+        if (slot instanceof DisplayFluidSlot) {
+            final ItemStack stack = player.inventory.getItemStack();
+            slot.putStack(stack.isEmpty() ? stack : stack.copy());
+        } else {
+            super.doAction(player, action, slotId, id);
+        }
+    }
+
+    public static class DisplayFluidSlot extends SlotFake {
+
+        final AppEngInternalAEInventory handler;
 
         public DisplayFluidSlot(IItemHandler inv, int idx, int x, int y) {
             super(inv, idx, x, y);
+            this.handler = (AppEngInternalAEInventory) inv;
         }
 
         @Override
         public void putStack(ItemStack is) {
-            //System.out.print(is + "\n");
             if (is.isEmpty()) {
+                super.putStack(is);
+                return;
+            }
+            if (is.getItem() instanceof ItemFluidPacket) {
                 super.putStack(is);
                 return;
             }
@@ -50,22 +70,23 @@ public class ContainerFluidLevelMaintainer extends AEBaseContainer {
                         is.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null))
                         .getTankProperties();
                 for (IFluidTankProperties tank : tanks) {
-                    ItemStack drops = ItemFluidDrop.newStack(tank.getContents());
-                    super.putStack(drops);
+                    ItemStack packet = ItemFluidPacket.newStack(tank.getContents());
+                    super.putStack(packet);
                     return;
                 }
             }
             super.putStack(ItemStack.EMPTY);
         }
 
-        /*@Override
-        public ItemStack getDisplayStack() {
-            ItemStack drops = super.getDisplayStack();
-            System.out.print(drops + "\n");
-            FluidStack fluid = ItemFluidDrop.getFluidStack(drops);
-            System.out.print(fluid + "\n");
-            return ItemFluidPacket.newDisplayStack(fluid);
-        }*/
+        @Override
+        public int getSlotStackLimit() {
+            return Integer.MAX_VALUE;
+        }
+
+        @Override
+        public int getItemStackLimit(@Nonnull ItemStack stack) {
+            return Integer.MAX_VALUE;
+        }
 
     }
 

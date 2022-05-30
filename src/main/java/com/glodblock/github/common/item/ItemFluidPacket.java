@@ -39,7 +39,7 @@ public class ItemFluidPacket extends Item implements HasCustomModel {
         FluidStack fluid = getFluidStack(stack);
         boolean display = isDisplay(stack);
         if (display) {
-            return fluid != null ? fluid.getUnlocalizedName() : super.getItemStackDisplayName(stack);
+            return fluid != null ? fluid.getLocalizedName() : super.getItemStackDisplayName(stack);
         }
         return fluid != null ? String.format("%s, %,d mB", fluid.getLocalizedName(), fluid.amount)
                 : super.getItemStackDisplayName(stack);

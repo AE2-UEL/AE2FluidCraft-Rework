@@ -5,12 +5,15 @@ import appeng.client.gui.widgets.GuiNumberBox;
 import appeng.core.localization.GuiText;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.container.ContainerFluidLevelMaintainer;
+import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.common.tile.TileFluidLevelMaintainer;
 import com.glodblock.github.network.CPacketUpdateFluidLevel;
 import com.glodblock.github.util.NameConst;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.IItemHandler;
 
 import java.io.IOException;
@@ -33,6 +36,22 @@ public class GuiFluidLevelMaintainer extends AEBaseGui {
         }
     }
 
+    @Override
+    protected void renderHoveredToolTip(int p_191948_1_, int p_191948_2_)
+    {
+        if (this.mc.player.inventory.getItemStack().isEmpty() && this.getSlotUnderMouse() != null
+                && this.getSlotUnderMouse().getHasStack() && this.getSlotUnderMouse() instanceof ContainerFluidLevelMaintainer.DisplayFluidSlot)
+        {
+            ItemStack packet = this.getSlotUnderMouse().getStack();
+            FluidStack fluid = ItemFluidPacket.getFluidStack(packet);
+            this.renderToolTip(ItemFluidPacket.newDisplayStack(fluid), p_191948_1_, p_191948_2_);
+        }
+        else {
+            super.renderHoveredToolTip(p_191948_1_, p_191948_2_);
+        }
+    }
+
+    @Override
     protected void keyTyped(char character, int key) throws IOException {
 
         if (!this.checkHotbarKeys(key)) {
@@ -92,7 +111,8 @@ public class GuiFluidLevelMaintainer extends AEBaseGui {
         IItemHandler inv = tile.getInventoryHandler();
         for (int i = 0; i < inv.getSlots(); i ++) {
             if (!inv.getStackInSlot(i).isEmpty()) {
-                this.maintain[i].setText(String.valueOf(inv.getStackInSlot(i).getCount()));
+                FluidStack fluid = ItemFluidPacket.getFluidStack(inv.getStackInSlot(i));
+                this.maintain[i].setText(String.valueOf(fluid == null ? "0" : fluid.amount));
             }
             else {
                 this.maintain[i].setText("0");
