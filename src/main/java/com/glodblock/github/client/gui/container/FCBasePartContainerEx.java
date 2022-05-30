@@ -10,6 +10,7 @@ import appeng.tile.inventory.AppEngInternalInventory;
 import appeng.tile.inventory.IAEAppEngInventory;
 import appeng.tile.inventory.InvOperation;
 import appeng.util.Platform;
+import com.glodblock.github.common.item.ItemFluidEncodedPattern;
 import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.common.parts.PartFluidPatternTerminalEx;
 import com.glodblock.github.util.Util;
@@ -151,6 +152,12 @@ public class FCBasePartContainerEx extends FCBaseMonitorContain implements IAEAp
                 output = encodedPatternStack;
                 this.patternSlotOUT.putStack( output );
             }
+        } else if ( output.getItem() instanceof ItemFluidEncodedPattern ) {
+            for( final ItemStack encodedPatternStack : AEApi.instance().definitions().items().encodedPattern().maybeStack( 1 ).asSet() )
+            {
+                output = encodedPatternStack;
+                this.patternSlotOUT.putStack( output );
+            }
         }
 
         // encode the slot.
@@ -228,7 +235,9 @@ public class FCBasePartContainerEx extends FCBaseMonitorContain implements IAEAp
         {
             return false;
         }
-
+        if (output.getItem() instanceof ItemFluidEncodedPattern) {
+            return true;
+        }
         final IDefinitions definitions = AEApi.instance().definitions();
 
         boolean isPattern = definitions.items().encodedPattern().isSameAs( output );
