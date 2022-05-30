@@ -14,7 +14,6 @@ import appeng.api.networking.storage.IStorageGrid;
 import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.IStorageChannel;
 import appeng.api.storage.channels.IFluidStorageChannel;
-import appeng.api.storage.channels.IItemStorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IAEStack;
@@ -62,6 +61,13 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements IStackWat
         this.config.setStackInSlot(id, item.getDefinition());
     }
 
+    public void setConfig(int id, int size) {
+        if (id < 0 || id > MAX_FLUID || this.config.getStackInSlot(id).isEmpty()) {
+            return;
+        }
+        this.config.getStackInSlot(id).setCount(size);
+    }
+
     public void setRequest(int id, long amount) {
         if (id < 0 || id > MAX_FLUID) {
             return;
@@ -71,6 +77,10 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements IStackWat
 
     public IItemHandler getInventoryHandler() {
         return this.config;
+    }
+
+    public long[] getRequest() {
+        return this.request;
     }
 
     @Override
@@ -200,4 +210,5 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements IStackWat
     public void onChangeInventory(IItemHandler iItemHandler, int i, InvOperation invOperation, ItemStack itemStack, ItemStack itemStack1) {
         markForUpdate();
     }
+
 }

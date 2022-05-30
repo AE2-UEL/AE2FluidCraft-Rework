@@ -1,6 +1,5 @@
 package com.glodblock.github.client.container;
 
-import appeng.api.storage.data.IAEItemStack;
 import appeng.container.AEBaseContainer;
 import appeng.container.slot.SlotFake;
 import com.glodblock.github.common.item.ItemFluidDrop;
@@ -8,6 +7,7 @@ import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.common.tile.TileFluidLevelMaintainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.IItemHandler;
@@ -34,14 +34,13 @@ public class ContainerFluidLevelMaintainer extends AEBaseContainer {
 
     private static class DisplayFluidSlot extends SlotFake {
 
-        IItemHandler icv;
-
         public DisplayFluidSlot(IItemHandler inv, int idx, int x, int y) {
             super(inv, idx, x, y);
-            this.icv = inv;
         }
 
+        @Override
         public void putStack(ItemStack is) {
+            //System.out.print(is + "\n");
             if (is.isEmpty()) {
                 super.putStack(is);
                 return;
@@ -58,6 +57,15 @@ public class ContainerFluidLevelMaintainer extends AEBaseContainer {
             }
             super.putStack(ItemStack.EMPTY);
         }
+
+        /*@Override
+        public ItemStack getDisplayStack() {
+            ItemStack drops = super.getDisplayStack();
+            System.out.print(drops + "\n");
+            FluidStack fluid = ItemFluidDrop.getFluidStack(drops);
+            System.out.print(fluid + "\n");
+            return ItemFluidPacket.newDisplayStack(fluid);
+        }*/
 
     }
 

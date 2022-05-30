@@ -16,10 +16,7 @@ import appeng.parts.reporting.AbstractPartTerminal;
 import com.glodblock.github.client.*;
 import com.glodblock.github.client.container.*;
 import com.glodblock.github.common.part.PartFluidExportBus;
-import com.glodblock.github.common.tile.TileBurette;
-import com.glodblock.github.common.tile.TileFluidPacketDecoder;
-import com.glodblock.github.common.tile.TileFluidPatternEncoder;
-import com.glodblock.github.common.tile.TileIngredientBuffer;
+import com.glodblock.github.common.tile.*;
 import com.glodblock.github.interfaces.FCPriorityHost;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.player.EntityPlayer;
@@ -34,6 +31,18 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public enum GuiType {
+
+    FLUID_LEVEL_MAINTAINER(new PartOrTileGuiFactory<TileFluidLevelMaintainer>(TileFluidLevelMaintainer.class) {
+        @Override
+        protected Object createServerGui(EntityPlayer player, TileFluidLevelMaintainer inv) {
+            return new ContainerFluidLevelMaintainer(player.inventory, inv);
+        }
+
+        @Override
+        protected Object createClientGui(EntityPlayer player, TileFluidLevelMaintainer inv) {
+            return new GuiFluidLevelMaintainer(player.inventory, inv);
+        }
+    }),
 
     FLUID_EXPORT_BUS(new PartOrTileGuiFactory<PartFluidExportBus>(PartFluidExportBus.class) {
         @Override

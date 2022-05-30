@@ -37,6 +37,10 @@ public class ItemFluidPacket extends Item implements HasCustomModel {
     @Nonnull
     public String getItemStackDisplayName(@Nonnull ItemStack stack) {
         FluidStack fluid = getFluidStack(stack);
+        boolean display = isDisplay(stack);
+        if (display) {
+            return fluid != null ? fluid.getUnlocalizedName() : super.getItemStackDisplayName(stack);
+        }
         return fluid != null ? String.format("%s, %,d mB", fluid.getLocalizedName(), fluid.amount)
                 : super.getItemStackDisplayName(stack);
     }
@@ -45,6 +49,8 @@ public class ItemFluidPacket extends Item implements HasCustomModel {
     @Override
     public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flags) {
         FluidStack fluid = getFluidStack(stack);
+        boolean display = isDisplay(stack);
+        if (display) return;
         if (fluid != null) {
             for (String line : I18n.translateToLocal(NameConst.TT_FLUID_PACKET).split("\\\\n")) {
                 tooltip.add(TextFormatting.GRAY + line);
@@ -63,6 +69,13 @@ public class ItemFluidPacket extends Item implements HasCustomModel {
         return (fluid != null && fluid.amount > 0) ? fluid : null;
     }
 
+    public static boolean isDisplay(ItemStack stack) {
+        if (stack.isEmpty() || !stack.hasTagCompound() || stack.getTagCompound() == null) {
+            return false;
+        }
+        return stack.getTagCompound().getBoolean("DisplayOnly");
+    }
+
     @Nullable
     public static FluidStack getFluidStack(@Nullable IAEItemStack stack) {
         return stack != null ? getFluidStack(stack.getDefinition()) : null;
@@ -77,6 +90,22 @@ public class ItemFluidPacket extends Item implements HasCustomModel {
         NBTTagCompound fluidTag = new NBTTagCompound();
         fluid.writeToNBT(fluidTag);
         tag.setTag("FluidStack", fluidTag);
+        stack.setTagCompound(tag);
+        return stack;
+    }
+
+    public static ItemStack newDisplayStack(@Nullable FluidStack fluid) {
+        if (fluid == null) {
+            return ItemStack.EMPTY;
+        }
+        FluidStack copy = fluid.copy();
+        copy.amount = 1000;
+        ItemStack stack = new ItemStack(FCItems.FLUID_PACKET);
+        NBTTagCompound tag = new NBTTagCompound();
+        NBTTagCompound fluidTag = new NBTTagCompound();
+        copy.writeToNBT(fluidTag);
+        tag.setTag("FluidStack", fluidTag);
+        tag.setBoolean("DisplayOnly", true);
         stack.setTagCompound(tag);
         return stack;
     }
