@@ -150,6 +150,10 @@ public class ContainerFluidPatternTerminal extends FCBasePartContainer implement
         }
         Slot slot = getSlot(slotId);
         ItemStack stack = player.inventory.getItemStack();
+        if (Util.getFluidFromItem(stack) == null || Util.getFluidFromItem(stack).amount <= 0) {
+            super.doAction(player, action, slotId, id);
+            return;
+        }
         if ((slot instanceof SlotFakeCraftingMatrix || slot instanceof SlotPatternOutputs) && stack != null
             && (stack.getItem() instanceof IFluidContainerItem || FluidContainerRegistry.isContainer(stack))) {
             FluidStack fluid = null;

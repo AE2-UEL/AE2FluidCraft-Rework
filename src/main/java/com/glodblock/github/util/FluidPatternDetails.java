@@ -186,8 +186,8 @@ public class FluidPatternDetails implements ICraftingPatternDetails, Comparable<
         NBTTagCompound tag = Objects.requireNonNull(patternStack.getTagCompound());
         // may be possible to enter a partially-correct state if setInputs succeeds but setOutputs failed
         // but outside code should treat it as completely incorrect and not attempt to make calls
-        return setInputs(readStackArray(tag.getTagList("in", Constants.NBT.TAG_COMPOUND), 9))
-            && setOutputs(readStackArray(tag.getTagList("out", Constants.NBT.TAG_COMPOUND), 3));
+        return setInputs(readStackArray(tag.getTagList("in", Constants.NBT.TAG_COMPOUND), 16))
+            && setOutputs(readStackArray(tag.getTagList("out", Constants.NBT.TAG_COMPOUND), 4));
     }
 
     public static IAEItemStack[] readStackArray(NBTTagList listTag, int maxCount) {
