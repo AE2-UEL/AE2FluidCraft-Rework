@@ -6,6 +6,7 @@ import appeng.container.implementations.ContainerCraftingStatus;
 import com.glodblock.github.client.gui.*;
 import com.glodblock.github.client.gui.container.*;
 import com.glodblock.github.common.parts.FCBasePart;
+import com.glodblock.github.common.parts.PartSharedFluidBus;
 import com.glodblock.github.common.tile.TileFluidPacketDecoder;
 import com.glodblock.github.common.tile.TileFluidPatternEncoder;
 import com.glodblock.github.common.tile.TileIngredientBuffer;
@@ -16,6 +17,18 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public enum GuiType {
+
+    FLUID_BUS_IO(new PartGuiFactory<PartSharedFluidBus>(PartSharedFluidBus.class) {
+        @Override
+        protected Object createServerGui(EntityPlayer player, PartSharedFluidBus inv) {
+            return new ContainerFluidIO(player.inventory, inv);
+        }
+
+        @Override
+        protected Object createClientGui(EntityPlayer player, PartSharedFluidBus inv) {
+            return new GuiFluidIO(player.inventory, inv);
+        }
+    }),
 
     INGREDIENT_BUFFER(new TileGuiFactory<TileIngredientBuffer>(TileIngredientBuffer.class) {
         @Override

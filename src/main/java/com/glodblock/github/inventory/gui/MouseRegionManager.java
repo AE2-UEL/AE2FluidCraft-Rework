@@ -1,6 +1,7 @@
 package com.glodblock.github.inventory.gui;
 
 import com.glodblock.github.util.Ae2Reflect;
+import com.glodblock.github.util.Ae2ReflectClient;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.util.ResourceLocation;
@@ -22,8 +23,8 @@ public class MouseRegionManager {
     }
 
     public boolean onClick(int mX, int mY, int button) {
-        mX -= Ae2Reflect.getGuiLeft(gui);
-        mY -= Ae2Reflect.getGuiTop(gui);
+        mX -= Ae2ReflectClient.getGuiLeft(gui);
+        mY -= Ae2ReflectClient.getGuiTop(gui);
         for (Region region : regions) {
             if (region.containsMouse(mX, mY) && region.handler.onClick(button)) {
                 gui.mc.getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1F));
@@ -34,8 +35,8 @@ public class MouseRegionManager {
     }
 
     public void render(int mX, int mY) {
-        mX -= Ae2Reflect.getGuiLeft(gui);
-        mY -= Ae2Reflect.getGuiTop(gui);
+        mX -= Ae2ReflectClient.getGuiLeft(gui);
+        mY -= Ae2ReflectClient.getGuiTop(gui);
         for (Region region : regions) {
             if (region.containsMouse(mX, mY)) {
                 List<String> tooltip = region.handler.getTooltip();

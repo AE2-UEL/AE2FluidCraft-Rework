@@ -2,6 +2,7 @@ package com.glodblock.github.util;
 
 import appeng.api.config.ActionItems;
 import appeng.api.config.Settings;
+import appeng.api.config.Upgrades;
 import appeng.core.AEConfig;
 import appeng.core.localization.ButtonToolTips;
 import appeng.core.localization.GuiText;
@@ -23,9 +24,18 @@ public final class ModAndClassUtil {
     public static boolean isCraftStatus;
     public static boolean isSearchBar;
     public static boolean isShiftTooltip;
+    public static boolean isBigInterface;
 
     @SuppressWarnings("all")
     public static void init() {
+
+        try {
+            Field d = Upgrades.class.getDeclaredField("PATTERN_CAPACITY");
+            if (d == null) isBigInterface = false;
+            isBigInterface = true;
+        } catch (NoSuchFieldException e) {
+            isBigInterface = false;
+        }
 
         try {
             Field d = GuiText.class.getDeclaredField("HoldShiftForTooltip");

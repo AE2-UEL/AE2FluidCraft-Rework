@@ -5,6 +5,8 @@ import appeng.core.AELog;
 import appeng.util.Platform;
 import appeng.util.item.AEFluidStack;
 import com.glodblock.github.util.Util;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;

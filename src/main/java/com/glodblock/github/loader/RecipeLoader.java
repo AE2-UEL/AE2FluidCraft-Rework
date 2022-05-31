@@ -31,6 +31,7 @@ public class RecipeLoader implements Runnable {
     public final static ItemStack AE2_CELL_1K = new ItemStack(GameRegistry.findItem("appliedenergistics2", "item.ItemMultiMaterial"), 1, 35);
     public final static ItemStack AE2_CORE_ANN = new ItemStack(GameRegistry.findItem("appliedenergistics2", "item.ItemMultiMaterial"), 1, 44);
     public final static ItemStack AE2_CORE_FOM = new ItemStack(GameRegistry.findItem("appliedenergistics2", "item.ItemMultiMaterial"), 1, 43);
+    public final static ItemStack PISTON = new ItemStack(Blocks.piston, 1);
 
     @Override
     public void run() {
@@ -65,6 +66,11 @@ public class RecipeLoader implements Runnable {
                 GameRegistry.addRecipe(new ShapedOreRecipe(cell, "GDG", "DCD", "III", 'D', "dustRedstone", 'G', AE2_QUARTZ_GLASS, 'C', cell.getComponent(), 'I', "ingotIron"));
                 GameRegistry.addRecipe(new ShapelessOreRecipe(cell, AE2_CELL_HOUSING, cell.getComponent()));
             }
+        }
+
+        if (Config.fluidIOBus) {
+            GameRegistry.addRecipe(new ShapedOreRecipe(FLUID_EXPORT_BUS, "ICI", "BPB", 'B', "dyeBlue", 'I', "ingotIron", 'P', PISTON, 'C', AE2_CORE_FOM));
+            GameRegistry.addRecipe(new ShapedOreRecipe(FLUID_IMPORT_BUS, "BCB", "IPI", 'B', "dyeBlue", 'I', "ingotIron", 'P', PISTON, 'C', AE2_CORE_ANN));
         }
 
     }

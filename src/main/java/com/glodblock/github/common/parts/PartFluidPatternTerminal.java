@@ -131,6 +131,16 @@ public class PartFluidPatternTerminal extends FCBasePart {
                     this.setCraftingRecipe( details.isCraftable() );
                     this.setSubstitution( details.canSubstitute() );
 
+                    for( int x = 0; x < this.crafting.getSizeInventory(); x++ )
+                    {
+                        this.crafting.setInventorySlotContents( x, null );
+                    }
+
+                    for( int x = 0; x < this.output.getSizeInventory(); x++ )
+                    {
+                        this.output.setInventorySlotContents( x, null );
+                    }
+
                     for( int x = 0; x < this.crafting.getSizeInventory() && x < details.getInputs().length; x++ )
                     {
                         final IAEItemStack item = details.getInputs()[x];
@@ -165,6 +175,16 @@ public class PartFluidPatternTerminal extends FCBasePart {
                 {
                     this.setCraftingRecipe( details.isCraftable() );
                     this.setSubstitution( details.canSubstitute() );
+
+                    for( int x = 0; x < this.crafting.getSizeInventory(); x++ )
+                    {
+                        this.crafting.setInventorySlotContents( x, null );
+                    }
+
+                    for( int x = 0; x < this.output.getSizeInventory(); x++ )
+                    {
+                        this.output.setInventorySlotContents( x, null );
+                    }
 
                     for( int x = 0; x < this.crafting.getSizeInventory() && x < details.getInputs().length; x++ )
                     {

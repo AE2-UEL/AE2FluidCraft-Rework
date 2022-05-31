@@ -1,6 +1,7 @@
 package com.glodblock.github.util;
 
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import javax.annotation.Nonnull;
 
@@ -20,6 +21,10 @@ public class BlockPos {
         this.x = te.xCoord;
         this.y = te.yCoord;
         this.z = te.zCoord;
+    }
+
+    public BlockPos getOffSet(ForgeDirection face) {
+        return new BlockPos(this.x + face.offsetX, this.y + face.offsetY, this.z + face.offsetZ);
     }
 
     public int getX() {

@@ -19,7 +19,6 @@ import java.util.List;
 public class ItemBasicFluidStoragePart extends Item {
 
     public static final int types = 7;
-    @SideOnly(Side.CLIENT)
     private final static HashMap<Integer, IIcon> icon = new HashMap<>();
 
     public ItemBasicFluidStoragePart() {

@@ -2,27 +2,25 @@ package com.glodblock.github.network;
 
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.util.item.AEFluidStack;
-import com.glodblock.github.client.gui.GuiFluidIO;
-import com.glodblock.github.client.gui.GuiIngredientBuffer;
+import com.glodblock.github.client.gui.container.ContainerFluidConfigurable;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.inventory.Container;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SPacketFluidUpdate implements IMessage {
+public class CPacketFluidUpdate implements IMessage {
 
     private Map<Integer, IAEFluidStack> list;
 
-    public SPacketFluidUpdate() {
+    public CPacketFluidUpdate() {
     }
 
-    public SPacketFluidUpdate(Map<Integer, IAEFluidStack> data) {
+    public CPacketFluidUpdate(Map<Integer, IAEFluidStack> data) {
         this.list = data;
     }
 
@@ -64,20 +62,15 @@ public class SPacketFluidUpdate implements IMessage {
         }
     }
 
-    public static class Handler implements IMessageHandler<SPacketFluidUpdate, IMessage> {
+    public static class Handler implements IMessageHandler<CPacketFluidUpdate, IMessage> {
 
         @Override
-        public IMessage onMessage(SPacketFluidUpdate message, MessageContext ctx) {
-            final GuiScreen gs = Minecraft.getMinecraft().currentScreen;
-            if( gs instanceof GuiIngredientBuffer)
+        public IMessage onMessage(CPacketFluidUpdate message, MessageContext ctx) {
+            final Container c = ctx.getServerHandler().playerEntity.openContainer;
+            if( c instanceof ContainerFluidConfigurable)
             {
                 for (Map.Entry<Integer, IAEFluidStack> e : message.list.entrySet() ) {
-                    ( (GuiIngredientBuffer) gs ).update(e.getKey(), e.getValue());
-                }
-            } else if( gs instanceof GuiFluidIO)
-            {
-                for (Map.Entry<Integer, IAEFluidStack> e : message.list.entrySet() ) {
-                    ( (GuiFluidIO) gs ).update(e.getKey(), e.getValue());
+                    ( (ContainerFluidConfigurable) c ).setFluid(e.getKey(), e.getValue());
                 }
             }
             return null;

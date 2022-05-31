@@ -25,6 +25,8 @@ This is a rework and ported version of [ae2-fluid-crafting](https://github.com/p
  - [1.12.2] Fix the fluid amount display error when removing fluid.
  - [1.12.2] Upgrade cards can be inserted in Dual Interface.
  - [1.12.2] Fluid pattern is searchable in interface terminal.
+ - [1.12.2] Fix crash when using block mode, fluid will also be considered as blockable.
+ - [1.12.2] Fluid export bus supports crafting card.
 
 ## Installation
 

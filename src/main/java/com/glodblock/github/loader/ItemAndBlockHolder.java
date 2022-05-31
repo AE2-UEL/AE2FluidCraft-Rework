@@ -12,6 +12,8 @@ public class ItemAndBlockHolder {
     public static ItemPartFluidPatternTerminal FLUID_TERMINAL = new ItemPartFluidPatternTerminal().register();
     public static ItemPartFluidPatternTerminalEx FLUID_TERMINAL_EX = new ItemPartFluidPatternTerminalEx().register();
     public static ItemPartFluidInterface FLUID_INTERFACE = new ItemPartFluidInterface().register();
+    public static ItemFluidImportBus FLUID_IMPORT_BUS = new ItemFluidImportBus().register();
+    public static ItemFluidExportBus FLUID_EXPORT_BUS = new ItemFluidExportBus().register();
     public static ItemFluidPacket PACKET = new ItemFluidPacket().register();
     public static ItemBasicFluidStorageCell CELL1K = new ItemBasicFluidStorageCell(CellType.Cell1kPart, 1).register();
     public static ItemBasicFluidStorageCell CELL4K = new ItemBasicFluidStorageCell(CellType.Cell4kPart, 4).register();

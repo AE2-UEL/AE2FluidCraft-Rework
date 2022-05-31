@@ -49,7 +49,6 @@ public class ItemBasicFluidStorageCell extends AEBaseItem implements IStorageFlu
     private final int totalBytes;
     private final int perType;
     private final double idleDrain;
-    @SideOnly(Side.CLIENT)
     private final static HashMap<Integer, IIcon> icon = new HashMap<>();
 
     public ItemBasicFluidStorageCell( final CellType whichCell, final int kilobytes )

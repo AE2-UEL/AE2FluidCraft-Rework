@@ -1,6 +1,7 @@
 package com.glodblock.github.common.parts;
 
 import appeng.api.config.Actionable;
+import appeng.api.config.Upgrades;
 import appeng.api.networking.energy.IEnergyGrid;
 import appeng.api.networking.security.BaseActionSource;
 import appeng.api.networking.security.MachineSource;
@@ -69,6 +70,12 @@ public class PartFluidInterface extends PartInterface implements IFluidHandler {
 
         rh.setBounds( 5, 5, 13, 11, 11, 14 );
         rh.renderInventoryBox( renderer );
+    }
+
+    @Override
+    public int getInstalledUpgrades( final Upgrades u )
+    {
+        return getInterfaceDuality().getInstalledUpgrades( u );
     }
 
     private IMEMonitor<IAEFluidStack> getFluidGrid() {
