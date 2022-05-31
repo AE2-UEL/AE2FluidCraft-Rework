@@ -4,12 +4,16 @@ import appeng.container.AEBaseContainer;
 import appeng.container.slot.SlotFake;
 import appeng.helpers.InventoryAction;
 import appeng.tile.inventory.AppEngInternalAEInventory;
+import com.glodblock.github.FluidCraft;
 import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.common.tile.TileFluidLevelMaintainer;
+import com.glodblock.github.network.SPacketSetFluidLevel;
+import com.glodblock.github.util.Util;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.IItemHandler;
@@ -40,6 +44,8 @@ public class ContainerFluidLevelMaintainer extends AEBaseContainer {
         Slot slot = getSlot(slotId);
         if (slot instanceof DisplayFluidSlot) {
             final ItemStack stack = player.inventory.getItemStack();
+            FluidStack fluid = Util.getFluidFromItem(stack);
+            FluidCraft.proxy.netHandler.sendTo(new SPacketSetFluidLevel(slotId, fluid == null ? 0 : fluid.amount), player);
             slot.putStack(stack.isEmpty() ? stack : stack.copy());
         } else {
             super.doAction(player, action, slotId, id);

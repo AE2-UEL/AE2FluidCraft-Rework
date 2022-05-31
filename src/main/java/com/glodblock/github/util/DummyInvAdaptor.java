@@ -37,12 +37,12 @@ public class DummyInvAdaptor extends InventoryAdaptor {
 
     @Override
     public ItemStack addItems(ItemStack itemStack) {
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
     public ItemStack simulateAdd(ItemStack itemStack) {
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override

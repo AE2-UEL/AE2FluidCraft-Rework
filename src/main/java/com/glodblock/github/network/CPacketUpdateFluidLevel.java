@@ -45,7 +45,7 @@ public class CPacketUpdateFluidLevel implements IMessage {
             player.getServerWorld().addScheduledTask(() -> {
                 if (player.openContainer instanceof ContainerFluidLevelMaintainer) {
                     TileFluidLevelMaintainer te = ((ContainerFluidLevelMaintainer) player.openContainer).getTile();
-                    if (message.index > 10) {
+                    if (message.index >= 10) {
                         te.setRequest(message.index - 10, message.size);
                     }
                     else {

@@ -7,20 +7,18 @@ import appeng.api.networking.GridFlags;
 import appeng.api.networking.crafting.ICraftingLink;
 import appeng.api.networking.crafting.ICraftingRequester;
 import appeng.api.networking.energy.IEnergyGrid;
+import appeng.api.networking.events.MENetworkChannelsChanged;
+import appeng.api.networking.events.MENetworkEventSubscribe;
+import appeng.api.networking.events.MENetworkPowerStatusChange;
+import appeng.api.networking.events.MENetworkStorageEvent;
 import appeng.api.networking.security.IActionSource;
-import appeng.api.networking.storage.IStackWatcher;
-import appeng.api.networking.storage.IStackWatcherHost;
 import appeng.api.networking.storage.IStorageGrid;
 import appeng.api.storage.IMEMonitor;
-import appeng.api.storage.IStorageChannel;
 import appeng.api.storage.channels.IFluidStorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
-import appeng.api.storage.data.IAEStack;
-import appeng.api.storage.data.IItemList;
 import appeng.core.AELog;
 import appeng.fluids.util.AEFluidStack;
-import appeng.helpers.MultiCraftingTracker;
 import appeng.helpers.Reflected;
 import appeng.me.GridAccessException;
 import appeng.me.helpers.MachineSource;
@@ -31,6 +29,7 @@ import appeng.util.inv.InvOperation;
 import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.util.DummyInvAdaptor;
+import com.glodblock.github.util.MultiCraftingTracker;
 import com.google.common.collect.ImmutableSet;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
@@ -42,7 +41,7 @@ import net.minecraftforge.items.IItemHandler;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 
-public class TileFluidLevelMaintainer extends AENetworkTile implements IStackWatcherHost, ICraftingRequester, IAEAppEngInventory {
+public class TileFluidLevelMaintainer extends AENetworkTile implements ICraftingRequester, IAEAppEngInventory {
 
     public static final int MAX_FLUID = 5;
 
@@ -59,8 +58,6 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements IStackWat
     };
     private final MultiCraftingTracker craftingTracker = new MultiCraftingTracker(this, MAX_FLUID);
     private final long[] request = new long[MAX_FLUID];
-    private final long[] reportValue = new long[MAX_FLUID];
-    private IStackWatcher watcher;
     private final IActionSource source;
 
     @Reflected
@@ -70,15 +67,8 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements IStackWat
         this.source = new MachineSource( this );
     }
 
-    public void setConfig(int id, IAEItemStack item) {
-        if (id < 0 || id > MAX_FLUID) {
-            return;
-        }
-        this.config.setStackInSlot(id, item.getDefinition());
-    }
-
     public void setConfig(int id, int size) {
-        if (id < 0 || id > MAX_FLUID || this.config.getStackInSlot(id).isEmpty()) {
+        if (id < 0 || id >= MAX_FLUID || this.config.getStackInSlot(id).isEmpty()) {
             return;
         }
         ItemStack packet = this.config.getStackInSlot(id);
@@ -86,13 +76,16 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements IStackWat
         if (copy != null)
             copy.amount = size;
         this.config.setStackInSlot(id, ItemFluidPacket.newStack(copy));
+        doWork();
     }
 
     public void setRequest(int id, long amount) {
-        if (id < 0 || id > MAX_FLUID) {
+        if (id < 0 || id >= MAX_FLUID || amount < 0) {
             return;
         }
         this.request[id] = amount;
+        markForUpdate();
+        doWork();
     }
 
     public IItemHandler getInventoryHandler() {
@@ -101,6 +94,46 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements IStackWat
 
     public long[] getRequest() {
         return this.request;
+    }
+
+    @MENetworkEventSubscribe
+    public void onStorageUpdate(MENetworkStorageEvent event) {
+        if (event.channel.equals(AEApi.instance().storage().getStorageChannel(IFluidStorageChannel.class))) {
+            doWork();
+        }
+    }
+
+    @MENetworkEventSubscribe
+    public void onPowerUpdate(MENetworkPowerStatusChange event) {
+        doWork();
+    }
+
+    @MENetworkEventSubscribe
+    public void onChannelUpdate(MENetworkChannelsChanged event) {
+        doWork();
+    }
+
+    public void doWork() {
+        if (!getProxy().isActive()) {
+            return;
+        }
+        IMEMonitor<IAEFluidStack> storage = getFluidMonitor();
+        try {
+            for (int i = 0; i < MAX_FLUID; i ++) {
+                IAEItemStack packet = this.config.getAEStackInSlot(i);
+                FluidStack fluid = ItemFluidPacket.getFluidStack(packet);
+                if (fluid != null && fluid.amount > 0) {
+                    IAEFluidStack remain = storage.extractItems(AEFluidStack.fromFluidStack(fluid), Actionable.SIMULATE, this.source);
+                    if (remain == null || remain.getStackSize() < fluid.amount) {
+                        FluidStack copy = fluid.copy();
+                        copy.amount = (int) request[i];
+                        System.out.print(this.craftingTracker.handleCrafting(i, request[i], ItemFluidDrop.newAeStack(copy), DummyInvAdaptor.INSTANCE, getWorld(), getProxy().getGrid(), getProxy().getCrafting(), this.source) + "\n");
+                    }
+                }
+            }
+        } catch (GridAccessException e) {
+            //Ignore
+        }
     }
 
     @Override
@@ -113,6 +146,9 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements IStackWat
                 changed = true;
             }
         }
+        for (int i = 0; i < MAX_FLUID; i ++) {
+            request[i] = data.readLong();
+        }
         return changed;
     }
 
@@ -122,14 +158,16 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements IStackWat
         for (int i = 0; i < config.getSlots(); i++) {
             ByteBufUtils.writeItemStack(data, config.getStackInSlot(i));
         }
+        for (int i = 0; i < MAX_FLUID; i ++) {
+            data.writeLong(request[i]);
+        }
     }
 
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         for (int i = 0; i < MAX_FLUID; i ++) {
-            request[i] = data.getLong("req" + i);
-            reportValue[i] = data.getLong("rep" + i);
+            request[i] = data.getLong("reqX" + i);
         }
         config.readFromNBT(data, "configX");
         craftingTracker.readFromNBT(data);
@@ -139,8 +177,7 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements IStackWat
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         for (int i = 0; i < MAX_FLUID; i ++) {
-            data.setLong("req" + i, request[i]);
-            data.setLong("rep" + i, reportValue[i]);
+            data.setLong("reqX" + i, request[i]);
         }
         config.writeToNBT(data, "configX");
         craftingTracker.writeToNBT(data);
@@ -207,46 +244,6 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements IStackWat
     @Override
     public void jobStateChange(ICraftingLink link) {
         this.craftingTracker.jobStateChange( link );
-    }
-
-    @Override
-    public void updateWatcher(IStackWatcher iWatcher) {
-        this.watcher = iWatcher;
-        configureWatchers();
-    }
-
-    public void configureWatchers() {
-        if (this.watcher != null) {
-            watcher.reset();
-            for (int i = 0; i < MAX_FLUID; i ++ ) {
-                if (this.config.getAEStackInSlot(i) != null && !this.config.getAEStackInSlot(i).getDefinition().isEmpty()) {
-                    IAEItemStack packet = this.config.getAEStackInSlot(i);
-                    watcher.add(ItemFluidDrop.newAeStack(ItemFluidPacket.getFluidStack(packet)));
-                }
-            }
-        }
-    }
-
-    @Override
-    public void onStackChange(IItemList<?> iItemList, IAEStack<?> fullStack, IAEStack<?> diffStack, IActionSource src, IStorageChannel<?> chan) {
-        if (chan == AEApi.instance().storage().getStorageChannel(IFluidStorageChannel.class) && fullStack instanceof IAEFluidStack) {
-            for (int i = 0; i < MAX_FLUID; i ++) {
-                try {
-                    IAEItemStack packet = this.config.getAEStackInSlot(i);
-                    IAEFluidStack fluid = AEFluidStack.fromFluidStack(ItemFluidPacket.getFluidStack(packet));
-                    if (fluid != null && fluid.getFluidStack() != null
-                            && fluid.getFluidStack().isFluidEqual(((IAEFluidStack)diffStack).getFluidStack())) {
-                        this.reportValue[i] = fullStack.getStackSize();
-                        IAEItemStack drops = ItemFluidDrop.newAeStack(fluid);
-                        if (drops != null && this.reportValue[i] < drops.getStackSize()) {
-                            this.craftingTracker.handleCrafting(i, request[i], drops, DummyInvAdaptor.INSTANCE, this.world, this.getProxy().getGrid(), this.getProxy().getCrafting(), this.source );
-                        }
-                    }
-                } catch (GridAccessException e) {
-                    // Ignore
-                }
-            }
-        }
     }
 
     @Override

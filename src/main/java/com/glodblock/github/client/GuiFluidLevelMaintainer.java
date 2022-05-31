@@ -30,24 +30,25 @@ public class GuiFluidLevelMaintainer extends AEBaseGui {
         super(new ContainerFluidLevelMaintainer(ipl, tile));
         this.cont = (ContainerFluidLevelMaintainer) inventorySlots;
         this.ySize = 214;
-        for (int i = 0; i < TileFluidLevelMaintainer.MAX_FLUID; i ++) {
-            maintain[i] = new GuiNumberBox(this.fontRenderer, this.guiLeft + 39, this.guiTop + 22 + i * 20, 42, 10, Integer.class);
-            request[i] = new GuiNumberBox(this.fontRenderer, this.guiLeft + 102, this.guiTop + 22 + i * 20, 42, 10, Integer.class);
-        }
+    }
+
+    public void setMaintainNumber(int id, int size) {
+        if (id < 0 || id >= TileFluidLevelMaintainer.MAX_FLUID || size < 0)
+            return;
+        this.maintain[id].setText(String.valueOf(size));
     }
 
     @Override
-    protected void renderHoveredToolTip(int p_191948_1_, int p_191948_2_)
-    {
+    protected void renderHoveredToolTip(int x, int y) {
         if (this.mc.player.inventory.getItemStack().isEmpty() && this.getSlotUnderMouse() != null
                 && this.getSlotUnderMouse().getHasStack() && this.getSlotUnderMouse() instanceof ContainerFluidLevelMaintainer.DisplayFluidSlot)
         {
             ItemStack packet = this.getSlotUnderMouse().getStack();
             FluidStack fluid = ItemFluidPacket.getFluidStack(packet);
-            this.renderToolTip(ItemFluidPacket.newDisplayStack(fluid), p_191948_1_, p_191948_2_);
+            this.renderToolTip(ItemFluidPacket.newDisplayStack(fluid), x, y);
         }
         else {
-            super.renderHoveredToolTip(p_191948_1_, p_191948_2_);
+            super.renderHoveredToolTip(x, y);
         }
     }
 
@@ -91,7 +92,8 @@ public class GuiFluidLevelMaintainer extends AEBaseGui {
                             result = 1;
                         }
 
-                        FluidCraft.proxy.netHandler.sendToServer(new CPacketUpdateFluidLevel(id, (int) result));
+                        if (id >= 10 || result != 0)
+                            FluidCraft.proxy.netHandler.sendToServer(new CPacketUpdateFluidLevel(id, (int) result));
 
                     } catch (NumberFormatException ignored) {
                     }
@@ -107,6 +109,12 @@ public class GuiFluidLevelMaintainer extends AEBaseGui {
     @Override
     public void initGui() {
         super.initGui();
+        for (int i = 0; i < TileFluidLevelMaintainer.MAX_FLUID; i ++) {
+            maintain[i] = new GuiNumberBox(this.fontRenderer, this.guiLeft + 39, this.guiTop + 22 + i * 20, 42, 10, Integer.class);
+            request[i] = new GuiNumberBox(this.fontRenderer, this.guiLeft + 102, this.guiTop + 22 + i * 20, 42, 10, Integer.class);
+            maintain[i].setTextColor(16777215);
+            request[i].setTextColor(16777215);
+        }
         TileFluidLevelMaintainer tile = this.cont.getTile();
         IItemHandler inv = tile.getInventoryHandler();
         for (int i = 0; i < inv.getSlots(); i ++) {
@@ -147,5 +155,9 @@ public class GuiFluidLevelMaintainer extends AEBaseGui {
     public void drawBG(int offsetX, int offsetY, int mouseX, int mouseY) {
         mc.getTextureManager().bindTexture(TEX_BG);
         drawTexturedModalRect(offsetX, offsetY, 0, 0, 176, ySize);
+        for (int i = 0; i < TileFluidLevelMaintainer.MAX_FLUID ; i ++) {
+            this.maintain[i].drawTextBox();
+            this.request[i].drawTextBox();
+        }
     }
 }
