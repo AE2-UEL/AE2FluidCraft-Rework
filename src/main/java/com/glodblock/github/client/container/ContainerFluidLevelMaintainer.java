@@ -30,9 +30,9 @@ public class ContainerFluidLevelMaintainer extends AEBaseContainer {
         this.tile = tile;
         IItemHandler inv = tile.getInventoryHandler();
         for (int i = 0; i < 5; i++) {
-            addSlotToContainer(new DisplayFluidSlot(inv, i, 17, 19 + i * 20));
+            addSlotToContainer(new DisplayFluidSlot(inv, i, 17, 28 + i * 20));
         }
-        bindPlayerInventory(ip, 0, 132);
+        bindPlayerInventory(ip, 0, 141);
     }
 
     public TileFluidLevelMaintainer getTile() {

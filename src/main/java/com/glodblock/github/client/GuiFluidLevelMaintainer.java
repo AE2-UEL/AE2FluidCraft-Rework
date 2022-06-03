@@ -29,7 +29,7 @@ public class GuiFluidLevelMaintainer extends AEBaseGui {
     public GuiFluidLevelMaintainer(InventoryPlayer ipl, TileFluidLevelMaintainer tile) {
         super(new ContainerFluidLevelMaintainer(ipl, tile));
         this.cont = (ContainerFluidLevelMaintainer) inventorySlots;
-        this.ySize = 214;
+        this.ySize = 223;
     }
 
     public void setMaintainNumber(int id, int size) {
@@ -68,7 +68,7 @@ public class GuiFluidLevelMaintainer extends AEBaseGui {
                     id = i + 10;
                 }
             }
-            if (focus != null) {
+            if (focus != null && key != 1) {
                 if ((key == 211 || key == 205 || key == 203 || key == 14 || character == '-' || Character.isDigit(character)) && focus.textboxKeyTyped(character, key)) {
                     try {
                         String out = focus.getText();
@@ -92,6 +92,11 @@ public class GuiFluidLevelMaintainer extends AEBaseGui {
                             result = 1;
                         }
 
+                        if (result > Integer.MAX_VALUE) {
+                            result = Integer.MAX_VALUE;
+                            focus.setText(String.valueOf(result));
+                        }
+
                         if (id >= 10 || result != 0)
                             FluidCraft.proxy.netHandler.sendToServer(new CPacketUpdateFluidLevel(id, (int) result));
 
@@ -110,10 +115,14 @@ public class GuiFluidLevelMaintainer extends AEBaseGui {
     public void initGui() {
         super.initGui();
         for (int i = 0; i < TileFluidLevelMaintainer.MAX_FLUID; i ++) {
-            maintain[i] = new GuiNumberBox(this.fontRenderer, this.guiLeft + 39, this.guiTop + 22 + i * 20, 42, 10, Integer.class);
-            request[i] = new GuiNumberBox(this.fontRenderer, this.guiLeft + 102, this.guiTop + 22 + i * 20, 42, 10, Integer.class);
+            maintain[i] = new GuiNumberBox(this.fontRenderer, this.guiLeft + 39, this.guiTop + 33 + i * 20, 51, 10, Integer.class);
+            request[i] = new GuiNumberBox(this.fontRenderer, this.guiLeft + 102, this.guiTop + 33 + i * 20, 51, 10, Integer.class);
             maintain[i].setTextColor(16777215);
             request[i].setTextColor(16777215);
+            maintain[i].setEnableBackgroundDrawing(false);
+            request[i].setEnableBackgroundDrawing(false);
+            maintain[i].setMaxStringLength(10);
+            request[i].setMaxStringLength(10);
         }
         TileFluidLevelMaintainer tile = this.cont.getTile();
         IItemHandler inv = tile.getInventoryHandler();
@@ -149,6 +158,8 @@ public class GuiFluidLevelMaintainer extends AEBaseGui {
     public void drawFG(int offsetX, int offsetY, int mouseX, int mouseY) {
         fontRenderer.drawString(getGuiDisplayName(I18n.format(NameConst.GUI_FLUID_LEVEL_MAINTAINER)), 8, 6, 0x404040);
         fontRenderer.drawString(GuiText.inventory.getLocal(), 8, ySize - 94, 0x404040);
+        fontRenderer.drawString(I18n.format(NameConst.MISC_THRESHOLD), 39, 19, 0x404040);
+        fontRenderer.drawString(I18n.format(NameConst.MISC_REQ), 102, 19, 0x404040);
     }
 
     @Override

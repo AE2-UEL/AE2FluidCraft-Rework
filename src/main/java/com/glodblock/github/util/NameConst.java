@@ -38,6 +38,10 @@ public final class NameConst {
     public static final String GUI_BURETTE = GUI_KEY + BLOCK_BURETTE;
     public static final String GUI_FLUID_LEVEL_MAINTAINER = GUI_KEY + BLOCK_FLUID_LEVEL_MAINTAINER;
 
+    public static final String MISC = FluidCraft.MODID + ".misc.";
+    public static final String MISC_THRESHOLD = MISC + "threshold";
+    public static final String MISC_REQ = MISC + "request";
+
     public static final ResourceLocation MODEL_DENSE_ENCODED_PATTERN = FluidCraft.resource("builtin/dense_encoded_pattern");
     public static final ResourceLocation MODEL_FLUID_PACKET = FluidCraft.resource("builtin/fluid_packet");
 

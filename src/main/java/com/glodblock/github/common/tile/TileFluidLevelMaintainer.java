@@ -34,6 +34,7 @@ import com.google.common.collect.ImmutableSet;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ITickable;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.items.IItemHandler;
@@ -41,9 +42,10 @@ import net.minecraftforge.items.IItemHandler;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 
-public class TileFluidLevelMaintainer extends AENetworkTile implements ICraftingRequester, IAEAppEngInventory {
+public class TileFluidLevelMaintainer extends AENetworkTile implements ICraftingRequester, IAEAppEngInventory, ITickable {
 
     public static final int MAX_FLUID = 5;
+    private int tick = 0;
 
     private final AppEngInternalAEInventory config = new AppEngInternalAEInventory(this, MAX_FLUID) {
         @Override
@@ -251,4 +253,15 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements ICrafting
         markForUpdate();
     }
 
+    //Sometimes it may get fucked, let's force update it every 60s
+    @Override
+    public void update() {
+        if (!getWorld().isRemote) {
+            tick ++;
+            if (tick > 1200) {
+                tick = 0;
+                doWork();
+            }
+        }
+    }
 }
