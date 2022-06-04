@@ -23,7 +23,7 @@ public class BlockBurette extends AEBaseTileBlock {
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
                                     EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (player.isSneaking()) {
-            return false;
+            return super.onBlockActivated(world, pos, state, player, hand, facing, hitX, hitY, hitZ);
         }
         TileBurette tile = getTileEntity(world, pos);
         if (tile != null) {
@@ -32,7 +32,7 @@ public class BlockBurette extends AEBaseTileBlock {
             }
             return true;
         }
-        return false;
+        return super.onBlockActivated(world, pos, state, player, hand, facing, hitX, hitY, hitZ);
     }
 
 }
