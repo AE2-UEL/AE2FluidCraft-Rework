@@ -1,0 +1,33 @@
+{
+  "type": "forge:ore_shaped",
+  "result": {
+    "item": "ae2fc:fluid_level_maintainer",
+    "count": 1
+  },
+  "pattern": [
+    "flf",
+    "eie",
+    "fbf"
+  ],
+  "key": {
+    "f": {
+      "type": "forge:ore_dict",
+      "ore": "dustFluix"
+    },
+    "l": {
+      "type": "appliedenergistics2:part",
+      "part": "part.fluid_level_emitter"
+    },
+    "e": {
+      "type": "appliedenergistics2:part",
+      "part": "material.engineering_processor"
+    },
+    "i": {
+      "item": "appliedenergistics2:crafting_monitor"
+    },
+    "b": {
+      "type": "forge:ore_dict",
+      "ore": "dyeBlue"
+    }
+  }
+}
