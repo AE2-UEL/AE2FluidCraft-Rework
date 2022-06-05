@@ -29,12 +29,12 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -102,7 +102,7 @@ public class ItemBasicFluidStorageCell extends AEBaseItem implements IStorageFlu
 
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
-        return I18n.format("item.fluid_storage." + this.totalBytes / 1024 + ".name");
+        return StatCollector.translateToLocalFormatted("item.fluid_storage." + this.totalBytes / 1024 + ".name");
     }
 
     @Override

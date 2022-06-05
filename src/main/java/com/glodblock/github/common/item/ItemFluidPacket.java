@@ -9,13 +9,13 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.StatCollector;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -43,11 +43,11 @@ public class ItemFluidPacket extends Item {
     public void addInformation(ItemStack stack, EntityPlayer player, List tooltip, boolean flags) {
         FluidStack fluid = getFluidStack(stack);
         if (fluid != null) {
-            for (String line : I18n.format(NameConst.TT_FLUID_PACKET).split("\\\\n")) {
+            for (String line : StatCollector.translateToLocalFormatted(NameConst.TT_FLUID_PACKET).split("\\\\n")) {
                 tooltip.add(EnumChatFormatting.GRAY + line);
             }
         } else {
-            tooltip.add(EnumChatFormatting.RED + I18n.format(NameConst.TT_INVALID_FLUID));
+            tooltip.add(EnumChatFormatting.RED + StatCollector.translateToLocalFormatted(NameConst.TT_INVALID_FLUID));
         }
     }
 

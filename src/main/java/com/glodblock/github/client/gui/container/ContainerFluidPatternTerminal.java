@@ -154,8 +154,7 @@ public class ContainerFluidPatternTerminal extends FCBasePartContainer implement
             super.doAction(player, action, slotId, id);
             return;
         }
-        if ((slot instanceof SlotFakeCraftingMatrix || slot instanceof SlotPatternOutputs) && stack != null
-            && (stack.getItem() instanceof IFluidContainerItem || FluidContainerRegistry.isContainer(stack))) {
+        if ((slot instanceof SlotFakeCraftingMatrix || slot instanceof SlotPatternOutputs) && (stack.getItem() instanceof IFluidContainerItem || FluidContainerRegistry.isContainer(stack))) {
             FluidStack fluid = null;
             switch (action) {
                 case PICKUP_OR_SET_DOWN:
