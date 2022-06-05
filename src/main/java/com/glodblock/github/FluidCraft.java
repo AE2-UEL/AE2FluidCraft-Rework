@@ -51,7 +51,10 @@ public class FluidCraft {
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent event) {
         NetworkRegistry.INSTANCE.registerGuiHandler(FluidCraft.INSTANCE, new InventoryHandler());
-        (new RecipeLoader()).run();
+
+        if (!Config.removeRecipe) {
+            (new RecipeLoader()).run();
+        }
 
         if (ModAndClassUtil.isBigInterface) {
             Upgrades.PATTERN_CAPACITY.registerItem(new ItemStack(ItemAndBlockHolder.FLUID_INTERFACE), 3 );
