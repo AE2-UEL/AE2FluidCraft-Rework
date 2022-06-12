@@ -376,7 +376,18 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
 
         if( slot instanceof SlotFake)
         {
-            final InventoryAction action = ctrlDown == 1 ? InventoryAction.SPLIT_OR_PLACE_SINGLE : InventoryAction.PICKUP_OR_SET_DOWN;
+            InventoryAction action = ctrlDown == 1 ? InventoryAction.SPLIT_OR_PLACE_SINGLE : InventoryAction.PICKUP_OR_SET_DOWN;
+
+            if (Keyboard.isKeyDown(Keyboard.KEY_LMENU) || Keyboard.isKeyDown(Keyboard.KEY_RMENU)) {
+                if (action == InventoryAction.SPLIT_OR_PLACE_SINGLE) {
+                    action = InventoryAction.MOVE_REGION;
+                }
+                else {
+                    action = InventoryAction.PICKUP_SINGLE;
+                }
+            }
+
+            System.out.print(action + "\n");
 
             if( Ae2ReflectClient.getDragClick(this).size() > 1 )
             {

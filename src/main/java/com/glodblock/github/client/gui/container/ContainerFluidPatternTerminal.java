@@ -140,12 +140,21 @@ public class ContainerFluidPatternTerminal extends FCBasePartContainer implement
 
     @Override
     public void doAction(EntityPlayerMP player, InventoryAction action, int slotId, long id) {
+        System.out.print(action + "\n");
         if (this.isCraftingMode()) {
             super.doAction(player, action, slotId, id);
             return;
         }
         if (slotId < 0 || slotId >= this.inventorySlots.size()) {
             super.doAction(player, action, slotId, id);
+            return;
+        }
+        if (action == InventoryAction.MOVE_REGION) {
+            super.doAction(player, InventoryAction.SPLIT_OR_PLACE_SINGLE, slotId, id);
+            return;
+        }
+        if (action == InventoryAction.PICKUP_SINGLE) {
+            super.doAction(player, InventoryAction.PICKUP_OR_SET_DOWN, slotId, id);
             return;
         }
         Slot slot = getSlot(slotId);
@@ -176,11 +185,6 @@ public class ContainerFluidPatternTerminal extends FCBasePartContainer implement
                 return;
             }
             return;
-        }
-        if (action == InventoryAction.SPLIT_OR_PLACE_SINGLE) {
-            if (stack == null && slot.getStack() != null && slot.getStack().getItem() instanceof ItemFluidPacket) {
-                return;
-            }
         }
         super.doAction(player, action, slotId, id);
     }
