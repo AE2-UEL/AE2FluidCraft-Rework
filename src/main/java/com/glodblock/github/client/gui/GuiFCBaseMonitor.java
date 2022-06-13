@@ -387,8 +387,6 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
                 }
             }
 
-            System.out.print(action + "\n");
-
             if( Ae2ReflectClient.getDragClick(this).size() > 1 )
             {
                 return;

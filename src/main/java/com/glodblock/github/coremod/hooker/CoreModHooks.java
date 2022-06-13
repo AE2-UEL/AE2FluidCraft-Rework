@@ -21,8 +21,10 @@ import com.glodblock.github.util.SetBackedMachineSet;
 import com.glodblock.github.util.Util;
 import com.google.common.collect.Sets;
 import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
@@ -86,6 +88,14 @@ public class CoreModHooks {
             b.forEach(union::add);
             return new SetBackedMachineSet(TileInterface.class, union);
         }
+    }
+
+    public static ItemStack displayFluid(IAEItemStack aeStack) {
+        if (aeStack.getItemStack() != null && aeStack.getItemStack().getItem() instanceof ItemFluidDrop) {
+            FluidStack fluid = ItemFluidDrop.getFluidStack(aeStack.getItemStack());
+            return ItemFluidPacket.newDisplayStack(fluid);
+        }
+        else return aeStack.getItemStack();
     }
 
 }

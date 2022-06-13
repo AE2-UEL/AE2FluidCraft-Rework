@@ -140,7 +140,6 @@ public class ContainerFluidPatternTerminal extends FCBasePartContainer implement
 
     @Override
     public void doAction(EntityPlayerMP player, InventoryAction action, int slotId, long id) {
-        System.out.print(action + "\n");
         if (this.isCraftingMode()) {
             super.doAction(player, action, slotId, id);
             return;

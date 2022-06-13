@@ -131,10 +131,7 @@ public abstract class ContainerFluidConfigurable extends ContainerUpgradeable {
     public void setFluid(int id, IAEFluidStack fluidStack) {
         final AppEngInternalAEInventory inv = this.getFakeFluidInv();
         if (inv != null && this.isValidForConfig(id, AEFluidStack.create(fluidStack))) {
-            ItemStack tmp = ItemFluidPacket.newStack(fluidStack.getFluidStack());
-            if (tmp != null) {
-                tmp.setStackDisplayName(fluidStack.getFluidStack().getLocalizedName());
-            }
+            ItemStack tmp = ItemFluidPacket.newDisplayStack(fluidStack.getFluidStack());
             inv.setInventorySlotContents(id, tmp);
         }
     }
