@@ -12,6 +12,7 @@ import appeng.tile.misc.TileInterface;
 import appeng.util.InventoryAdaptor;
 import appeng.util.inv.BlockingInventoryAdaptor;
 import appeng.util.inv.filter.IAEItemFilter;
+import appeng.util.item.AEItemStack;
 import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidEncodedPattern;
 import com.glodblock.github.common.item.ItemFluidPacket;
@@ -30,6 +31,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -111,6 +113,22 @@ public class CoreModHooks {
             b.forEach(union::add);
             return new SetBackedMachineSet(TileInterface.class, union);
         }
+    }
+
+    public static ItemStack displayFluid(ItemStack drop) {
+        if (!drop.isEmpty() && drop.getItem() instanceof ItemFluidDrop) {
+            FluidStack fluid = ItemFluidDrop.getFluidStack(drop);
+            return ItemFluidPacket.newDisplayStack(fluid);
+        }
+        else return drop;
+    }
+
+    public static IAEItemStack displayAEFluid(IAEItemStack drop) {
+        if (!drop.getDefinition().isEmpty() && drop.getItem() instanceof ItemFluidDrop) {
+            FluidStack fluid = ItemFluidDrop.getFluidStack(drop.getDefinition());
+            return AEItemStack.fromItemStack(ItemFluidPacket.newDisplayStack(fluid));
+        }
+        else return drop;
     }
 
 }
