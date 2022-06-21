@@ -63,11 +63,6 @@ public class FluidPatternDetails implements ICraftingPatternDetails, Comparable<
     }
 
     public boolean setInputs(IAEItemStack[] inputs) {
-        for (IAEItemStack stack : inputs) { // see note at top of class
-            if (stack == null) {
-                return false;
-            }
-        }
         IAEItemStack[] condensed = condenseStacks(inputs);
         if (condensed.length == 0) {
             return false;
@@ -88,11 +83,6 @@ public class FluidPatternDetails implements ICraftingPatternDetails, Comparable<
     }
 
     public boolean setOutputs(IAEItemStack[] outputs) {
-        for (IAEItemStack stack : outputs) { // see note at top of class
-            if (stack == null) {
-                return false;
-            }
-        }
         IAEItemStack[] condensed = condenseStacks(outputs);
         if (condensed.length == 0) {
             return false;
