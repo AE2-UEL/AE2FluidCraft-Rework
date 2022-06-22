@@ -6,7 +6,6 @@ import appeng.api.storage.ITerminalHost;
 import appeng.container.guisync.GuiSync;
 import appeng.container.slot.*;
 import appeng.helpers.IContainerCraftingPacket;
-import appeng.tile.inventory.AppEngInternalInventory;
 import appeng.tile.inventory.IAEAppEngInventory;
 import appeng.tile.inventory.InvOperation;
 import appeng.util.Platform;
@@ -16,7 +15,9 @@ import com.glodblock.github.common.parts.PartFluidPatternTerminalEx;
 import com.glodblock.github.util.Util;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.*;
+import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -32,8 +33,6 @@ import java.util.stream.Collectors;
 public class FCBasePartContainerEx extends FCBaseMonitorContain implements IAEAppEngInventory, IOptionalSlotHost, IContainerCraftingPacket {
 
     private final PartFluidPatternTerminalEx patternTerminal;
-    private final AppEngInternalInventory cOut = new AppEngInternalInventory( null, 1 );
-    private final IInventory crafting;
     protected final SlotFakeCraftingMatrix[] craftingSlots = new SlotFakeCraftingMatrix[16];
     protected final OptionalSlotFake[] outputSlots = new OptionalSlotFake[4];
     protected final SlotRestrictedInput patternSlotIN;
@@ -49,13 +48,13 @@ public class FCBasePartContainerEx extends FCBaseMonitorContain implements IAEAp
         final IInventory patternInv = this.getPatternTerminal().getInventoryByName( "pattern" );
         final IInventory output = this.getPatternTerminal().getInventoryByName( "output" );
 
-        this.crafting = this.getPatternTerminal().getInventoryByName( "crafting" );
+        IInventory crafting = this.getPatternTerminal().getInventoryByName("crafting");
 
         for( int y = 0; y < 4; y++ )
         {
             for( int x = 0; x < 4; x++ )
             {
-                this.addSlotToContainer( this.craftingSlots[x + y * 4] = new SlotFakeCraftingMatrix( this.crafting, x + y * 4, 15 + x * 18, -83 + y * 18 ) );
+                this.addSlotToContainer( this.craftingSlots[x + y * 4] = new SlotFakeCraftingMatrix(crafting, x + y * 4, 15 + x * 18, -83 + y * 18 ) );
             }
         }
 
@@ -323,13 +322,6 @@ public class FCBasePartContainerEx extends FCBaseMonitorContain implements IAEAp
         return false;
     }
 
-    public void toggleSubstitute()
-    {
-        this.substitute = !this.substitute;
-
-        this.detectAndSendChanges();
-    }
-
     public PartFluidPatternTerminalEx getPatternTerminal()
     {
         return this.patternTerminal;
@@ -338,11 +330,6 @@ public class FCBasePartContainerEx extends FCBaseMonitorContain implements IAEAp
     private boolean isSubstitute()
     {
         return this.substitute;
-    }
-
-    public void setSubstitute( final boolean substitute )
-    {
-        this.substitute = substitute;
     }
 
     static boolean canDoubleStacks(SlotFake[] slots)

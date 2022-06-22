@@ -6,11 +6,9 @@ import appeng.api.config.Settings;
 import appeng.api.storage.ITerminalHost;
 import appeng.client.gui.widgets.GuiImgButton;
 import appeng.container.slot.AppEngSlot;
-import appeng.core.localization.GuiText;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.gui.container.FCBasePartContainerEx;
 import com.glodblock.github.network.CPacketFluidPatternTermBtns;
-import com.glodblock.github.util.Ae2Reflect;
 import com.glodblock.github.util.Ae2ReflectClient;
 import com.glodblock.github.util.ModAndClassUtil;
 import com.glodblock.github.util.NameConst;
@@ -23,9 +21,6 @@ public class GuiBaseFluidPatternTerminalEx extends GuiFCBaseMonitor {
 
     private static final String SUBSITUTION_DISABLE = "0";
     private static final String SUBSITUTION_ENABLE = "1";
-
-    private static final String CRAFTMODE_CRFTING = "1";
-    private static final String CRAFTMODE_PROCESSING = "0";
 
     public FCBasePartContainerEx container;
 

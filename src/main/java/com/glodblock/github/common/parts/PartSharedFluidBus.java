@@ -163,10 +163,7 @@ public abstract class PartSharedFluidBus extends PartUpgradeable implements IGri
     }
 
     public void setFluidInSlot(int id, IAEFluidStack fluid) {
-        ItemStack tmp = ItemFluidPacket.newStack(fluid == null ? null : fluid.getFluidStack());
-        if (tmp != null) {
-            tmp.setStackDisplayName(fluid.getFluidStack().getLocalizedName());
-        }
+        ItemStack tmp = ItemFluidPacket.newDisplayStack(fluid == null ? null : fluid.getFluidStack());
         this.config.setInventorySlotContents(id, tmp);
     }
 
