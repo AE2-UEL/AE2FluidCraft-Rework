@@ -32,9 +32,11 @@ ae2fc.tooltip.encode_pattern=Encode Patter
 ae2fc.tooltip.fluid_packet=Use a Fluid Packet Decoder to\nconvert this back into fluid.
 ae2fc.tooltip.empty=Empty
 ae2fc.tooltip.dump_tank=Dump Tank Contents
+ae2fc.tooltip.switch_fluid_interface=Switch ME Dual Interface GUI
 
 ae2fc.gui.part_fluid_pattern_terminal=Fluid Pattern Terminal
 ae2fc.gui.part_fluid_pattern_terminal_ex=Fluid Processing Pattern Terminal
 ae2fc.gui.fluid_pattern_encoder=Fluid Pattern Encoder
 ae2fc.gui.fluid_packet_decoder=ME Fluid Packet Decoder
 ae2fc.gui.ingredient_buffer=Ingredient Buffer
+ae2fc.gui.fluid_interface=ME Dual Interface

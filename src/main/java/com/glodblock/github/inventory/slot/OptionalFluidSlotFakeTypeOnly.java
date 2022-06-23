@@ -19,8 +19,7 @@ public class OptionalFluidSlotFakeTypeOnly extends OptionalSlotFakeTypeOnly {
     {
         FluidStack fluidStack = Util.getFluidFromItem(is);
         if (fluidStack != null) {
-            ItemStack tmp = ItemFluidPacket.newStack(fluidStack);
-            tmp.setStackDisplayName(fluidStack.getLocalizedName());
+            ItemStack tmp = ItemFluidPacket.newDisplayStack(fluidStack);
             super.putStack(tmp);
         }
         else {

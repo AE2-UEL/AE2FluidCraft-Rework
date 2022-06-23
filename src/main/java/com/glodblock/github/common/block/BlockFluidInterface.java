@@ -8,6 +8,9 @@ import appeng.tile.misc.TileInterface;
 import appeng.util.Platform;
 import com.glodblock.github.client.render.RenderBlockFluidInterface;
 import com.glodblock.github.common.tile.TileFluidInterface;
+import com.glodblock.github.inventory.InventoryHandler;
+import com.glodblock.github.inventory.gui.GuiType;
+import com.glodblock.github.util.BlockPos;
 import com.glodblock.github.util.NameConst;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -15,6 +18,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -38,19 +42,18 @@ public class BlockFluidInterface extends FCBaseBlock {
     }
 
     @Override
-    public boolean onActivated(final World w, final int x, final int y, final int z, final EntityPlayer p, final int side, final float hitX, final float hitY, final float hitZ )
+    public boolean onActivated(final World world, final int x, final int y, final int z, final EntityPlayer player, final int facing, final float hitX, final float hitY, final float hitZ )
     {
-        if( p.isSneaking() )
+        if( player.isSneaking() )
         {
             return false;
         }
-
-        final TileInterface tg = this.getTileEntity( w, x, y, z );
+        final TileInterface tg = this.getTileEntity( world, x, y, z );
         if( tg != null )
         {
             if( Platform.isServer() )
             {
-                Platform.openGUI( p, tg, ForgeDirection.getOrientation( side ), GuiBridge.GUI_INTERFACE );
+                InventoryHandler.openGui(player, world, new BlockPos(x, y, z), EnumFacing.getFront(facing), GuiType.DUAL_INTERFACE);
             }
             return true;
         }

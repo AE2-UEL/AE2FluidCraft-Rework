@@ -3,6 +3,7 @@ package com.glodblock.github.network;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.util.item.AEFluidStack;
 import com.glodblock.github.client.gui.GuiFluidIO;
+import com.glodblock.github.client.gui.GuiFluidInterface;
 import com.glodblock.github.client.gui.GuiIngredientBuffer;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
@@ -78,6 +79,10 @@ public class SPacketFluidUpdate implements IMessage {
             {
                 for (Map.Entry<Integer, IAEFluidStack> e : message.list.entrySet() ) {
                     ( (GuiFluidIO) gs ).update(e.getKey(), e.getValue());
+                }
+            } else if (gs instanceof GuiFluidInterface) {
+                for (Map.Entry<Integer, IAEFluidStack> e : message.list.entrySet() ) {
+                    ( (GuiFluidInterface) gs ).update(e.getKey(), e.getValue());
                 }
             }
             return null;
