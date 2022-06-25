@@ -6,6 +6,7 @@ import appeng.container.slot.IOptionalSlotHost;
 import appeng.util.item.AEFluidStack;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.common.parts.PartFluidInterface;
 import com.glodblock.github.common.tile.TileFluidInterface;
 import com.glodblock.github.inventory.slot.OptionalFluidSlotFakeTypeOnly;
 import com.glodblock.github.network.SPacketFluidUpdate;
@@ -33,6 +34,18 @@ public class ContainerFluidInterface extends AEBaseContainer implements IOptiona
         bindPlayerInventory(ipl, 0, 149);
     }
 
+    public ContainerFluidInterface(InventoryPlayer ipl, PartFluidInterface tile) {
+        super(ipl, tile);
+        this.tile = tile;
+        IInventory inv = tile.getConfig();
+        final int y = 35;
+        final int x = 35;
+        for (int i = 0; i < 6; i++) {
+            addSlotToContainer(new OptionalFluidSlotFakeTypeOnly(inv, this, i, x, y, i, 0, 0));
+        }
+        bindPlayerInventory(ipl, 0, 149);
+    }
+
     public Object getTile() {
         return tile;
     }
@@ -46,12 +59,23 @@ public class ContainerFluidInterface extends AEBaseContainer implements IOptiona
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
         Map<Integer, IAEFluidStack> tmp = new HashMap<>();
-        for (int i = 0; i < ((TileFluidInterface) tile).getInternalFluid().getSlots(); i ++) {
-            tmp.put(i, ((TileFluidInterface) tile).getInternalFluid().getFluidInSlot(i));
+        if (tile instanceof TileFluidInterface) {
+            for (int i = 0; i < ((TileFluidInterface) tile).getInternalFluid().getSlots(); i ++) {
+                tmp.put(i, ((TileFluidInterface) tile).getInternalFluid().getFluidInSlot(i));
+            }
+            for (int i = 0; i < ((TileFluidInterface) tile).getConfig().getSizeInventory(); i ++) {
+                tmp.put(i + 100, AEFluidStack.create(ItemFluidPacket.getFluidStack(((TileFluidInterface) tile).getConfig().getStackInSlot( i ))));
+            }
         }
-        for (int i = 0; i < ((TileFluidInterface) tile).getConfig().getSizeInventory(); i ++) {
-            tmp.put(i + 100, AEFluidStack.create(ItemFluidPacket.getFluidStack(((TileFluidInterface) tile).getConfig().getStackInSlot( i ))));
+        else {
+            for (int i = 0; i < ((PartFluidInterface) tile).getInternalFluid().getSlots(); i ++) {
+                tmp.put(i, ((PartFluidInterface) tile).getInternalFluid().getFluidInSlot(i));
+            }
+            for (int i = 0; i < ((PartFluidInterface) tile).getConfig().getSizeInventory(); i ++) {
+                tmp.put(i + 100, AEFluidStack.create(ItemFluidPacket.getFluidStack(((PartFluidInterface) tile).getConfig().getStackInSlot( i ))));
+            }
         }
+
         for( final Object g : this.crafters )
         {
             if( g instanceof EntityPlayer)

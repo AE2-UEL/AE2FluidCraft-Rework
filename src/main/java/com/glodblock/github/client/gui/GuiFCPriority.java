@@ -12,10 +12,12 @@ import appeng.core.sync.network.NetworkHandler;
 import appeng.core.sync.packets.PacketValueConfig;
 import appeng.helpers.IPriorityHost;
 import com.glodblock.github.FluidCraft;
+import com.glodblock.github.common.parts.PartFluidInterface;
 import com.glodblock.github.common.tile.TileFluidInterface;
 import com.glodblock.github.inventory.gui.GuiType;
 import com.glodblock.github.loader.ItemAndBlockHolder;
 import com.glodblock.github.network.CPacketSwitchGuis;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
@@ -72,6 +74,11 @@ public class GuiFCPriority extends AEBaseGui
         {
             myIcon = ItemAndBlockHolder.INTERFACE.stack();
             this.OriginalGui = GuiType.DUAL_INTERFACE;
+        }
+        else if (target instanceof PartFluidInterface)
+        {
+            myIcon = ItemAndBlockHolder.FLUID_INTERFACE.stack();
+            this.OriginalGui = GuiType.DUAL_INTERFACE_FLUID_PART;
         }
 
         if( this.OriginalGui != null && myIcon != null )

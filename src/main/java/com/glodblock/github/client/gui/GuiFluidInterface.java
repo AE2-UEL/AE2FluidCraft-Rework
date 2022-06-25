@@ -6,6 +6,7 @@ import appeng.client.gui.widgets.GuiTabButton;
 import appeng.core.localization.GuiText;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.gui.container.ContainerFluidInterface;
+import com.glodblock.github.common.parts.PartFluidInterface;
 import com.glodblock.github.common.tile.TileFluidInterface;
 import com.glodblock.github.inventory.IAEFluidTank;
 import com.glodblock.github.inventory.gui.GuiType;
@@ -41,12 +42,18 @@ public class GuiFluidInterface extends AEBaseGui {
         this.ySize = 231;
     }
 
+    public GuiFluidInterface(InventoryPlayer ipl, PartFluidInterface tile) {
+        super(new ContainerFluidInterface(ipl, tile));
+        this.cont = (ContainerFluidInterface) inventorySlots;
+        this.ySize = 231;
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public void initGui()
     {
         super.initGui();
-        this.switcher = new GuiTabButton( this.guiLeft + 154, this.guiTop, ItemAndBlockHolder.INTERFACE.stack(), StatCollector.translateToLocal("ae2fc.tooltip.switch_fluid_interface"), itemRender );
+        this.switcher = new GuiTabButton( this.guiLeft + 154, this.guiTop, isPart() ? ItemAndBlockHolder.FLUID_INTERFACE.stack() : ItemAndBlockHolder.INTERFACE.stack(), StatCollector.translateToLocal("ae2fc.tooltip.switch_fluid_interface"), itemRender );
         this.buttonList.add( this.switcher );
     }
 
@@ -56,7 +63,13 @@ public class GuiFluidInterface extends AEBaseGui {
         fontRendererObj.drawString(GuiText.inventory.getLocal(), 8, ySize - 94, 0x404040);
         GL11.glColor4f(1F, 1F, 1F, 1F);
 
-        IAEFluidTank fluidInv = ((TileFluidInterface) cont.getTile()).getInternalFluid();
+        IAEFluidTank fluidInv;
+        if (isPart()) {
+            fluidInv = ((PartFluidInterface) cont.getTile()).getInternalFluid();
+        } else {
+            fluidInv = ((TileFluidInterface) cont.getTile()).getInternalFluid();
+        }
+
         mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
         for (int i = 0; i < 6; i++) {
             renderFluidIntoGui(TANK_X + i * TANK_X_OFF, TANK_Y, TANK_WIDTH, TANK_HEIGHT,
@@ -95,18 +108,30 @@ public class GuiFluidInterface extends AEBaseGui {
     {
         super.actionPerformed(btn);
         if (btn == this.switcher) {
-            FluidCraft.proxy.netHandler.sendToServer(new CPacketSwitchGuis(GuiType.DUAL_INTERFACE));
+            FluidCraft.proxy.netHandler.sendToServer(new CPacketSwitchGuis(isPart() ? GuiType.DUAL_INTERFACE_PART : GuiType.DUAL_INTERFACE));
         }
     }
 
     public void update(int id, IAEFluidStack stack) {
         if (id >= 100) {
             id -= 100;
-            ((TileFluidInterface) cont.getTile()).setConfig(id, stack);
+            if (isPart()) {
+                ((PartFluidInterface) cont.getTile()).setConfig(id, stack);
+            } else {
+                ((TileFluidInterface) cont.getTile()).setConfig(id, stack);
+            }
         }
         else {
-            ((TileFluidInterface) cont.getTile()).setFluidInv(id, stack);
+            if(isPart()) {
+                ((PartFluidInterface) cont.getTile()).setFluidInv(id, stack);
+            } else {
+                ((TileFluidInterface) cont.getTile()).setFluidInv(id, stack);
+            }
         }
+    }
+
+    private boolean isPart() {
+        return this.cont.getTile() instanceof PartFluidInterface;
     }
 
 }

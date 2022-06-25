@@ -163,12 +163,12 @@ public class TileFluidInterface extends TileInterface implements IFluidHandler, 
 
     @Override
     public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
-        return null;
+        return invFluids.drain(from, resource, doDrain);
     }
 
     @Override
     public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
-        return null;
+        return invFluids.drain(from, maxDrain, doDrain);
     }
 
     @Override
@@ -178,12 +178,12 @@ public class TileFluidInterface extends TileInterface implements IFluidHandler, 
 
     @Override
     public boolean canDrain(ForgeDirection from, Fluid fluid) {
-        return false;
+        return true;
     }
 
     @Override
     public FluidTankInfo[] getTankInfo(ForgeDirection from) {
-        return new FluidTankInfo[]{new FluidTankInfo(null, 0)};
+        return invFluids.getTankInfo(from);
     }
 
     @Override

@@ -12,6 +12,8 @@ import appeng.core.sync.network.NetworkHandler;
 import appeng.core.sync.packets.PacketConfigButton;
 import appeng.helpers.IInterfaceHost;
 import com.glodblock.github.FluidCraft;
+import com.glodblock.github.common.parts.PartFluidInterface;
+import com.glodblock.github.common.tile.TileFluidInterface;
 import com.glodblock.github.inventory.gui.GuiType;
 import com.glodblock.github.loader.ItemAndBlockHolder;
 import com.glodblock.github.network.CPacketSwitchGuis;
@@ -28,9 +30,11 @@ public class GuiDualInterface extends GuiUpgradeable {
     private GuiTabButton switcher;
     private GuiImgButton BlockMode;
     private GuiToggleButton interfaceMode;
+    private final IInterfaceHost host;
 
     public GuiDualInterface(InventoryPlayer inventoryPlayer, IInterfaceHost te) {
         super(new ContainerInterface(inventoryPlayer, te));
+        this.host = te;
         this.ySize = 211;
     }
 
@@ -41,7 +45,7 @@ public class GuiDualInterface extends GuiUpgradeable {
         this.priority = new GuiTabButton( this.guiLeft + 154, this.guiTop, 2 + 4 * 16, GuiText.Priority.getLocal(), itemRender );
         this.buttonList.add( this.priority );
 
-        this.switcher = new GuiTabButton( this.guiLeft + 132, this.guiTop, ItemAndBlockHolder.INTERFACE.stack(), StatCollector.translateToLocal("ae2fc.tooltip.switch_fluid_interface"), itemRender );
+        this.switcher = new GuiTabButton( this.guiLeft + 132, this.guiTop, host instanceof PartFluidInterface ? ItemAndBlockHolder.FLUID_INTERFACE.stack() : ItemAndBlockHolder.INTERFACE.stack(), StatCollector.translateToLocal("ae2fc.tooltip.switch_fluid_interface"), itemRender );
         this.buttonList.add( this.switcher );
 
         this.BlockMode = new GuiImgButton( this.guiLeft - 18, this.guiTop + 8, Settings.BLOCK, YesNo.NO );
@@ -93,12 +97,22 @@ public class GuiDualInterface extends GuiUpgradeable {
 
         if( btn == this.priority )
         {
-            FluidCraft.proxy.netHandler.sendToServer(new CPacketSwitchGuis(GuiType.DUAL_INTERFACE_PRIORITY));
+            if (host instanceof TileFluidInterface) {
+                FluidCraft.proxy.netHandler.sendToServer(new CPacketSwitchGuis(GuiType.DUAL_INTERFACE_PRIORITY));
+            }
+            else if(host instanceof PartFluidInterface) {
+                FluidCraft.proxy.netHandler.sendToServer(new CPacketSwitchGuis(GuiType.DUAL_INTERFACE_PRIORITY_PART));
+            }
         }
 
         if( btn == this.switcher )
         {
-            FluidCraft.proxy.netHandler.sendToServer(new CPacketSwitchGuis(GuiType.DUAL_INTERFACE_FLUID));
+            if (host instanceof TileFluidInterface) {
+                FluidCraft.proxy.netHandler.sendToServer(new CPacketSwitchGuis(GuiType.DUAL_INTERFACE_FLUID));
+            }
+            else if (host instanceof PartFluidInterface) {
+                FluidCraft.proxy.netHandler.sendToServer(new CPacketSwitchGuis(GuiType.DUAL_INTERFACE_FLUID_PART));
+            }
         }
 
         if( btn == this.interfaceMode )

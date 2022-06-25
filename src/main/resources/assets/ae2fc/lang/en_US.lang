@@ -2,7 +2,7 @@ item.fluid_drop.name=drop of %s
 item.fluid_encoded_pattern.name=Encode Pattern
 item.part_fluid_pattern_terminal.name=ME Fluid Pattern Terminal
 item.part_fluid_pattern_terminal_ex.name=ME Fluid Processing Pattern Terminal
-item.part_fluid_interface.name=Fluid Interface
+item.part_fluid_interface.name=ME Dual Interface
 item.part_fluid_import.name=ME Fluid Import Bus
 item.part_fluid_export.name=ME Fluid Export Bus
 item.fluid_packet.name=Fluid Packet
@@ -24,7 +24,7 @@ item.fluid_part.6.name=4096k ME Fluid Storage Component
 tile.fluid_discretizer.name=Fluid Discretizer
 tile.fluid_pattern_encoder.name=Fluid Pattern Encoder
 tile.fluid_packet_decoder.name=ME Fluid Packet Decoder
-tile.fluid_interface.name=Fluid Interface
+tile.fluid_interface.name=ME Dual Interface
 tile.ingredient_buffer.name=Ingredient Buffer
 
 ae2fc.tooltip.invalid_fluid=Invalid fluid!

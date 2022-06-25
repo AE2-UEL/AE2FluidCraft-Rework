@@ -21,7 +21,6 @@ public class AEFluidInventory implements IAEFluidTank
     private final IAEFluidStack[] fluids;
     private final IAEFluidInventory handler;
     private final int capacity;
-    private FluidTankInfo[] props = null;
 
     public AEFluidInventory( final IAEFluidInventory handler, final int slots, final int capcity )
     {
@@ -92,16 +91,12 @@ public class AEFluidInventory implements IAEFluidTank
     @Override
     public FluidTankInfo[] getTankInfo(ForgeDirection from)
     {
-        if( this.props == null )
+        FluidTankInfo[] props = new FluidTankInfo[this.getSlots()];
+        for( int i = 0; i < this.getSlots(); ++i )
         {
-            this.props = new FluidTankInfo[this.getSlots()];
-            for( int i = 0; i < this.getSlots(); ++i )
-            {
-                this.props[i] = new FluidTankInfo(new FluidTankPropertiesWrapper( i ));
-            }
-
+            props[i] = new FluidTankInfo(new FluidTankPropertiesWrapper( i ));
         }
-        return this.props;
+        return props;
     }
 
     public int fill( final int slot, final FluidStack resource, final boolean doFill )
