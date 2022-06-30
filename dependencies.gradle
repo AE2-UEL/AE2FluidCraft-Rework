@@ -15,5 +15,5 @@ dependencies {
     compileOnly('com.github.GTNewHorizons:AppleCore:3.1.9:dev') {transitive = false}
     compileOnly('com.github.GTNewHorizons:BuildCraft:7.1.27:dev') {transitive = false}
     compileOnly("com.gregoriust.gregtech:gregtech_1.7.10:6.14.23:dev") {transitive = false}
-    compile('com.github.GTNewHorizons:OpenComputers:1.7.5.23-GTNH:dev') {transitive = false}
+    compileOnly('com.github.GTNewHorizons:OpenComputers:1.7.5.23-GTNH:dev') {transitive = false}
 }
