@@ -72,10 +72,17 @@ public class GuiFluidInterface extends AEBaseGui {
 
         mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
         for (int i = 0; i < 6; i++) {
+            if (!isPart()) {
+                fontRendererObj.drawString(dirName(i), TANK_X + i * TANK_X_OFF + 5, 22, 0x404040);
+            }
             renderFluidIntoGui(TANK_X + i * TANK_X_OFF, TANK_Y, TANK_WIDTH, TANK_HEIGHT,
                 fluidInv.getFluidInSlot(i), fluidInv.getTankInfo(ForgeDirection.UNKNOWN)[i].capacity);
         }
         GL11.glColor4f(1F, 1F, 1F, 1F);
+    }
+
+    public String dirName(int face) {
+        return I18n.format(NameConst.GUI_FLUID_INTERFACE + "." + face);
     }
 
     @Override

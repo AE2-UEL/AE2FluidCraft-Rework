@@ -16,8 +16,6 @@ import appeng.client.texture.CableBusTextures;
 import appeng.core.settings.TickRates;
 import appeng.me.GridAccessException;
 import appeng.parts.misc.PartInterface;
-import appeng.tile.TileEvent;
-import appeng.tile.events.TileEventType;
 import appeng.tile.inventory.AppEngInternalAEInventory;
 import appeng.util.Platform;
 import appeng.util.item.AEFluidStack;
@@ -108,7 +106,7 @@ public class PartFluidInterface extends PartInterface implements IFluidHandler, 
         return config;
     }
 
-    @TileEvent( TileEventType.NETWORK_WRITE )
+    @Override
     public void writeToStream(ByteBuf data) throws IOException {
         super.writeToStream( data );
         for (int i = 0; i < config.getSizeInventory(); i++) {

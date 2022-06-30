@@ -168,7 +168,7 @@ public class TileFluidInterface extends TileInterface implements IFluidHandler, 
 
     @Override
     public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
-        return invFluids.drain(from, maxDrain, doDrain);
+        return invFluids.drain(from.ordinal(), maxDrain, doDrain);
     }
 
     @Override

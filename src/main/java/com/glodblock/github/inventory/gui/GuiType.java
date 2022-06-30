@@ -11,10 +11,7 @@ import com.glodblock.github.client.gui.container.*;
 import com.glodblock.github.common.parts.FCBasePart;
 import com.glodblock.github.common.parts.PartFluidInterface;
 import com.glodblock.github.common.parts.PartSharedFluidBus;
-import com.glodblock.github.common.tile.TileFluidInterface;
-import com.glodblock.github.common.tile.TileFluidPacketDecoder;
-import com.glodblock.github.common.tile.TileFluidPatternEncoder;
-import com.glodblock.github.common.tile.TileIngredientBuffer;
+import com.glodblock.github.common.tile.*;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -22,6 +19,18 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public enum GuiType {
+
+    OC_PATTERN_EDITOR(new TileGuiFactory<TileOCPatternEditor>(TileOCPatternEditor.class) {
+        @Override
+        protected Object createServerGui(EntityPlayer player, TileOCPatternEditor inv) {
+            return new ContainerOCPatternEditor(player.inventory, inv);
+        }
+
+        @Override
+        protected Object createClientGui(EntityPlayer player, TileOCPatternEditor inv) {
+            return new GuiOCPatternEditor(player.inventory, inv);
+        }
+    }),
 
     DUAL_INTERFACE_PART(new PartGuiFactory<PartFluidInterface>(PartFluidInterface.class) {
         @Override
