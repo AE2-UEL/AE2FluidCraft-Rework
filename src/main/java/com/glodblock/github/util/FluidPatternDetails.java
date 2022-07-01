@@ -159,12 +159,10 @@ public class FluidPatternDetails implements ICraftingPatternDetails, Comparable<
     public static NBTTagList writeStackArray(IAEItemStack[] stacks) {
         NBTTagList listTag = new NBTTagList();
         for (IAEItemStack stack : stacks) {
-            if (stack != null) {
-                // see note at top of class
-                NBTTagCompound stackTag = new NBTTagCompound();
-                stack.writeToNBT(stackTag);
-                listTag.appendTag(stackTag);
-            }
+            // see note at top of class
+            NBTTagCompound stackTag = new NBTTagCompound();
+            if (stack != null) stack.writeToNBT(stackTag);
+            listTag.appendTag(stackTag);
         }
         return listTag;
     }
