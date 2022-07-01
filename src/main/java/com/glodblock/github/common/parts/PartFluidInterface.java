@@ -328,6 +328,7 @@ public class PartFluidInterface extends PartInterface implements IFluidHandler, 
                 tickCount[i] = 1;
             }
         }
+        super.tickingRequest(node, TicksSinceLastCall);
         return TickRateModulation.URGENT;
     }
 
