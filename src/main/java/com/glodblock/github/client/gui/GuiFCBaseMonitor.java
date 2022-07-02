@@ -304,7 +304,7 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
         {
             if( s instanceof AppEngSlot)
             {
-                if( ( (Slot) s ).xDisplayPosition < 197 )
+                if( ( (Slot) s ).xDisplayPosition < 195 )
                 {
                     this.repositionSlot( (AppEngSlot) s );
                 }
@@ -581,7 +581,7 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
     {
 
         this.bindTextureBack( this.getBackground() );
-        final int x_width = 197;
+        final int x_width = 195;
         this.drawTexturedModalRect( offsetX, offsetY, 0, 0, x_width, 18 );
 
         if( this.viewCell )
