@@ -154,7 +154,7 @@ public class TileFluidInterface extends TileInterface implements IFluidHandler, 
         int ori = resource.amount;
         IAEFluidStack remove;
         if (doFill) {
-            remove = Platform.poweredInsert(energyGrid, fluidGrid, AEFluidStack.create(resource), ownActionSource);
+            remove = fluidGrid.injectItems(AEFluidStack.create(resource), Actionable.MODULATE, ownActionSource);
         } else {
             remove = fluidGrid.injectItems(AEFluidStack.create(resource), Actionable.SIMULATE, ownActionSource);
         }

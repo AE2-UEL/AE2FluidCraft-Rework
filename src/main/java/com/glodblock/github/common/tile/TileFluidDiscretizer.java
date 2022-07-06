@@ -164,7 +164,7 @@ public class TileFluidDiscretizer extends AENetworkTile implements IPriorityHost
                 return ItemFluidDrop.newAeStack(fluidGrid.injectItems(fluidStack.copy(), Actionable.SIMULATE, src));
             }
             else {
-                return ItemFluidDrop.newAeStack(Platform.poweredInsert(energyGrid, fluidGrid, fluidStack, ownActionSource));
+                return ItemFluidDrop.newAeStack(fluidGrid.injectItems(fluidStack.copy(), Actionable.MODULATE, src));
             }
         }
 
@@ -187,7 +187,7 @@ public class TileFluidDiscretizer extends AENetworkTile implements IPriorityHost
                 return ItemFluidDrop.newAeStack(fluidGrid.extractItems(fluidStack.copy(), Actionable.SIMULATE, src));
             }
             else {
-                return ItemFluidDrop.newAeStack(Platform.poweredExtraction(energyGrid, fluidGrid, fluidStack, ownActionSource));
+                return ItemFluidDrop.newAeStack(fluidGrid.extractItems(fluidStack.copy(), Actionable.MODULATE, src));
             }
         }
 
