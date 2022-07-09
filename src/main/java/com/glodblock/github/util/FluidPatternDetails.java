@@ -11,6 +11,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -87,7 +88,9 @@ public class FluidPatternDetails implements ICraftingPatternDetails, Comparable<
         if (condensed.length == 0) {
             return false;
         }
-        this.outputs = outputs;
+        this.outputs = Arrays.stream(outputs)
+                .filter(Objects::nonNull)
+                .toArray(IAEItemStack[]::new);
         this.outputsCond = condensed;
         return true;
     }
@@ -159,12 +162,11 @@ public class FluidPatternDetails implements ICraftingPatternDetails, Comparable<
     public static NBTTagList writeStackArray(IAEItemStack[] stacks) {
         NBTTagList listTag = new NBTTagList();
         for (IAEItemStack stack : stacks) {
-            if (stack != null) {
-                // see note at top of class
-                NBTTagCompound stackTag = new NBTTagCompound();
-                stack.writeToNBT(stackTag);
-                listTag.appendTag(stackTag);
-            }
+            // see note at top of class
+            NBTTagCompound stackTag = new NBTTagCompound();
+            if (stack != null) stack.writeToNBT(stackTag);
+
+            listTag.appendTag(stackTag);
         }
         return listTag;
     }
@@ -176,13 +178,13 @@ public class FluidPatternDetails implements ICraftingPatternDetails, Comparable<
         NBTTagCompound tag = Objects.requireNonNull(patternStack.getTagCompound());
         // may be possible to enter a partially-correct state if setInputs succeeds but setOutputs failed
         // but outside code should treat it as completely incorrect and not attempt to make calls
-        return setInputs(readStackArray(tag.getTagList("in", Constants.NBT.TAG_COMPOUND), 16))
-            && setOutputs(readStackArray(tag.getTagList("out", Constants.NBT.TAG_COMPOUND), 4));
+        return setInputs(readStackArray(tag.getTagList("in", Constants.NBT.TAG_COMPOUND)))
+            && setOutputs(readStackArray(tag.getTagList("out", Constants.NBT.TAG_COMPOUND)));
     }
 
-    public static IAEItemStack[] readStackArray(NBTTagList listTag, int maxCount) {
+    public static IAEItemStack[] readStackArray(NBTTagList listTag) {
         // see note at top of class
-        IAEItemStack[] stacks = new IAEItemStack[Math.min(listTag.tagCount(), maxCount)];
+        IAEItemStack[] stacks = new IAEItemStack[listTag.tagCount()];
         for (int i = 0; i < stacks.length; i++) {
             stacks[i] = AEItemStack.loadItemStackFromNBT(listTag.getCompoundTagAt(i));
         }
