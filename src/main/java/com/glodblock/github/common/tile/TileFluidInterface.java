@@ -43,6 +43,7 @@ public class TileFluidInterface extends TileInterface implements IFluidHandler, 
 
     private final boolean[] tickState = new boolean[]{true, true, true, true, true, true};
     private final int[] tickCount = new int[]{0, 0, 0, 0, 0, 0};
+    private int tickMain = 0;
 
     private IMEMonitor<IAEFluidStack> getFluidGrid() {
         try {
@@ -207,56 +208,61 @@ public class TileFluidInterface extends TileInterface implements IFluidHandler, 
     @TileEvent( TileEventType.TICK )
     public void updateTick() {
         //Very Hacky thing.
-        for (int i = 0; i < 6; i ++) {
+        if (tickMain % 20 == 0) {
+            tickMain = 0;
+            for (int i = 0; i < 6; i ++) {
 
-            FluidStack configFluid = ItemFluidPacket.getFluidStack(config.getStackInSlot(i));
-            FluidStack storedFluid = invFluids.getFluidInSlot(i) == null ? null : invFluids.getFluidInSlot(i).getFluidStack();
+                FluidStack configFluid = ItemFluidPacket.getFluidStack(config.getStackInSlot(i));
+                FluidStack storedFluid = invFluids.getFluidInSlot(i) == null ? null : invFluids.getFluidInSlot(i).getFluidStack();
 
-            if (!Util.areFluidsEqual(configFluid, storedFluid)) {
-                if (storedFluid != null) {
-                    int ori = storedFluid.amount;
-                    int filled = fill(ForgeDirection.UNKNOWN, storedFluid, false);
-                    if (ori == filled) {
-                        fill(ForgeDirection.UNKNOWN, storedFluid, true);
-                        invFluids.setFluidInSlot(i, null);
-                    }
-                    else {
-                        tickState[i] = false;
-                    }
-                }
-            }
-
-            if (configFluid != null) {
-                if (tickState[i]) {
-                    if (getFluidGrid() != null) {
-                        FluidStack configCopy = configFluid.copy();
-                        configCopy.amount = Math.min(8000, getLeftSpace(storedFluid, configCopy));
-                        IAEFluidStack fluidDrain = getFluidGrid().extractItems(AEFluidStack.create(configCopy), Actionable.MODULATE, ownActionSource);
-                        if (fluidDrain != null && fluidDrain.getStackSize() != 0) {
-                            invFluids.fill(i, fluidDrain.getFluidStack(), true);
-                        } else {
+                if (!Util.areFluidsEqual(configFluid, storedFluid)) {
+                    if (storedFluid != null) {
+                        int ori = storedFluid.amount;
+                        int filled = fill(ForgeDirection.UNKNOWN, storedFluid, false);
+                        if (ori == filled) {
+                            fill(ForgeDirection.UNKNOWN, storedFluid, true);
+                            invFluids.setFluidInSlot(i, null);
+                            tickState[i] = true;
+                        }
+                        else {
                             tickState[i] = false;
                         }
                     }
                 }
-                else if (tickCount[i] % 40 == 0) {
-                    if (getFluidGrid() != null) {
-                        FluidStack configCopy = configFluid.copy();
-                        configCopy.amount = Math.min(8000, getLeftSpace(storedFluid, configCopy));
-                        IAEFluidStack fluidDrain = getFluidGrid().extractItems(AEFluidStack.create(configCopy), Actionable.MODULATE, ownActionSource);
-                        if (fluidDrain != null && fluidDrain.getStackSize() != 0) {
-                            invFluids.fill(i, fluidDrain.getFluidStack(), true);
-                            tickState[i] = true;
+
+                if (configFluid != null) {
+                    if (tickState[i]) {
+                        if (getFluidGrid() != null) {
+                            FluidStack configCopy = configFluid.copy();
+                            configCopy.amount = Math.min(8000, getLeftSpace(storedFluid, configCopy));
+                            IAEFluidStack fluidDrain = getFluidGrid().extractItems(AEFluidStack.create(configCopy), Actionable.MODULATE, ownActionSource);
+                            if (fluidDrain != null && fluidDrain.getStackSize() != 0) {
+                                invFluids.fill(i, fluidDrain.getFluidStack(), true);
+                            } else {
+                                tickState[i] = false;
+                            }
+                        }
+                    }
+                    else if (tickCount[i] % 5 == 0) {
+                        if (getFluidGrid() != null) {
+                            FluidStack configCopy = configFluid.copy();
+                            configCopy.amount = Math.min(8000, getLeftSpace(storedFluid, configCopy));
+                            IAEFluidStack fluidDrain = getFluidGrid().extractItems(AEFluidStack.create(configCopy), Actionable.MODULATE, ownActionSource);
+                            if (fluidDrain != null && fluidDrain.getStackSize() != 0) {
+                                invFluids.fill(i, fluidDrain.getFluidStack(), true);
+                                tickState[i] = true;
+                            }
                         }
                     }
                 }
-            }
 
-            tickCount[i] ++;
-            if (tickCount[i] > 500) {
-                tickCount[i] = 1;
+                tickCount[i] ++;
+                if (tickCount[i] > 500) {
+                    tickCount[i] = 1;
+                }
             }
         }
+        tickMain ++;
     }
 
     private int getLeftSpace(FluidStack stored, FluidStack req) {
