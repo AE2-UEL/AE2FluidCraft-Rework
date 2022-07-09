@@ -5,19 +5,16 @@ import codechicken.nei.recipe.IRecipeHandler;
 import codechicken.nei.recipe.TemplateRecipeHandler;
 import com.glodblock.github.nei.object.IRecipeExtractorLegacy;
 import com.glodblock.github.nei.object.OrderStack;
-import crazypants.enderio.nei.VatRecipeHandler;
+import com.glodblock.github.util.NEIUtil;
 import forestry.core.recipes.nei.PositionedFluidTank;
 import forestry.core.recipes.nei.RecipeHandlerBase;
 import forestry.factory.recipes.nei.NEIHandlerFabricator;
 import forestry.factory.recipes.nei.NEIHandlerSqueezer;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class ForestryRecipeExtractor implements IRecipeExtractorLegacy {
 
@@ -58,7 +55,7 @@ public class ForestryRecipeExtractor implements IRecipeExtractorLegacy {
     public List<OrderStack<?>> getInputIngredients(List<PositionedStack> rawInputs, IRecipeHandler recipe, int index) {
         TemplateRecipeHandler tRecipe = (TemplateRecipeHandler) recipe;
         List<OrderStack<?>> tmp = new ArrayList<>();
-        List<PositionedStack> compressed = compress(rawInputs);
+        List<PositionedStack> compressed = NEIUtil.compress(rawInputs);
         if (tRecipe.arecipes.get(index) instanceof RecipeHandlerBase.CachedBaseRecipe) {
             tmp = getInputIngredients(compressed);
             List<PositionedFluidTank> tanks = ((RecipeHandlerBase.CachedBaseRecipe) tRecipe.arecipes.get(index)).getFluidTanks();
@@ -77,7 +74,7 @@ public class ForestryRecipeExtractor implements IRecipeExtractorLegacy {
         TemplateRecipeHandler tRecipe = (TemplateRecipeHandler) recipe;
         removeGlass(rawOutputs);
         List<OrderStack<?>> tmp = new ArrayList<>();
-        List<PositionedStack> compressed = compress(rawOutputs);
+        List<PositionedStack> compressed = NEIUtil.compress(rawOutputs);
         if (tRecipe.arecipes.get(index) instanceof RecipeHandlerBase.CachedBaseRecipe) {
             tmp = getOutputIngredients(compressed);
             List<PositionedFluidTank> tanks = ((RecipeHandlerBase.CachedBaseRecipe) tRecipe.arecipes.get(index)).getFluidTanks();
@@ -95,29 +92,6 @@ public class ForestryRecipeExtractor implements IRecipeExtractorLegacy {
             }
         }
         return tmp;
-    }
-
-    private List<PositionedStack> compress(List<PositionedStack> list) {
-        List<PositionedStack> comp = new LinkedList<>();
-        for (PositionedStack positionedStack : list) {
-            if (positionedStack == null) continue;
-            ItemStack currentStack = positionedStack.items[0].copy();
-            if (currentStack.stackSize == 0) continue;
-            boolean find = false;
-            for (PositionedStack storedStack : comp) {
-                if (storedStack == null) continue;
-                ItemStack firstStack = storedStack.items[0].copy();
-                boolean areItemStackEqual = firstStack.isItemEqual(currentStack) && ItemStack.areItemStackTagsEqual(firstStack, currentStack);
-                if (areItemStackEqual && (firstStack.stackSize + currentStack.stackSize) <= firstStack.getMaxStackSize()) {
-                    find = true;
-                    storedStack.items[0].stackSize = firstStack.stackSize + currentStack.stackSize;
-                }
-            }
-            if (!find) {
-                comp.add(positionedStack.copy());
-            }
-        }
-        return comp.stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     private void removeGlass(List<PositionedStack> list) {
