@@ -1,4 +1,4 @@
-//version: 1644894948
+//version: 1650343995
 /*
 DO NOT CHANGE THIS FILE!
 
@@ -6,12 +6,11 @@ Also, you may replace this file at any time if there is an update available.
 Please check https://github.com/GTNewHorizons/ExampleMod1.7.10/blob/main/build.gradle for updates.
 */
 
-import org.gradle.internal.logging.text.StyledTextOutput
-import org.gradle.internal.logging.text.StyledTextOutputFactory
-import org.gradle.internal.logging.text.StyledTextOutput.Style
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.gradle.internal.logging.text.StyledTextOutput.Style
+import org.gradle.internal.logging.text.StyledTextOutputFactory
 
 import java.util.concurrent.TimeUnit
 
@@ -104,6 +103,7 @@ checkPropertyExists("usesShadowedDependencies")
 checkPropertyExists("developmentEnvironmentUserName")
 
 boolean noPublishedSources = project.findProperty("noPublishedSources") ? project.noPublishedSources.toBoolean() : false
+boolean usesMixinDebug = project.findProperty('usesMixinDebug') ?: project.usesMixins.toBoolean()
 
 String javaSourceDir = "src/main/java/"
 String scalaSourceDir = "src/main/scala/"
@@ -180,6 +180,11 @@ catch (Exception ignored) {
 }
 
 // Pulls version first from the VERSION env and then git tag
+String identifiedVersion
+String versionOverride = System.getenv("VERSION") ?: null
+try {
+    identifiedVersion = versionOverride == null ? gitVersion() : versionOverride
+}
 catch (Exception ignored) {
     out.style(Style.Failure).text(
         'This mod must be version controlled by Git AND the repository must provide at least one tag,\n' +
@@ -187,11 +192,15 @@ catch (Exception ignored) {
         'clone the repository, see ').style(Style.Info).text('https://gtnh.miraheze.org/wiki/Development').style(Style.SuccessHeader).println(' for details.)'
     )
     versionOverride = 'NO-GIT-TAG-SET'
+    identifiedVersion = versionOverride
 }
-String versionTag = gitVersion().split("-")[gitVersion().split("-").length - 1]
-version = minecraftVersion + '-' + versionTag
+version = minecraftVersion + '-' + identifiedVersion
 ext {
-    modVersion = versionTag
+    modVersion = identifiedVersion
+}
+
+if(identifiedVersion == versionOverride) {
+    out.style(Style.Failure).text('Override version to ').style(Style.Identifier).text(modVersion).style(Style.Failure).println('!\7')
 }
 
 group = modGroup
@@ -205,13 +214,17 @@ else {
 def arguments = []
 def jvmArguments = []
 
-if(usesMixins.toBoolean()) {
+if (usesMixins.toBoolean()) {
     arguments += [
-            "--tweakClass org.spongepowered.asm.launch.MixinTweaker"
+        "--tweakClass org.spongepowered.asm.launch.MixinTweaker"
     ]
-    jvmArguments += [
-            "-Dmixin.debug.countInjections=true", "-Dmixin.debug.verbose=true", "-Dmixin.debug.export=true"
-    ]
+    if (usesMixinDebug.toBoolean()) {
+        jvmArguments += [
+            "-Dmixin.debug.countInjections=true",
+            "-Dmixin.debug.verbose=true",
+            "-Dmixin.debug.export=true"
+        ]
+    }
 }
 
 minecraft {
@@ -303,18 +316,23 @@ def refMap = "${tasks.compileJava.temporaryDir}" + File.separator + mixingConfig
 def mixinSrg = "${tasks.reobf.temporaryDir}" + File.separator + "mixins.srg"
 
 task generateAssets {
-    if(usesMixins.toBoolean()) {
-        getFile("/src/main/resources/mixins." + modId + ".json").text = """{
+    if (usesMixins.toBoolean()) {
+        def mixinConfigFile = getFile("/src/main/resources/mixins." + modId + ".json");
+        if (!mixinConfigFile.exists()) {
+            mixinConfigFile.text = """{
   "required": true,
   "minVersion": "0.7.11",
   "package": "${modGroup}.${mixinsPackage}",
   "plugin": "${modGroup}.${mixinPlugin}",
   "refmap": "${mixingConfigRefMap}",
   "target": "@env(DEFAULT)",
-  "compatibilityLevel": "JAVA_8"
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [],
+  "client": [],
+  "server": []
 }
-
 """
+        }
     }
 }
 
@@ -453,7 +471,7 @@ def getManifestAttributes() {
 }
 
 task sourcesJar(type: Jar) {
-    from (sourceSets.main.allJava)
+    from (sourceSets.main.allSource)
     from (file("$projectDir/LICENSE"))
     getArchiveClassifier().set('sources')
 }
@@ -508,7 +526,7 @@ task devJar(type: Jar) {
 }
 
 task apiJar(type: Jar) {
-    from (sourceSets.main.allJava) {
+    from (sourceSets.main.allSource) {
         include modGroup.toString().replaceAll("\\.", "/") + "/" + apiPackage.toString().replaceAll("\\.", "/") + '/**'
     }
 
@@ -550,7 +568,7 @@ publishing {
                 artifact source: shadowJar, classifier: ""
             }
             if(!noPublishedSources) {
-                artifact source: sourcesJar, classifier: "src"
+                artifact source: sourcesJar, classifier: "sources"
             }
             artifact source: usesShadowedDependencies.toBoolean() ? shadowDevJar : devJar, classifier: "dev"
             if (apiPackage) {
@@ -560,7 +578,7 @@ publishing {
             groupId = System.getenv("ARTIFACT_GROUP_ID") ?: "com.github.GTNewHorizons"
             artifactId = System.getenv("ARTIFACT_ID") ?: project.name
             // Using the identified version, not project.version as it has the prepended 1.7.10
-            version = System.getenv("RELEASE_VERSION") ?: versionTag
+            version = System.getenv("RELEASE_VERSION") ?: identifiedVersion
 
             // remove extra garbage from minecraft and minecraftDeps configuration
             pom.withXml {
@@ -597,8 +615,44 @@ publishing {
 // Updating
 task updateBuildScript {
     doLast {
+        if (performBuildScriptUpdate(projectDir.toString())) return
+
         print("Build script already up-to-date!")
     }
+}
+
+if (isNewBuildScriptVersionAvailable(projectDir.toString())) {
+    if (autoUpdateBuildScript.toBoolean()) {
+        performBuildScriptUpdate(projectDir.toString())
+    } else {
+        out.style(Style.SuccessHeader).println("Build script update available! Run 'gradle updateBuildScript'")
+    }
+}
+
+static URL availableBuildScriptUrl() {
+    new URL("https://raw.githubusercontent.com/GTNewHorizons/ExampleMod1.7.10/main/build.gradle")
+}
+
+boolean performBuildScriptUpdate(String projectDir) {
+    if (isNewBuildScriptVersionAvailable(projectDir)) {
+        def buildscriptFile = getFile("build.gradle")
+        availableBuildScriptUrl().withInputStream { i -> buildscriptFile.withOutputStream { it << i } }
+        out.style(Style.Success).print("Build script updated. Please REIMPORT the project or RESTART your IDE!")
+        return true
+    }
+    return false
+}
+
+boolean isNewBuildScriptVersionAvailable(String projectDir) {
+    Map parameters = ["connectTimeout": 2000, "readTimeout": 2000]
+
+    String currentBuildScript = getFile("build.gradle").getText()
+    String currentBuildScriptHash = getVersionHash(currentBuildScript)
+    String availableBuildScript = availableBuildScriptUrl().newInputStream(parameters).getText()
+    String availableBuildScriptHash = getVersionHash(availableBuildScript)
+
+    boolean isUpToDate = currentBuildScriptHash.empty || availableBuildScriptHash.empty || currentBuildScriptHash == availableBuildScriptHash
+    return !isUpToDate
 }
 
 static String getVersionHash(String buildScriptContent) {

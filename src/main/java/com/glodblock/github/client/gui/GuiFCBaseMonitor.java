@@ -31,12 +31,9 @@ import appeng.util.Platform;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.gui.container.FCBaseMonitorContain;
 import com.glodblock.github.client.gui.container.FCBasePartContainer;
-import com.glodblock.github.common.parts.PartFluidPatternTerminal;
-import com.glodblock.github.common.parts.PartFluidPatternTerminalEx;
 import com.glodblock.github.network.CPacketInventoryAction;
 import com.glodblock.github.util.Ae2ReflectClient;
 import com.glodblock.github.util.ModAndClassUtil;
-import com.glodblock.github.util.NameConst;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
@@ -94,13 +91,8 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
         this.setScrollBar( scrollbar );
         this.repo = new ItemRepo( scrollbar, this );
 
-        this.xSize = 185;
+        this.xSize = 195;
         this.ySize = 204;
-
-        if( te instanceof IViewCellStorage)
-        {
-            this.xSize += 33;
-        }
 
         this.standardSize = this.xSize;
 
@@ -312,7 +304,7 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
         {
             if( s instanceof AppEngSlot)
             {
-                if( ( (Slot) s ).xDisplayPosition < 197 )
+                if( ( (Slot) s ).xDisplayPosition < 195 )
                 {
                     this.repositionSlot( (AppEngSlot) s );
                 }
@@ -589,7 +581,7 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
     {
 
         this.bindTextureBack( this.getBackground() );
-        final int x_width = 197;
+        final int x_width = 195;
         this.drawTexturedModalRect( offsetX, offsetY, 0, 0, x_width, 18 );
 
         if( this.viewCell )
@@ -759,4 +751,31 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
     {
         return searchField.isMouseIn(x,y);
     }
+
+    public boolean hideItemPanelSlot(int tx, int ty, int tw, int th)
+    {
+
+        if (this.viewCell) {
+            int rw = 33;
+            int rh = 14 + myCurrentViewCells.length * 18;
+
+            if (rw <= 0 || rh <= 0 || tw <= 0 || th <= 0) {
+                return false;
+            }
+
+            int rx = this.guiLeft + this.xSize;
+            int ry = this.guiTop + 0;
+
+            rw += rx;
+            rh += ry;
+            tw += tx;
+            th += ty;
+
+            //      overflow || intersect
+            return (rw < rx || rw > tx) && (rh < ry || rh > ty) && (tw < tx || tw > rx) && (th < ty || th > ry);
+        }
+
+        return false;
+    }
+
 }

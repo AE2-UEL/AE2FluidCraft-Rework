@@ -18,6 +18,7 @@ public final class ModAndClassUtil {
     public static boolean EIO = false;
     public static boolean FTR = false;
     public static boolean OC = false;
+    public static boolean GTPP = false;
 
     public static boolean isDoubleButton;
     public static boolean isSaveText;
@@ -98,8 +99,7 @@ public final class ModAndClassUtil {
             FTR = true;
         if (Loader.isModLoaded("OpenComputers"))
             OC = true;
+        if (Loader.isModLoaded("miscutils"))
+            GTPP = true;
     }
-
-
-
 }
