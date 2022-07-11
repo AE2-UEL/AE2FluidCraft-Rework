@@ -29,7 +29,7 @@ public class ContainerFluidInterface extends AEBaseContainer implements IOptiona
         final int y = 35;
         final int x = 35;
         for (int i = 0; i < 6; i++) {
-            addSlotToContainer(new OptionalFluidSlotFakeTypeOnly(inv, this, i, x, y, i, 0, 0));
+            addSlotToContainer(new OptionalFluidSlotFakeTypeOnly(inv, tile.getDualityFluid().getConfig(), this, i, x, y, i, 0, 0));
         }
         bindPlayerInventory(ipl, 0, 149);
     }
@@ -41,7 +41,7 @@ public class ContainerFluidInterface extends AEBaseContainer implements IOptiona
         final int y = 35;
         final int x = 35;
         for (int i = 0; i < 6; i++) {
-            addSlotToContainer(new OptionalFluidSlotFakeTypeOnly(inv, this, i, x, y, i, 0, 0));
+            addSlotToContainer(new OptionalFluidSlotFakeTypeOnly(inv, tile.getDualityFluid().getConfig(), this, i, x, y, i, 0, 0));
         }
         bindPlayerInventory(ipl, 0, 149);
     }

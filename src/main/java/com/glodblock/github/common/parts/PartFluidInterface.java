@@ -4,6 +4,9 @@ import appeng.api.config.Actionable;
 import appeng.api.config.Upgrades;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.energy.IEnergyGrid;
+import appeng.api.networking.events.MENetworkChannelsChanged;
+import appeng.api.networking.events.MENetworkEventSubscribe;
+import appeng.api.networking.events.MENetworkPowerStatusChange;
 import appeng.api.networking.security.BaseActionSource;
 import appeng.api.networking.security.MachineSource;
 import appeng.api.networking.storage.IStorageGrid;
@@ -27,6 +30,7 @@ import com.glodblock.github.inventory.IAEFluidTank;
 import com.glodblock.github.inventory.InventoryHandler;
 import com.glodblock.github.inventory.gui.GuiType;
 import com.glodblock.github.util.BlockPos;
+import com.glodblock.github.util.DualityFluidInterface;
 import com.glodblock.github.util.Util;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.relauncher.Side;
@@ -49,11 +53,8 @@ import java.util.Objects;
 public class PartFluidInterface extends PartInterface implements IFluidHandler, IAEFluidInventory {
 
     private final BaseActionSource ownActionSource = new MachineSource(this);
-    private final AEFluidInventory invFluids = new AEFluidInventory(this, 6, 16000);
     private final AppEngInternalAEInventory config = new AppEngInternalAEInventory( this, 6 );
-
-    private final boolean[] tickState = new boolean[]{true, true, true, true, true, true};
-    private final int[] tickCount = new int[]{0, 0, 0, 0, 0, 0};
+    private final DualityFluidInterface fluidDuality = new DualityFluidInterface(this.getProxy(), this);
 
     public PartFluidInterface(ItemStack is) {
         super(is);
@@ -98,29 +99,62 @@ public class PartFluidInterface extends PartInterface implements IFluidHandler, 
         rh.renderInventoryBox( renderer );
     }
 
+    @MENetworkEventSubscribe
+    public void stateChange(final MENetworkChannelsChanged c) {
+        fluidDuality.onChannelStateChange(c);
+    }
+
+    @MENetworkEventSubscribe
+    public void stateChange(final MENetworkPowerStatusChange c) {
+        fluidDuality.onPowerStateChange(c);
+    }
+
+    @Override
+    public void gridChanged() {
+        super.gridChanged();
+        fluidDuality.gridChanged();
+    }
+
+    public DualityFluidInterface getDualityFluid() {
+        return fluidDuality;
+    }
+
     public AEFluidInventory getInternalFluid() {
-        return invFluids;
+        return fluidDuality.getTanks();
     }
 
     public AppEngInternalAEInventory getConfig() {
+        for (int i = 0; i < fluidDuality.getConfig().getSlots(); i ++) {
+            IAEFluidStack fluid = fluidDuality.getConfig().getFluidInSlot(i);
+            if (fluid == null) {
+                config.setInventorySlotContents(i, null);
+            }
+            else {
+                config.setInventorySlotContents(i, ItemFluidPacket.newDisplayStack(fluid.getFluidStack()));
+            }
+        }
         return config;
     }
 
     @Override
     public void writeToStream(ByteBuf data) throws IOException {
-        super.writeToStream( data );
+        super.writeToStream(data);
         for (int i = 0; i < config.getSizeInventory(); i++) {
             ByteBufUtils.writeItemStack(data, config.getStackInSlot(i));
+            for (int j = 0; j < config.getSizeInventory(); j ++) {
+                FluidStack fluid = ItemFluidPacket.getFluidStack(config.getStackInSlot(j));
+                fluidDuality.getConfig().setFluidInSlot(j, fluidDuality.getStandardFluid(fluid));
+            }
         }
         int fluidMask = 0;
-        for (int i = 0; i < invFluids.getSlots(); i++) {
-            if (invFluids.getFluidInSlot(i) != null) {
+        for (int i = 0; i < getInternalFluid().getSlots(); i++) {
+            if (getInternalFluid().getFluidInSlot(i) != null) {
                 fluidMask |= 1 << i;
             }
         }
         data.writeByte(fluidMask);
-        for (int i = 0; i < invFluids.getSlots(); i++) {
-            IAEFluidStack fluid = invFluids.getFluidInSlot(i);
+        for (int i = 0; i < getInternalFluid().getSlots(); i++) {
+            IAEFluidStack fluid = getInternalFluid().getFluidInSlot(i);
             if (fluid != null) {
                 fluid.writeToPacket(data);
             }
@@ -137,20 +171,24 @@ public class PartFluidInterface extends PartInterface implements IFluidHandler, 
                 config.setInventorySlotContents(i, stack);
                 changed = true;
             }
+            for (int j = 0; j < config.getSizeInventory(); j ++) {
+                FluidStack fluid = ItemFluidPacket.getFluidStack(config.getStackInSlot(j));
+                fluidDuality.getConfig().setFluidInSlot(j, fluidDuality.getStandardFluid(fluid));
+            }
         }
         int fluidMask = data.readByte();
-        for (int i = 0; i < invFluids.getSlots(); i++) {
+        for (int i = 0; i < getInternalFluid().getSlots(); i++) {
             if ((fluidMask & (1 << i)) != 0) {
                 IAEFluidStack fluid = AEFluidStack.loadFluidStackFromPacket(data);
                 if (fluid != null) { // this shouldn't happen, but better safe than sorry
-                    IAEFluidStack origFluid = invFluids.getFluidInSlot(i);
+                    IAEFluidStack origFluid = getInternalFluid().getFluidInSlot(i);
                     if (!fluid.equals(origFluid) || fluid.getStackSize() != origFluid.getStackSize()) {
-                        invFluids.setFluidInSlot(i, fluid);
+                        getInternalFluid().setFluidInSlot(i, fluid);
                         changed = true;
                     }
                 }
-            } else if (invFluids.getFluidInSlot(i) != null) {
-                invFluids.setFluidInSlot(i, null);
+            } else if (getInternalFluid().getFluidInSlot(i) != null) {
+                getInternalFluid().setFluidInSlot(i, null);
                 changed = true;
             }
         }
@@ -158,17 +196,21 @@ public class PartFluidInterface extends PartInterface implements IFluidHandler, 
     }
 
     @Override
-    public void readFromNBT( NBTTagCompound extra ) {
-        super.readFromNBT( extra );
-        config.readFromNBT(extra, "ConfigInv");
-        invFluids.readFromNBT(extra, "FluidInv");
+    public void readFromNBT( NBTTagCompound data ) {
+        super.readFromNBT( data );
+        config.readFromNBT(data, "ConfigInv");
+        for (int i = 0; i < config.getSizeInventory(); i ++) {
+            FluidStack fluid = ItemFluidPacket.getFluidStack(config.getStackInSlot(i));
+            fluidDuality.getConfig().setFluidInSlot(i, fluidDuality.getStandardFluid(fluid));
+        }
+        getInternalFluid().readFromNBT(data, "FluidInv");
     }
 
     @Override
-    public void writeToNBT( NBTTagCompound extra ) {
-        super.writeToNBT(extra);
-        config.writeToNBT(extra, "ConfigInv");
-        invFluids.writeToNBT(extra, "FluidInv");
+    public void writeToNBT( NBTTagCompound data ) {
+        super.writeToNBT(data);
+        config.writeToNBT(data, "ConfigInv");
+        getInternalFluid().writeToNBT(data, "FluidInv");
     }
 
     @Override
@@ -211,12 +253,12 @@ public class PartFluidInterface extends PartInterface implements IFluidHandler, 
 
     @Override
     public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
-        return invFluids.drain(from, resource, doDrain);
+        return fluidDuality.drain(from, resource, doDrain);
     }
 
     @Override
     public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
-        return invFluids.drain(from, maxDrain, doDrain);
+        return fluidDuality.drain(from, maxDrain, doDrain);
     }
 
     @Override
@@ -231,7 +273,7 @@ public class PartFluidInterface extends PartInterface implements IFluidHandler, 
 
     @Override
     public FluidTankInfo[] getTankInfo(ForgeDirection from) {
-        return invFluids.getTankInfo(from);
+        return fluidDuality.getTankInfo(from);
     }
 
     @Override
@@ -252,93 +294,43 @@ public class PartFluidInterface extends PartInterface implements IFluidHandler, 
     public void onFluidInventoryChanged(IAEFluidTank inv, int slot) {
         saveChanges();
         getTileEntity().markDirty();
+        fluidDuality.onFluidInventoryChanged(inv, slot);
     }
 
     public void setConfig(int id, IAEFluidStack fluid) {
         if (id >= 0 && id < 6) {
             config.setInventorySlotContents(id, ItemFluidPacket.newDisplayStack(fluid == null ? null : fluid.getFluidStack()));
+            fluidDuality.getConfig().setFluidInSlot(id, fluidDuality.getStandardFluid(fluid));
         }
     }
 
     public void setFluidInv(int id, IAEFluidStack fluid) {
         if (id >= 0 && id < 6) {
-            invFluids.setFluidInSlot(id, fluid);
+            getInternalFluid().setFluidInSlot(id, fluid);
         }
     }
 
     @Override
     public TickingRequest getTickingRequest( final IGridNode node )
     {
-        return new TickingRequest( TickRates.Interface.getMin(), TickRates.Interface.getMax(), false, true );
+        TickingRequest item = super.getTickingRequest(node);
+        TickingRequest fluid = fluidDuality.getTickingRequest(node);
+        return new TickingRequest(
+            Math.min(item.minTickRate, fluid.minTickRate),
+            Math.max(item.maxTickRate, fluid.maxTickRate),
+            item.isSleeping && fluid.isSleeping,
+            true);
     }
 
     @Override
     public TickRateModulation tickingRequest(IGridNode node, int TicksSinceLastCall) {
-        //Very Hacky thing.
-        if (!isActive()) {
-            return TickRateModulation.SLEEP;
+        TickRateModulation item = super.tickingRequest(node, TicksSinceLastCall);
+        TickRateModulation fluid = fluidDuality.tickingRequest(node, TicksSinceLastCall);
+        if (item.ordinal() >= fluid.ordinal()) {
+            return item;
+        } else {
+            return fluid;
         }
-        for (int i = 0; i < 6; i ++) {
-
-            FluidStack configFluid = ItemFluidPacket.getFluidStack(config.getStackInSlot(i));
-            FluidStack storedFluid = invFluids.getFluidInSlot(i) == null ? null : invFluids.getFluidInSlot(i).getFluidStack();
-
-            if (!Util.areFluidsEqual(configFluid, storedFluid)) {
-                if (storedFluid != null) {
-                    int ori = storedFluid.amount;
-                    int filled = fill(ForgeDirection.UNKNOWN, storedFluid, false);
-                    if (ori == filled) {
-                        fill(ForgeDirection.UNKNOWN, storedFluid, true);
-                        invFluids.setFluidInSlot(i, null);
-                    }
-                    else {
-                        tickState[i] = false;
-                    }
-                }
-            }
-
-            if (configFluid != null) {
-                if (tickState[i]) {
-                    if (getFluidGrid() != null) {
-                        FluidStack configCopy = configFluid.copy();
-                        configCopy.amount = Math.min(8000, getLeftSpace(storedFluid, configCopy));
-                        IAEFluidStack fluidDrain = getFluidGrid().extractItems(AEFluidStack.create(configCopy), Actionable.MODULATE, ownActionSource);
-                        if (fluidDrain != null && fluidDrain.getStackSize() != 0) {
-                            invFluids.fill(i, fluidDrain.getFluidStack(), true);
-                        } else {
-                            tickState[i] = false;
-                        }
-                    }
-                }
-                else if (tickCount[i] % 40 == 0) {
-                    if (getFluidGrid() != null) {
-                        FluidStack configCopy = configFluid.copy();
-                        configCopy.amount = Math.min(8000, getLeftSpace(storedFluid, configCopy));
-                        IAEFluidStack fluidDrain = getFluidGrid().extractItems(AEFluidStack.create(configCopy), Actionable.MODULATE, ownActionSource);
-                        if (fluidDrain != null && fluidDrain.getStackSize() != 0) {
-                            invFluids.fill(i, fluidDrain.getFluidStack(), true);
-                            tickState[i] = true;
-                        }
-                    }
-                }
-            }
-
-            tickCount[i] ++;
-            if (tickCount[i] > 500) {
-                tickCount[i] = 1;
-            }
-        }
-        super.tickingRequest(node, TicksSinceLastCall);
-        return TickRateModulation.URGENT;
     }
 
-    private int getLeftSpace(FluidStack stored, FluidStack req) {
-        if (stored == null) {
-            return 16000;
-        }
-        if (!Util.areFluidsEqual(stored, req)) {
-            return 0;
-        }
-        return 16000 - stored.amount;
-    }
 }

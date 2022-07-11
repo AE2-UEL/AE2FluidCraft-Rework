@@ -131,11 +131,6 @@ public class TileFluidDiscretizer extends AENetworkTile implements IPriorityHost
         updateState();
     }
 
-    private boolean checkDiscreatizer() {
-        int amount = getProxy().getNode().getGrid().getMachines(this.getClass()).size();
-        return amount <= 1;
-    }
-
     private class FluidDiscretizingInventory implements IMEInventory<IAEItemStack>, IMEMonitorHandlerReceiver<IAEFluidStack> {
 
         private final MEInventoryHandler<IAEItemStack> invHandler = new MEInventoryHandler<>(this, getChannel());
