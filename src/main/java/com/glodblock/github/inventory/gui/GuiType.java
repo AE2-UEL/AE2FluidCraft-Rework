@@ -3,13 +3,15 @@ package com.glodblock.github.inventory.gui;
 import appeng.api.storage.ITerminalHost;
 import appeng.container.implementations.ContainerCraftAmount;
 import appeng.container.implementations.ContainerCraftingStatus;
+import appeng.container.implementations.ContainerInterface;
+import appeng.container.implementations.ContainerPriority;
+import appeng.helpers.IPriorityHost;
 import com.glodblock.github.client.gui.*;
 import com.glodblock.github.client.gui.container.*;
 import com.glodblock.github.common.parts.FCBasePart;
+import com.glodblock.github.common.parts.PartFluidInterface;
 import com.glodblock.github.common.parts.PartSharedFluidBus;
-import com.glodblock.github.common.tile.TileFluidPacketDecoder;
-import com.glodblock.github.common.tile.TileFluidPatternEncoder;
-import com.glodblock.github.common.tile.TileIngredientBuffer;
+import com.glodblock.github.common.tile.*;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -17,6 +19,90 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public enum GuiType {
+
+    OC_PATTERN_EDITOR(new TileGuiFactory<TileOCPatternEditor>(TileOCPatternEditor.class) {
+        @Override
+        protected Object createServerGui(EntityPlayer player, TileOCPatternEditor inv) {
+            return new ContainerOCPatternEditor(player.inventory, inv);
+        }
+
+        @Override
+        protected Object createClientGui(EntityPlayer player, TileOCPatternEditor inv) {
+            return new GuiOCPatternEditor(player.inventory, inv);
+        }
+    }),
+
+    DUAL_INTERFACE_PART(new PartGuiFactory<PartFluidInterface>(PartFluidInterface.class) {
+        @Override
+        protected Object createServerGui(EntityPlayer player, PartFluidInterface inv) {
+            return new ContainerInterface(player.inventory, inv);
+        }
+
+        @Override
+        protected Object createClientGui(EntityPlayer player, PartFluidInterface inv) {
+            return new GuiDualInterface(player.inventory, inv);
+        }
+    }),
+
+    DUAL_INTERFACE_FLUID_PART(new PartGuiFactory<PartFluidInterface>(PartFluidInterface.class) {
+        @Override
+        protected Object createServerGui(EntityPlayer player, PartFluidInterface inv) {
+            return new ContainerFluidInterface(player.inventory, inv);
+        }
+
+        @Override
+        protected Object createClientGui(EntityPlayer player, PartFluidInterface inv) {
+            return new GuiFluidInterface(player.inventory, inv);
+        }
+    }),
+
+    DUAL_INTERFACE(new TileGuiFactory<TileFluidInterface>(TileFluidInterface.class) {
+        @Override
+        protected Object createServerGui(EntityPlayer player, TileFluidInterface inv) {
+            return new ContainerInterface(player.inventory, inv);
+        }
+
+        @Override
+        protected Object createClientGui(EntityPlayer player, TileFluidInterface inv) {
+            return new GuiDualInterface(player.inventory, inv);
+        }
+    }),
+
+    DUAL_INTERFACE_FLUID(new TileGuiFactory<TileFluidInterface>(TileFluidInterface.class) {
+        @Override
+        protected Object createServerGui(EntityPlayer player, TileFluidInterface inv) {
+            return new ContainerFluidInterface(player.inventory, inv);
+        }
+
+        @Override
+        protected Object createClientGui(EntityPlayer player, TileFluidInterface inv) {
+            return new GuiFluidInterface(player.inventory, inv);
+        }
+    }),
+
+    DUAL_INTERFACE_PRIORITY_PART(new PartGuiFactory<IPriorityHost>(IPriorityHost.class) {
+        @Override
+        protected Object createServerGui(EntityPlayer player, IPriorityHost inv) {
+            return new ContainerPriority(player.inventory, inv);
+        }
+
+        @Override
+        protected Object createClientGui(EntityPlayer player, IPriorityHost inv) {
+            return new GuiFCPriority(player.inventory, inv);
+        }
+    }),
+
+    DUAL_INTERFACE_PRIORITY(new TileGuiFactory<IPriorityHost>(IPriorityHost.class) {
+        @Override
+        protected Object createServerGui(EntityPlayer player, IPriorityHost inv) {
+            return new ContainerPriority(player.inventory, inv);
+        }
+
+        @Override
+        protected Object createClientGui(EntityPlayer player, IPriorityHost inv) {
+            return new GuiFCPriority(player.inventory, inv);
+        }
+    }),
 
     FLUID_BUS_IO(new PartGuiFactory<PartSharedFluidBus>(PartSharedFluidBus.class) {
         @Override

@@ -87,6 +87,10 @@ public abstract class PartSharedFluidBus extends PartUpgradeable implements IGri
     @Override
     public boolean onPartActivate(final EntityPlayer player, final Vec3 pos)
     {
+        if( player.isSneaking() )
+        {
+            return false;
+        }
         if( Platform.isServer() )
         {
             InventoryHandler.openGui(player, this.getHost().getTile().getWorldObj(), new BlockPos(this.getHost().getTile()), Objects.requireNonNull(Util.from(this.getSide())), GuiType.FLUID_BUS_IO);

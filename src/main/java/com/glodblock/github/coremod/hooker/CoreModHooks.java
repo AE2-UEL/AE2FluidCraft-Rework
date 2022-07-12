@@ -98,4 +98,11 @@ public class CoreModHooks {
         else return aeStack.getItemStack();
     }
 
+    public static long getFluidSize(IAEItemStack aeStack) {
+        if (aeStack.getItemStack() != null && aeStack.getItemStack().getItem() instanceof ItemFluidDrop) {
+            return (long) Math.max(aeStack.getStackSize() / 1000D, 1);
+        }
+        else return aeStack.getStackSize();
+    }
+
 }

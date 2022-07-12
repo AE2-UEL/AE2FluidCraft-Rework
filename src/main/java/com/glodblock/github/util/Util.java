@@ -116,4 +116,9 @@ public final class Util {
         return fluid;
     }
 
+    public static boolean areFluidsEqual(FluidStack fluid1, FluidStack fluid2) {
+        if (fluid1 == null || fluid2 == null) return false;
+        return fluid1.isFluidEqual(fluid2);
+    }
+
 }

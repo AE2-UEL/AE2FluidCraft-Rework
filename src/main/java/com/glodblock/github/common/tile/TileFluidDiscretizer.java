@@ -131,11 +131,6 @@ public class TileFluidDiscretizer extends AENetworkTile implements IPriorityHost
         updateState();
     }
 
-    private boolean checkDiscreatizer() {
-        int amount = getProxy().getNode().getGrid().getMachines(this.getClass()).size();
-        return amount <= 1;
-    }
-
     private class FluidDiscretizingInventory implements IMEInventory<IAEItemStack>, IMEMonitorHandlerReceiver<IAEFluidStack> {
 
         private final MEInventoryHandler<IAEItemStack> invHandler = new MEInventoryHandler<>(this, getChannel());
@@ -164,7 +159,7 @@ public class TileFluidDiscretizer extends AENetworkTile implements IPriorityHost
                 return ItemFluidDrop.newAeStack(fluidGrid.injectItems(fluidStack.copy(), Actionable.SIMULATE, src));
             }
             else {
-                return ItemFluidDrop.newAeStack(Platform.poweredInsert(energyGrid, fluidGrid, fluidStack, ownActionSource));
+                return ItemFluidDrop.newAeStack(fluidGrid.injectItems(fluidStack.copy(), Actionable.MODULATE, src));
             }
         }
 
@@ -187,7 +182,7 @@ public class TileFluidDiscretizer extends AENetworkTile implements IPriorityHost
                 return ItemFluidDrop.newAeStack(fluidGrid.extractItems(fluidStack.copy(), Actionable.SIMULATE, src));
             }
             else {
-                return ItemFluidDrop.newAeStack(Platform.poweredExtraction(energyGrid, fluidGrid, fluidStack, ownActionSource));
+                return ItemFluidDrop.newAeStack(fluidGrid.extractItems(fluidStack.copy(), Actionable.MODULATE, src));
             }
         }
 

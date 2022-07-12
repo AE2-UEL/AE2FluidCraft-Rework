@@ -43,10 +43,6 @@ public class TileFluidPatternEncoder extends AEBaseTile implements IAEAppEngInve
 
     @Override
     public void getDrops(final World w, final int x, final int y, final int z, final List<ItemStack> drops ) {
-        getDrops(w, new BlockPos(x, y, z), drops);
-    }
-
-    public void getDrops(World world, BlockPos pos, List<ItemStack> drops) {
         for (ItemStack stack : patternInv) {
             if (stack != null) {
                 drops.add(stack);

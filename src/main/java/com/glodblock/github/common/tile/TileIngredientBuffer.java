@@ -149,6 +149,6 @@ public class TileIngredientBuffer extends AEBaseInvTile implements IAEFluidInven
 
     @Override
     public FluidTankInfo[] getTankInfo(ForgeDirection from) {
-        return invFluids.getTankInfo(ForgeDirection.UNKNOWN);
+        return invFluids.getTankInfo(from);
     }
 }

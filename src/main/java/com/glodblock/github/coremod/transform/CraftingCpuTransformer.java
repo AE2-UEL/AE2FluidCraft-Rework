@@ -6,7 +6,7 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-public class CraftingCpuTransformer  extends FCClassTransformer.ClassMapper {
+public class CraftingCpuTransformer extends FCClassTransformer.ClassMapper {
 
     public static final CraftingCpuTransformer INSTANCE = new CraftingCpuTransformer();
 
@@ -38,6 +38,7 @@ public class CraftingCpuTransformer  extends FCClassTransformer.ClassMapper {
     private static class TransformExecuteCrafting extends MethodVisitor {
 
         private boolean gotInventory = false;
+        private int reach_stack = 0;
 
         TransformExecuteCrafting(int api, MethodVisitor mv) {
             super(api, mv);
@@ -59,7 +60,27 @@ public class CraftingCpuTransformer  extends FCClassTransformer.ClassMapper {
         }
 
         @Override
+        public void visitJumpInsn(int opcode, Label label) {
+            if (opcode == Opcodes.IFNULL && reach_stack == 0) {
+                reach_stack = 1;
+            }
+            super.visitJumpInsn(opcode, label);
+        }
+
+        @Override
         public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
+            if (reach_stack == 1) {
+                if (opcode == Opcodes.INVOKEINTERFACE
+                    && owner.equals("appeng/api/storage/data/IAEItemStack") && name.equals("getStackSize")) {
+                    reach_stack = 2;
+                    super.visitMethodInsn(Opcodes.INVOKESTATIC,
+                        "com/glodblock/github/coremod/hooker/CoreModHooks",
+                        "getFluidSize",
+                        "(Lappeng/api/storage/data/IAEItemStack;)J",
+                        false);
+                    return;
+                }
+            }
             super.visitMethodInsn(opcode, owner, name, desc, itf);
             if (gotInventory) {
                 if (opcode == Opcodes.INVOKESTATIC

@@ -1,6 +1,5 @@
 package com.glodblock.github.inventory.gui;
 
-import com.glodblock.github.util.Ae2Reflect;
 import com.glodblock.github.util.Ae2ReflectClient;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.inventory.GuiContainer;
