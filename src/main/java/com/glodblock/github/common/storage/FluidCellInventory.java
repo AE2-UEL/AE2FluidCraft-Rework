@@ -11,6 +11,8 @@ import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IItemList;
 import appeng.util.Platform;
 import appeng.util.item.AEFluidStack;
+import com.glodblock.github.common.Config;
+import com.glodblock.github.util.ModAndClassUtil;
 import com.glodblock.github.util.Util;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;

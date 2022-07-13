@@ -23,6 +23,7 @@ import com.glodblock.github.common.storage.CellType;
 import com.glodblock.github.common.storage.IFluidCellInventory;
 import com.glodblock.github.common.storage.IFluidCellInventoryHandler;
 import com.glodblock.github.common.storage.IStorageFluidCell;
+import com.glodblock.github.util.ModAndClassUtil;
 import com.glodblock.github.util.NameConst;
 import com.google.common.base.Optional;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -157,6 +158,9 @@ public class ItemBasicFluidStorageCell extends AEBaseItem implements IStorageFlu
 
     @Override
     public boolean isBlackListed(ItemStack cellItem, IAEFluidStack requestedAddition) {
+        if (Config.blacklistEssentiaGas && ModAndClassUtil.ThE && requestedAddition != null) {
+            return ModAndClassUtil.essentiaGas.isInstance(requestedAddition.getFluid());
+        }
         return false;
     }
 
