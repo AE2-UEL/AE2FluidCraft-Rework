@@ -9,6 +9,7 @@ public class NameConst {
     public static final String BLOCK_FLUID_PACKET_DECODER = "fluid_packet_decoder";
     public static final String BLOCK_FLUID_INTERFACE = "fluid_interface";
     public static final String BLOCK_INGREDIENT_BUFFER = "ingredient_buffer";
+    public static final String BLOCK_LARGE_INGREDIENT_BUFFER = "large_ingredient_buffer";
     public static final String BLOCK_OC_PATTERN_EDITOR = "oc_pattern_editor";
 
     public static final String ITEM_FLUID_DROP = "fluid_drop";
@@ -37,6 +38,7 @@ public class NameConst {
     public static final String GUI_FLUID_PATTERN_ENCODER = GUI_KEY + BLOCK_FLUID_PATTERN_ENCODER;
     public static final String GUI_FLUID_PACKET_DECODER = GUI_KEY + BLOCK_FLUID_PACKET_DECODER;
     public static final String GUI_INGREDIENT_BUFFER = GUI_KEY + BLOCK_INGREDIENT_BUFFER;
+    public static final String GUI_LARGE_INGREDIENT_BUFFER = GUI_KEY + BLOCK_LARGE_INGREDIENT_BUFFER;
     public static final String GUI_FLUID_INTERFACE = GUI_KEY + BLOCK_FLUID_INTERFACE;
     public static final String GUI_OC_PATTERN_EDITOR = GUI_KEY + BLOCK_OC_PATTERN_EDITOR;
 

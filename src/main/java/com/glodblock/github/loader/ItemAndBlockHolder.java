@@ -29,6 +29,7 @@ public class ItemAndBlockHolder {
     public static BlockFluidPacketDecoder DECODER = new BlockFluidPacketDecoder().register();
     public static BlockFluidInterface INTERFACE = new BlockFluidInterface().register();
     public static BlockIngredientBuffer BUFFER = new BlockIngredientBuffer().register();
+    public static BlockLargeIngredientBuffer LARGE_BUFFER = new BlockLargeIngredientBuffer().register();
     public static BlockOCPatternEditor OC_EDITOR = new BlockOCPatternEditor().register();
 
     public static void loadSetting() {
