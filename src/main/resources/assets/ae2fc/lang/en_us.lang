@@ -4,6 +4,7 @@ tile.ae2fc:fluid_discretizer.name=ME Fluid Discretizer
 tile.ae2fc:fluid_pattern_encoder.name=Fluid Pattern Encoder
 tile.ae2fc:fluid_packet_decoder.name=ME Fluid Packet Decoder
 tile.ae2fc:ingredient_buffer.name=Ingredient Buffer
+tile.ae2fc:large_ingredient_buffer.name=Large Ingredient Buffer
 tile.ae2fc:burette.name=Precision Burette
 tile.ae2fc:dual_interface.name=ME Dual Interface
 tile.ae2fc:part_dual_interface.name=ME Dual Interface
@@ -19,6 +20,7 @@ item.ae2fc:part_fluid_pattern_ex_terminal.name=ME Extended Processing Fluid Patt
 ae2fc.gui.fluid_pattern_encoder=Fluid Pattern Encoder
 ae2fc.gui.fluid_packet_decoder=ME Fluid Packet Decoder
 ae2fc.gui.ingredient_buffer=Ingredient Buffer
+ae2fc.gui.large_ingredient_buffer=Large Ingredient Buffer
 ae2fc.gui.burette=Precision Burette
 ae2fc.gui.fluid_level_maintainer=ME Fluid Level Maintainer
 

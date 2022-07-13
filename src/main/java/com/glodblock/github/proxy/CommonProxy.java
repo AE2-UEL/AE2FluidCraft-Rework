@@ -49,6 +49,7 @@ public class CommonProxy {
         GameRegistry.registerTileEntity(TileFluidPatternEncoder.class, FluidCraft.resource(NameConst.BLOCK_FLUID_PATTERN_ENCODER));
         GameRegistry.registerTileEntity(TileFluidPacketDecoder.class, FluidCraft.resource(NameConst.BLOCK_FLUID_PACKET_DECODER));
         GameRegistry.registerTileEntity(TileIngredientBuffer.class, FluidCraft.resource(NameConst.BLOCK_INGREDIENT_BUFFER));
+        GameRegistry.registerTileEntity(TileLargeIngredientBuffer.class, FluidCraft.resource(NameConst.BLOCK_LARGE_INGREDIENT_BUFFER));
         GameRegistry.registerTileEntity(TileBurette.class, FluidCraft.resource(NameConst.BLOCK_BURETTE));
         GameRegistry.registerTileEntity(TileDualInterface.class, FluidCraft.resource(NameConst.BLOCK_DUAL_INTERFACE));
         GameRegistry.registerTileEntity(TileFluidLevelMaintainer.class, FluidCraft.resource(NameConst.BLOCK_FLUID_LEVEL_MAINTAINER));

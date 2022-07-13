@@ -3,9 +3,11 @@ package com.glodblock.github.proxy;
 import appeng.api.util.AEColor;
 import com.glodblock.github.client.render.DropColourHandler;
 import com.glodblock.github.client.render.RenderIngredientBuffer;
+import com.glodblock.github.client.render.RenderLargeIngredientBuffer;
 import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.common.tile.TileIngredientBuffer;
+import com.glodblock.github.common.tile.TileLargeIngredientBuffer;
 import com.glodblock.github.handler.ClientRegistryHandler;
 import com.glodblock.github.handler.RegistryHandler;
 import com.glodblock.github.integration.pauto.PackagedFluidCrafting;
@@ -32,6 +34,7 @@ public class ClientProxy extends CommonProxy {
         super.preInit(event);
         MinecraftForge.EVENT_BUS.register(dropColourHandler);
         ClientRegistry.bindTileEntitySpecialRenderer(TileIngredientBuffer.class, new RenderIngredientBuffer());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileLargeIngredientBuffer.class, new RenderLargeIngredientBuffer());
     }
 
     @Override

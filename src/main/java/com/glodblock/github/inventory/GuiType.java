@@ -68,6 +68,18 @@ public enum GuiType {
         }
     }),
 
+    LARGE_INGREDIENT_BUFFER(new TileGuiFactory<TileLargeIngredientBuffer>(TileLargeIngredientBuffer.class) {
+        @Override
+        protected Object createServerGui(EntityPlayer player, TileLargeIngredientBuffer inv) {
+            return new ContainerLargeIngredientBuffer(player.inventory, inv);
+        }
+
+        @Override
+        protected Object createClientGui(EntityPlayer player, TileLargeIngredientBuffer inv) {
+            return new GuiLargeIngredientBuffer(player.inventory, inv);
+        }
+    }),
+
     FLUID_PATTERN_ENCODER(new TileGuiFactory<TileFluidPatternEncoder>(TileFluidPatternEncoder.class) {
         @Override
         protected Object createServerGui(EntityPlayer player, TileFluidPatternEncoder inv) {

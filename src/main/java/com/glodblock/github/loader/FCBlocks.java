@@ -16,6 +16,8 @@ public class FCBlocks {
     public static BlockFluidPacketDecoder FLUID_PACKET_DECODER;
     @GameRegistry.ObjectHolder(FluidCraft.MODID + ":" + NameConst.BLOCK_INGREDIENT_BUFFER)
     public static BlockIngredientBuffer INGREDIENT_BUFFER;
+    @GameRegistry.ObjectHolder(FluidCraft.MODID + ":" + NameConst.BLOCK_LARGE_INGREDIENT_BUFFER)
+    public static BlockLargeIngredientBuffer LARGE_INGREDIENT_BUFFER;
     @GameRegistry.ObjectHolder(FluidCraft.MODID + ":" + NameConst.BLOCK_BURETTE)
     public static BlockBurette BURETTE;
     @GameRegistry.ObjectHolder(FluidCraft.MODID + ":" + NameConst.BLOCK_DUAL_INTERFACE)
@@ -28,6 +30,7 @@ public class FCBlocks {
         regHandler.block(NameConst.BLOCK_FLUID_PATTERN_ENCODER, new BlockFluidPatternEncoder());
         regHandler.block(NameConst.BLOCK_FLUID_PACKET_DECODER, new BlockFluidPacketDecoder());
         regHandler.block(NameConst.BLOCK_INGREDIENT_BUFFER, new BlockIngredientBuffer());
+        regHandler.block(NameConst.BLOCK_LARGE_INGREDIENT_BUFFER, new BlockLargeIngredientBuffer());
         regHandler.block(NameConst.BLOCK_BURETTE, new BlockBurette());
         regHandler.block(NameConst.BLOCK_DUAL_INTERFACE, new BlockDualInterface());
         regHandler.block(NameConst.BLOCK_FLUID_LEVEL_MAINTAINER, new BlockFluidLevelMaintainer());

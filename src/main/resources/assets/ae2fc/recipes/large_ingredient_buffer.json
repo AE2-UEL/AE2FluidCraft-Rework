@@ -1,0 +1,24 @@
+{
+  "type": "forge:ore_shaped",
+  "result": {
+    "item": "ae2fc:large_ingredient_buffer",
+    "count": 1
+  },
+  "pattern": [
+    "bgb",
+    "geg",
+    "bgb"
+  ],
+  "key": {
+    "b": {
+      "item": "ae2fc:ingredient_buffer"
+    },
+    "g": {
+      "item": "appliedenergistics2:quartz_glass"
+    },
+    "e": {
+      "type": "appliedenergistics2:part",
+      "part": "material.engineering_processor"
+    }
+  }
+}
