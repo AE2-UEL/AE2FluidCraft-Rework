@@ -4,6 +4,7 @@ tile.ae2fc:fluid_discretizer.name=ME流体离散器
 tile.ae2fc:fluid_pattern_encoder.name=流体适配型样板编码台
 tile.ae2fc:fluid_packet_decoder.name=ME流体封包解码器
 tile.ae2fc:ingredient_buffer.name=原材料缓存仓
+tile.ae2fc:large_ingredient_buffer.name=Large Ingredient Buffer
 tile.ae2fc:burette.name=精准滴定器
 tile.ae2fc:dual_interface.name=ME二合一接口
 tile.ae2fc:part_dual_interface.name=ME二合一接口
@@ -19,7 +20,12 @@ item.ae2fc:part_fluid_pattern_ex_terminal.name=ME扩展流体样板终端
 ae2fc.gui.fluid_pattern_encoder=流体样板编码台
 ae2fc.gui.fluid_packet_decoder=ME流体封包解码器
 ae2fc.gui.ingredient_buffer=原材料缓存仓
+ae2fc.gui.large_ingredient_buffer=大型原材料缓存仓
 ae2fc.gui.burette=精准滴定器
+ae2fc.gui.fluid_level_maintainer=MME流体缓存指令器
+
+ae2fc.misc.threshold=阈值
+ae2fc.misc.request=批量制作数量
 
 ae2fc.tooltip.fluid_packet=使用ME流体封包解码器\n来将其转换回流体形式。
 ae2fc.tooltip.invalid_fluid=流体无效！
