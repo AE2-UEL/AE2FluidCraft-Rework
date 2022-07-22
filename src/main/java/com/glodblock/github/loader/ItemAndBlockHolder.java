@@ -7,6 +7,14 @@ import com.glodblock.github.common.storage.CellType;
 
 public class ItemAndBlockHolder {
 
+    public static BlockFluidDiscretizer DISCRETIZER = new BlockFluidDiscretizer().register();
+    public static BlockFluidPatternEncoder ENCODER = new BlockFluidPatternEncoder().register();
+    public static BlockFluidPacketDecoder DECODER = new BlockFluidPacketDecoder().register();
+    public static BlockFluidInterface INTERFACE = new BlockFluidInterface().register();
+    public static BlockIngredientBuffer BUFFER = new BlockIngredientBuffer().register();
+    public static BlockLargeIngredientBuffer LARGE_BUFFER = new BlockLargeIngredientBuffer().register();
+    public static BlockOCPatternEditor OC_EDITOR = new BlockOCPatternEditor().register();
+
     public static ItemFluidDrop DROP = new ItemFluidDrop().register();
     public static ItemFluidEncodedPattern PATTERN = new ItemFluidEncodedPattern().register();
     public static ItemPartFluidPatternTerminal FLUID_TERMINAL = new ItemPartFluidPatternTerminal().register();
@@ -23,14 +31,6 @@ public class ItemAndBlockHolder {
     public static ItemBasicFluidStorageCell CELL1024K = new ItemBasicFluidStorageCell(CellType.Cell1024kPart, 1024).register();
     public static ItemBasicFluidStorageCell CELL4096K = new ItemBasicFluidStorageCell(CellType.Cell4096kPart, 4096).register();
     public static ItemBasicFluidStoragePart CELL_PART = new ItemBasicFluidStoragePart().register();
-
-    public static BlockFluidDiscretizer DISCRETIZER = new BlockFluidDiscretizer().register();
-    public static BlockFluidPatternEncoder ENCODER = new BlockFluidPatternEncoder().register();
-    public static BlockFluidPacketDecoder DECODER = new BlockFluidPacketDecoder().register();
-    public static BlockFluidInterface INTERFACE = new BlockFluidInterface().register();
-    public static BlockIngredientBuffer BUFFER = new BlockIngredientBuffer().register();
-    public static BlockLargeIngredientBuffer LARGE_BUFFER = new BlockLargeIngredientBuffer().register();
-    public static BlockOCPatternEditor OC_EDITOR = new BlockOCPatternEditor().register();
 
     public static void loadSetting() {
         if (!Config.fluidCells) return;

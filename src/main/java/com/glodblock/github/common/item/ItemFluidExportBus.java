@@ -5,6 +5,7 @@ import appeng.api.parts.IPartItem;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.common.Config;
 import com.glodblock.github.common.parts.PartFluidExportBus;
+import com.glodblock.github.common.tabs.FluidCraftingTabs;
 import com.glodblock.github.util.NameConst;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -39,6 +40,7 @@ public class ItemFluidExportBus extends Item implements IPartItem {
     public ItemFluidExportBus register() {
         if (!Config.fluidIOBus) return null;
         GameRegistry.registerItem(this, NameConst.ITEM_PART_FLUID_EXPORT, FluidCraft.MODID);
+        setCreativeTab(FluidCraftingTabs.INSTANCE);
         return this;
     }
 

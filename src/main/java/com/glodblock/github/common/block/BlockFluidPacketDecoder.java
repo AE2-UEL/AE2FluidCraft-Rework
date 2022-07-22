@@ -1,6 +1,7 @@
 package com.glodblock.github.common.block;
 
 import appeng.block.AEBaseItemBlock;
+import com.glodblock.github.common.tabs.FluidCraftingTabs;
 import com.glodblock.github.common.tile.TileFluidPacketDecoder;
 import com.glodblock.github.inventory.InventoryHandler;
 import com.glodblock.github.inventory.gui.GuiType;
@@ -40,6 +41,7 @@ public class BlockFluidPacketDecoder extends FCBaseBlock {
     public BlockFluidPacketDecoder register() {
         GameRegistry.registerBlock(this, AEBaseItemBlock.class, NameConst.BLOCK_FLUID_PACKET_DECODER);
         GameRegistry.registerTileEntity(TileFluidPacketDecoder.class, NameConst.BLOCK_FLUID_PACKET_DECODER);
+        setCreativeTab(FluidCraftingTabs.INSTANCE);
         return this;
     }
 

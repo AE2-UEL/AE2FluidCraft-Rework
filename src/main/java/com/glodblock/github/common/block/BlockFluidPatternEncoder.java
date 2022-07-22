@@ -1,6 +1,7 @@
 package com.glodblock.github.common.block;
 
 import appeng.block.AEBaseItemBlock;
+import com.glodblock.github.common.tabs.FluidCraftingTabs;
 import com.glodblock.github.common.tile.TileFluidPatternEncoder;
 import com.glodblock.github.inventory.InventoryHandler;
 import com.glodblock.github.inventory.gui.GuiType;
@@ -40,6 +41,7 @@ public class BlockFluidPatternEncoder extends FCBaseBlock {
     public BlockFluidPatternEncoder register() {
         GameRegistry.registerBlock(this, AEBaseItemBlock.class, NameConst.BLOCK_FLUID_PATTERN_ENCODER);
         GameRegistry.registerTileEntity(TileFluidPatternEncoder.class, NameConst.BLOCK_FLUID_PATTERN_ENCODER);
+        setCreativeTab(FluidCraftingTabs.INSTANCE);
         return this;
     }
 

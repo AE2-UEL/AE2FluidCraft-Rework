@@ -23,6 +23,7 @@ import com.glodblock.github.common.storage.CellType;
 import com.glodblock.github.common.storage.IFluidCellInventory;
 import com.glodblock.github.common.storage.IFluidCellInventoryHandler;
 import com.glodblock.github.common.storage.IStorageFluidCell;
+import com.glodblock.github.common.tabs.FluidCraftingTabs;
 import com.glodblock.github.util.ModAndClassUtil;
 import com.glodblock.github.util.NameConst;
 import com.google.common.base.Optional;
@@ -329,6 +330,7 @@ public class ItemBasicFluidStorageCell extends AEBaseItem implements IStorageFlu
     public ItemBasicFluidStorageCell register() {
         if (!Config.fluidCells) return null;
         GameRegistry.registerItem(this, NameConst.ITEM_FLUID_STORAGE + this.totalBytes / 1024 , FluidCraft.MODID);
+        setCreativeTab(FluidCraftingTabs.INSTANCE);
         return this;
     }
 

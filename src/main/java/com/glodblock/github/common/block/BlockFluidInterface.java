@@ -7,6 +7,7 @@ import appeng.core.sync.GuiBridge;
 import appeng.tile.misc.TileInterface;
 import appeng.util.Platform;
 import com.glodblock.github.client.render.RenderBlockFluidInterface;
+import com.glodblock.github.common.tabs.FluidCraftingTabs;
 import com.glodblock.github.common.tile.TileFluidInterface;
 import com.glodblock.github.inventory.InventoryHandler;
 import com.glodblock.github.inventory.gui.GuiType;
@@ -78,6 +79,7 @@ public class BlockFluidInterface extends FCBaseBlock {
     public BlockFluidInterface register() {
         GameRegistry.registerBlock(this, AEBaseItemBlock.class, NameConst.BLOCK_FLUID_INTERFACE);
         GameRegistry.registerTileEntity(TileFluidInterface.class, NameConst.BLOCK_FLUID_INTERFACE);
+        setCreativeTab(FluidCraftingTabs.INSTANCE);
         return this;
     }
 
