@@ -16,7 +16,6 @@ import com.glodblock.github.common.tile.TileFluidInterface;
 import com.glodblock.github.inventory.FluidConvertingInventoryAdaptor;
 import com.glodblock.github.inventory.FluidConvertingInventoryCrafting;
 import com.glodblock.github.loader.ItemAndBlockHolder;
-import com.glodblock.github.util.Ae2Reflect;
 import com.glodblock.github.util.SetBackedMachineSet;
 import com.glodblock.github.util.Util;
 import com.google.common.collect.Sets;
@@ -33,7 +32,7 @@ import java.util.Set;
 public class CoreModHooks {
 
     public static InventoryCrafting wrapCraftingBuffer(InventoryCrafting inv) {
-        return new FluidConvertingInventoryCrafting(Ae2Reflect.getCraftContainer(inv), Ae2Reflect.getCraftWidth(inv), inv.getSizeInventory()/Ae2Reflect.getCraftWidth(inv));
+        return new FluidConvertingInventoryCrafting(inv.eventHandler, inv.inventoryWidth, inv.getSizeInventory()/inv.inventoryWidth);
     }
 
     public static IAEItemStack wrapFluidPacketStack(IAEItemStack stack) {

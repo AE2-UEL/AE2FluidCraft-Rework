@@ -34,7 +34,7 @@ public class GuiBaseFluidPatternTerminalEx extends GuiFCBaseMonitor {
     {
         super( inventoryPlayer, te, new FCBasePartContainerEx( inventoryPlayer, te ) );
         this.container = (FCBasePartContainerEx) this.inventorySlots;
-        Ae2ReflectClient.setReservedSpace(this, 81);
+        setReservedSpace(81);
     }
 
     @Override
@@ -106,7 +106,7 @@ public class GuiBaseFluidPatternTerminalEx extends GuiFCBaseMonitor {
         }
 
         super.drawFG( offsetX, offsetY, mouseX, mouseY );
-        this.fontRendererObj.drawString( StatCollector.translateToLocal(NameConst.GUI_FLUID_PATTERN_TERMINAL_EX), 8, this.ySize - 96 + 2 - Ae2ReflectClient.getReservedSpace(this), 4210752 );
+        this.fontRendererObj.drawString( StatCollector.translateToLocal(NameConst.GUI_FLUID_PATTERN_TERMINAL_EX), 8, this.ySize - 96 + 2 - getReservedSpace(), 4210752 );
     }
 
     @Override

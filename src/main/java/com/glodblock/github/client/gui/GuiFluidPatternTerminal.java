@@ -27,13 +27,15 @@ public class GuiFluidPatternTerminal extends GuiBaseFluidPatternTerminal {
         ContainerFluidPatternTerminal container = new ContainerFluidPatternTerminal(inventoryPlayer, te);
         container.setGui(this);
         this.inventorySlots = container;
-        Ae2ReflectClient.setGuiContainer(this, container);
+        this.container = container;
+        this.monitorableContainer = container;
+        this.configSrc = container.getConfigManager();
     }
 
     @Override
     public void initGui() {
         super.initGui();
-        craftingStatusBtn = Ae2ReflectClient.getCraftingStatusButton(this);
+        craftingStatusBtn = super.craftingStatusBtn;
     }
 
     @Override

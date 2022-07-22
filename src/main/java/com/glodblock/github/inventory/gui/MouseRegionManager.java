@@ -22,8 +22,8 @@ public class MouseRegionManager {
     }
 
     public boolean onClick(int mX, int mY, int button) {
-        mX -= Ae2ReflectClient.getGuiLeft(gui);
-        mY -= Ae2ReflectClient.getGuiTop(gui);
+        mX -= gui.guiLeft;
+        mY -= gui.guiTop;
         for (Region region : regions) {
             if (region.containsMouse(mX, mY) && region.handler.onClick(button)) {
                 gui.mc.getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1F));
@@ -34,8 +34,8 @@ public class MouseRegionManager {
     }
 
     public void render(int mX, int mY) {
-        mX -= Ae2ReflectClient.getGuiLeft(gui);
-        mY -= Ae2ReflectClient.getGuiTop(gui);
+        mX -= gui.guiLeft;
+        mY -= gui.guiTop;
         for (Region region : regions) {
             if (region.containsMouse(mX, mY)) {
                 List<String> tooltip = region.handler.getTooltip();

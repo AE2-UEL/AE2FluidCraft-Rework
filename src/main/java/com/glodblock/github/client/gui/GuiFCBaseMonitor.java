@@ -60,7 +60,7 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
     private final boolean viewCell;
     private final ItemStack[] myCurrentViewCells = new ItemStack[5];
     public FCBaseMonitorContain monitorableContainer;
-    private GuiTabButton craftingStatusBtn;
+    public GuiTabButton craftingStatusBtn;
     private GuiImgButton craftingStatusImgBtn;
     private FCGuiTextField searchField;
     private int perRow = 9;
@@ -711,12 +711,12 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
         this.repo.updateView();
     }
 
-    int getReservedSpace()
+    public int getReservedSpace()
     {
         return this.reservedSpace;
     }
 
-    void setReservedSpace( final int reservedSpace )
+    public void setReservedSpace( final int reservedSpace )
     {
         this.reservedSpace = reservedSpace;
     }

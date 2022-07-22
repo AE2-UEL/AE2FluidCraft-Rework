@@ -30,7 +30,7 @@ public class GuiBaseFluidPatternTerminal extends GuiFCBaseMonitor {
     private static final String CRAFTMODE_CRFTING = "1";
     private static final String CRAFTMODE_PROCESSING = "0";
 
-    public final FCBasePartContainer container;
+    public FCBasePartContainer container;
 
     private GuiTabButton tabCraftButton;
     private GuiTabButton tabProcessButton;
@@ -44,7 +44,7 @@ public class GuiBaseFluidPatternTerminal extends GuiFCBaseMonitor {
     {
         super( inventoryPlayer, te, new FCBasePartContainer( inventoryPlayer, te ) );
         this.container = (FCBasePartContainer) this.inventorySlots;
-        Ae2ReflectClient.setReservedSpace(this, 81);
+        setReservedSpace(81);
     }
 
     @Override
@@ -137,7 +137,7 @@ public class GuiBaseFluidPatternTerminal extends GuiFCBaseMonitor {
         }
 
         super.drawFG( offsetX, offsetY, mouseX, mouseY );
-        this.fontRendererObj.drawString(StatCollector.translateToLocal(NameConst.GUI_FLUID_PATTERN_TERMINAL), 8, this.ySize - 96 + 2 - Ae2ReflectClient.getReservedSpace(this), 4210752 );
+        this.fontRendererObj.drawString(StatCollector.translateToLocal(NameConst.GUI_FLUID_PATTERN_TERMINAL), 8, this.ySize - 96 + 2 - getReservedSpace(), 4210752 );
     }
 
     @Override

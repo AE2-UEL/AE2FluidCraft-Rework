@@ -3,36 +3,20 @@ package com.glodblock.github.util;
 import appeng.api.implementations.IUpgradeableHost;
 import appeng.api.networking.crafting.ICraftingCPU;
 import appeng.api.storage.IMEInventory;
-import appeng.client.gui.AEBaseGui;
-import appeng.client.gui.implementations.GuiCraftingStatus;
-import appeng.client.gui.widgets.GuiTabButton;
-import appeng.client.render.AppEngRenderItem;
 import appeng.container.implementations.ContainerUpgradeable;
 import appeng.container.implementations.CraftingCPURecord;
 import appeng.me.storage.MEInventoryHandler;
 import appeng.me.storage.MEPassThrough;
 import appeng.util.inv.ItemSlot;
 import appeng.util.prioitylist.IPartitionList;
-import com.glodblock.github.client.gui.GuiBaseFluidPatternTerminal;
-import com.glodblock.github.client.gui.GuiFCBaseMonitor;
-import com.glodblock.github.client.gui.container.ContainerFluidPatternTerminal;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
 
 public class Ae2Reflect {
 
-    private static final Field fInventory_container;
     private static final Field fInventory_containerUpgrade;
-    private static final Field fInventory_width;
     private static final Field fAEPass_internal;
     private static final Field fAEInv_partitionList;
     private static final Field fCPU_cpu;
@@ -43,9 +27,7 @@ public class Ae2Reflect {
 
     static {
         try {
-            fInventory_container = reflectField(InventoryCrafting.class, "eventHandler", "field_70465_c", "c");
             fInventory_containerUpgrade = reflectField(ContainerUpgradeable.class, "upgradeable");
-            fInventory_width = reflectField(InventoryCrafting.class, "inventoryWidth", "field_70464_b", "b");
             fAEPass_internal = reflectField(MEPassThrough.class, "internal");
             fAEInv_partitionList = reflectField(MEInventoryHandler.class, "myPartitionList");
             fCPU_cpu = Ae2Reflect.reflectField(CraftingCPURecord.class, "cpu");
@@ -102,14 +84,6 @@ public class Ae2Reflect {
 
     public static IMEInventory<?> getInternal(MEPassThrough<?> me) {
         return Ae2Reflect.readField(me, fAEPass_internal);
-    }
-
-    public static Container getCraftContainer(InventoryCrafting inv) {
-        return Ae2Reflect.readField(inv, fInventory_container);
-    }
-
-    public static int getCraftWidth(InventoryCrafting inv) {
-        return Ae2Reflect.readField(inv, fInventory_width);
     }
 
     public static void setItemSlotExtractable(ItemSlot slot, boolean extractable) {
