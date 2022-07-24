@@ -24,7 +24,6 @@ public class GregTech5RecipeExtractor implements IRecipeExtractor {
 
     @Override
     public List<OrderStack<?>> getInputIngredients(List<PositionedStack> rawInputs) {
-        if (r) removeSpecial(rawInputs);
         if (removeSpecial) removeSpecial(rawInputs);
         List<OrderStack<?>> tmp = new LinkedList<>();
         for (int i = 0; i < rawInputs.size(); i ++) {
