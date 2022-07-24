@@ -26,6 +26,7 @@ public class FCClassTransformer implements IClassTransformer {
                 break;
             case "appeng.client.gui.implementations.GuiCraftingCPU":
             case "appeng.client.gui.implementations.GuiCraftConfirm":
+            case "net.p455w0rd.wirelesscraftingterminal.client.gui.GuiCraftConfirm":
                 tform = GuiCraftingTransformer.INSTANCE;
                 break;
             default:

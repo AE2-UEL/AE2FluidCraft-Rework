@@ -19,6 +19,7 @@ public final class ModAndClassUtil {
     public static boolean FTR = false;
     public static boolean OC = false;
     public static boolean ThE = false;
+    public static boolean WCT = false;
 
     public static boolean isDoubleButton;
     public static boolean isSaveText;
@@ -109,6 +110,8 @@ public final class ModAndClassUtil {
             OC = true;
         if (Loader.isModLoaded("thaumicenergistics"))
             ThE = true;
+        if (Loader.isModLoaded("ae2wct"))
+            WCT = true;
     }
 
 }
