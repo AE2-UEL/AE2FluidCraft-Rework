@@ -35,6 +35,10 @@ ae2fc.tooltip.fluid_packet=Use a Fluid Packet Decoder to\nconvert this back into
 ae2fc.tooltip.empty=Empty
 ae2fc.tooltip.dump_tank=Dump Tank Contents
 ae2fc.tooltip.switch_fluid_interface=Switch ME Dual Interface GUI
+ae2fc.tooltip.not_combine=Merge the same items
+ae2fc.tooltip.not_combine.hint=Disabled
+ae2fc.tooltip.combine=Merge the same items
+ae2fc.tooltip.combine.hint=Enabled
 
 ae2fc.gui.part_fluid_pattern_terminal=Fluid Pattern Terminal
 ae2fc.gui.part_fluid_pattern_terminal_ex=Fluid Processing Pattern Terminal

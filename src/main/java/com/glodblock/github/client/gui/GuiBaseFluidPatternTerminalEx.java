@@ -30,6 +30,9 @@ public class GuiBaseFluidPatternTerminalEx extends GuiFCBaseMonitor {
     private GuiImgButton clearBtn;
     private GuiImgButton doubleBtn;
 
+    private GuiFCImgButton combineEnableBtn;
+    private GuiFCImgButton combineDisableBtn;
+
     public GuiBaseFluidPatternTerminalEx(final InventoryPlayer inventoryPlayer, final ITerminalHost te )
     {
         super( inventoryPlayer, te, new FCBasePartContainerEx( inventoryPlayer, te ) );
@@ -53,6 +56,10 @@ public class GuiBaseFluidPatternTerminalEx extends GuiFCBaseMonitor {
         else if( this.substitutionsEnabledBtn == btn || this.substitutionsDisabledBtn == btn )
         {
             FluidCraft.proxy.netHandler.sendToServer( new CPacketFluidPatternTermBtns( "PatternTerminal.Substitute", this.substitutionsEnabledBtn == btn ? SUBSITUTION_DISABLE : SUBSITUTION_ENABLE ) );
+        }
+        else if( this.combineDisableBtn == btn || this.combineEnableBtn == btn )
+        {
+            FluidCraft.proxy.netHandler.sendToServer( new CPacketFluidPatternTermBtns( "PatternTerminal.Combine", this.combineDisableBtn == btn ? "1" : "0" ) );
         }
         else if (ModAndClassUtil.isDoubleButton && doubleBtn == btn)
         {
@@ -86,6 +93,14 @@ public class GuiBaseFluidPatternTerminalEx extends GuiFCBaseMonitor {
             this.doubleBtn.setHalfSize( true );
             this.buttonList.add( this.doubleBtn );
         }
+
+        this.combineEnableBtn = new GuiFCImgButton( this.guiLeft + 87, this.guiTop + this.ySize - 153, "FORCE_COMBINE", "DO_COMBINE" );
+        this.combineEnableBtn.setHalfSize( true );
+        this.buttonList.add( this.combineEnableBtn );
+
+        this.combineDisableBtn = new GuiFCImgButton( this.guiLeft + 87, this.guiTop + this.ySize - 153, "NOT_COMBINE", "DONT_COMBINE" );
+        this.combineDisableBtn.setHalfSize( true );
+        this.buttonList.add( this.combineDisableBtn );
     }
 
     @Override
@@ -103,6 +118,17 @@ public class GuiBaseFluidPatternTerminalEx extends GuiFCBaseMonitor {
         {
             this.substitutionsEnabledBtn.visible = false;
             this.substitutionsDisabledBtn.visible = true;
+        }
+
+        if ( this.container.combine )
+        {
+            this.combineEnableBtn.visible = true;
+            this.combineDisableBtn.visible = false;
+        }
+        else
+        {
+            this.combineEnableBtn.visible = false;
+            this.combineDisableBtn.visible = true;
         }
 
         super.drawFG( offsetX, offsetY, mouseX, mouseY );

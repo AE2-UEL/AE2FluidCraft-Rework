@@ -40,6 +40,9 @@ public class GuiBaseFluidPatternTerminal extends GuiFCBaseMonitor {
     private GuiImgButton clearBtn;
     private GuiImgButton doubleBtn;
 
+    private GuiFCImgButton combineEnableBtn;
+    private GuiFCImgButton combineDisableBtn;
+
     public GuiBaseFluidPatternTerminal(final InventoryPlayer inventoryPlayer, final ITerminalHost te )
     {
         super( inventoryPlayer, te, new FCBasePartContainer( inventoryPlayer, te ) );
@@ -67,6 +70,10 @@ public class GuiBaseFluidPatternTerminal extends GuiFCBaseMonitor {
         else if( this.substitutionsEnabledBtn == btn || this.substitutionsDisabledBtn == btn )
         {
             FluidCraft.proxy.netHandler.sendToServer( new CPacketFluidPatternTermBtns( "PatternTerminal.Substitute", this.substitutionsEnabledBtn == btn ? SUBSITUTION_DISABLE : SUBSITUTION_ENABLE ) );
+        }
+        else if( this.combineDisableBtn == btn || this.combineEnableBtn == btn )
+        {
+            FluidCraft.proxy.netHandler.sendToServer( new CPacketFluidPatternTermBtns( "PatternTerminal.Combine", this.combineDisableBtn == btn ? "1" : "0" ) );
         }
         else if (ModAndClassUtil.isDoubleButton && doubleBtn == btn)
         {
@@ -100,11 +107,22 @@ public class GuiBaseFluidPatternTerminal extends GuiFCBaseMonitor {
         this.encodeBtn = new GuiImgButton( this.guiLeft + 147, this.guiTop + this.ySize - 142, Settings.ACTIONS, ActionItems.ENCODE );
         this.buttonList.add( this.encodeBtn );
 
+        int combineLeft = 74;
+
         if (ModAndClassUtil.isDoubleButton) {
             this.doubleBtn = new GuiImgButton( this.guiLeft + 74, this.guiTop + this.ySize - 153, Settings.ACTIONS, ActionItems.DOUBLE );
             this.doubleBtn.setHalfSize( true );
             this.buttonList.add( this.doubleBtn );
+            combineLeft = 84;
         }
+
+        this.combineEnableBtn = new GuiFCImgButton( this.guiLeft + combineLeft, this.guiTop + this.ySize - 153, "FORCE_COMBINE", "DO_COMBINE" );
+        this.combineEnableBtn.setHalfSize( true );
+        this.buttonList.add( this.combineEnableBtn );
+
+        this.combineDisableBtn = new GuiFCImgButton( this.guiLeft + combineLeft, this.guiTop + this.ySize - 153, "NOT_COMBINE", "DONT_COMBINE" );
+        this.combineDisableBtn.setHalfSize( true );
+        this.buttonList.add( this.combineDisableBtn );
     }
 
     @Override
@@ -134,6 +152,25 @@ public class GuiBaseFluidPatternTerminal extends GuiFCBaseMonitor {
         {
             this.substitutionsEnabledBtn.visible = false;
             this.substitutionsDisabledBtn.visible = true;
+        }
+
+        if (!this.container.isCraftingMode())
+        {
+            if ( this.container.combine )
+            {
+                this.combineEnableBtn.visible = true;
+                this.combineDisableBtn.visible = false;
+            }
+            else
+            {
+                this.combineEnableBtn.visible = false;
+                this.combineDisableBtn.visible = true;
+            }
+        }
+        else
+        {
+            this.combineEnableBtn.visible = false;
+            this.combineDisableBtn.visible = false;
         }
 
         super.drawFG( offsetX, offsetY, mouseX, mouseY );

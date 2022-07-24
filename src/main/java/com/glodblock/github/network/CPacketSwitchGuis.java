@@ -62,7 +62,6 @@ public class CPacketSwitchGuis implements IMessage {
             InventoryHandler.openGui(player, player.worldObj, new BlockPos(te), Objects.requireNonNull(Util.from(context.getSide())), message.guiType);
             return null;
         }
-
     }
 }
 

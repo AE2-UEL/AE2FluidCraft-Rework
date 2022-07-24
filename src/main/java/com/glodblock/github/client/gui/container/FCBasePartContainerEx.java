@@ -39,6 +39,8 @@ public class FCBasePartContainerEx extends FCBaseMonitorContain implements IAEAp
     protected final SlotRestrictedInput patternSlotOUT;
     @GuiSync( 96 )
     public boolean substitute = false;
+    @GuiSync( 95 )
+    public boolean combine = false;
 
     public FCBasePartContainerEx(final InventoryPlayer ip, final ITerminalHost monitorable )
     {
@@ -222,7 +224,7 @@ public class FCBasePartContainerEx extends FCBaseMonitorContain implements IAEAp
 
         if( hasValue )
         {
-            return list.toArray( new ItemStack[list.size()] );
+            return list.toArray(new ItemStack[0]);
         }
 
         return null;
@@ -280,6 +282,7 @@ public class FCBasePartContainerEx extends FCBaseMonitorContain implements IAEAp
         if( Platform.isServer() )
         {
             this.substitute = this.patternTerminal.isSubstitution();
+            this.combine = this.patternTerminal.shouldCombine();
         }
     }
 
