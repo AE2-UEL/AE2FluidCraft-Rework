@@ -23,9 +23,6 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidContainerItem;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ContainerFluidPatternTerminal extends FCBasePartContainer implements PatternConsumer {
 
     public ContainerFluidPatternTerminal(InventoryPlayer ip, ITerminalHost monitorable) {
@@ -112,23 +109,22 @@ public class ContainerFluidPatternTerminal extends FCBasePartContainer implement
 
     private static IAEItemStack[] collectInventory(Slot[] slots) {
         // see note at top of FluidPatternDetails
-        List<IAEItemStack> acc = new ArrayList<>();
-        for (Slot slot : slots) {
-            ItemStack stack = slot.getStack();
-            if (stack == null) {
-                continue;
-            }
-            if (stack.getItem() instanceof ItemFluidPacket) {
-                IAEItemStack dropStack = ItemFluidDrop.newAeStack(ItemFluidPacket.getFluidStack(stack));
-                if (dropStack != null) {
-                    acc.add(dropStack);
-                    continue;
+        IAEItemStack[] stacks = new IAEItemStack[slots.length];
+        for (int i = 0; i < stacks.length; i++) {
+            ItemStack stack = slots[i].getStack();
+            if (stack != null) {
+                if (stack.getItem() instanceof ItemFluidPacket) {
+                    IAEItemStack dropStack = ItemFluidDrop.newAeStack(ItemFluidPacket.getFluidStack(stack));
+                    if (dropStack != null) {
+                        stacks[i] = dropStack;
+                        continue;
+                    }
                 }
             }
             IAEItemStack aeStack = AEItemStack.create(stack);
-            acc.add(aeStack);
+            stacks[i] = aeStack;
         }
-        return acc.toArray(new IAEItemStack[0]);
+        return stacks;
     }
 
     @Override

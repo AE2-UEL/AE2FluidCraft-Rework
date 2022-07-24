@@ -120,100 +120,54 @@ public class PartFluidPatternTerminal extends FCBasePart {
         return GuiBridge.GUI_ME;
     }
 
-    public void onChangeInventory0(final IInventory inv, final int slot, final InvOperation mc, final ItemStack removedStack, final ItemStack newStack )
-    {
-        if( inv == this.pattern && slot == 1 )
-        {
-            final ItemStack is = this.pattern.getStackInSlot( 1 );
-            if( is != null && is.getItem() instanceof ICraftingPatternItem)
-            {
-                final ICraftingPatternItem pattern = (ICraftingPatternItem) is.getItem();
-                final ICraftingPatternDetails details = pattern.getPatternForItem( is, this.getHost().getTile().getWorldObj() );
-                if( details != null )
-                {
-                    this.setCraftingRecipe( details.isCraftable() );
-                    this.setSubstitution( details.canSubstitute() );
-
-                    for( int x = 0; x < this.crafting.getSizeInventory(); x++ )
-                    {
-                        this.crafting.setInventorySlotContents( x, null );
-                    }
-
-                    for( int x = 0; x < this.output.getSizeInventory(); x++ )
-                    {
-                        this.output.setInventorySlotContents( x, null );
-                    }
-
-                    for( int x = 0; x < this.crafting.getSizeInventory() && x < details.getInputs().length; x++ )
-                    {
-                        final IAEItemStack item = details.getInputs()[x];
-                        this.crafting.setInventorySlotContents( x, item == null ? null : item.getItemStack() );
-                    }
-
-                    for( int x = 0; x < this.output.getSizeInventory() && x < details.getOutputs().length; x++ )
-                    {
-                        final IAEItemStack item = details.getOutputs()[x];
-                        this.output.setInventorySlotContents( x, item == null ? null : item.getItemStack() );
-                    }
-                }
-            }
-        }
-        else if( inv == this.crafting )
-        {
-            this.fixCraftingRecipes();
-        }
-
-        this.getHost().markForSave();
-    }
-
     @Override
     public void onChangeInventory(final IInventory inv, final int slot, final InvOperation mc, final ItemStack removedStack, final ItemStack newStack )
     {
         if (inv == this.pattern && slot == 1) {
             final ItemStack is = inv.getStackInSlot(1);
-            if (is != null && is.getItem() instanceof ItemFluidEncodedPattern) {
-                final ItemFluidEncodedPattern pattern = (ItemFluidEncodedPattern) is.getItem();
-                final ICraftingPatternDetails details = pattern.getPatternForItem( is, this.getHost().getTile().getWorldObj() );
-                if( details != null )
-                {
-                    this.setCraftingRecipe( details.isCraftable() );
-                    this.setSubstitution( details.canSubstitute() );
+            if (is != null && is.getItem() instanceof ICraftingPatternItem) {
+                final ICraftingPatternItem pattern = (ICraftingPatternItem) is.getItem();
+                final ICraftingPatternDetails details = pattern.getPatternForItem(is, this.getHost().getTile().getWorldObj());
+                if (details != null) {
+                    final IAEItemStack[] inItems = details.getInputs();
+                    final IAEItemStack[] outItems = details.getOutputs();
 
-                    for( int x = 0; x < this.crafting.getSizeInventory(); x++ )
-                    {
-                        this.crafting.setInventorySlotContents( x, null );
+                    this.setCraftingRecipe(details.isCraftable());
+                    this.setSubstitution(details.canSubstitute());
+
+                    for (int i = 0; i < this.crafting.getSizeInventory(); i++) {
+                        this.crafting.setInventorySlotContents(i, null);
                     }
 
-                    for( int x = 0; x < this.output.getSizeInventory(); x++ )
-                    {
-                        this.output.setInventorySlotContents( x, null );
+                    for (int i = 0; i < this.output.getSizeInventory(); i++) {
+                        this.output.setInventorySlotContents(i, null);
                     }
 
-                    for( int x = 0; x < this.crafting.getSizeInventory() && x < details.getInputs().length; x++ )
-                    {
-                        final IAEItemStack item = details.getInputs()[x];
-                        if (item != null && item.getItem() instanceof ItemFluidDrop) {
-                            ItemStack packet = ItemFluidPacket.newStack(ItemFluidDrop.getFluidStack(item.getItemStack()));
-                            this.crafting.setInventorySlotContents(x, packet);
+                    for (int i = 0; i < this.crafting.getSizeInventory() && i < inItems.length; i++) {
+                        if (inItems[i] != null) {
+                            final IAEItemStack item = inItems[i];
+                            if (item != null && item.getItem() instanceof ItemFluidDrop) {
+                                ItemStack packet = ItemFluidPacket.newStack(ItemFluidDrop.getFluidStack(item.getItemStack()));
+                                this.crafting.setInventorySlotContents(i, packet);
+                            } else
+                                this.crafting.setInventorySlotContents(i, item == null ? null : item.getItemStack());
                         }
-                        else this.crafting.setInventorySlotContents( x, item == null ? null : item.getItemStack() );
                     }
 
-                    for( int x = 0; x < this.output.getSizeInventory() && x < details.getOutputs().length; x++ )
-                    {
-                        final IAEItemStack item = details.getOutputs()[x];
-                        if (item != null && item.getItem() instanceof ItemFluidDrop) {
-                            ItemStack packet = ItemFluidPacket.newStack(ItemFluidDrop.getFluidStack(item.getItemStack()));
-                            this.output.setInventorySlotContents(x, packet);
+                    for (int i = 0; i < this.output.getSizeInventory() && i < outItems.length; i++) {
+                        if (outItems[i] != null) {
+                            final IAEItemStack item = outItems[i];
+                            if (item != null && item.getItem() instanceof ItemFluidDrop) {
+                                ItemStack packet = ItemFluidPacket.newStack(ItemFluidDrop.getFluidStack(item.getItemStack()));
+                                this.output.setInventorySlotContents(i, packet);
+                            } else
+                                this.output.setInventorySlotContents(i, item == null ? null : item.getItemStack());
                         }
-                        else this.output.setInventorySlotContents( x, item == null ? null : item.getItemStack() );
                     }
                 }
-                this.getHost().markForSave();
-                return;
             }
         }
-        onChangeInventory0(inv, slot, mc, removedStack, newStack);
+        this.getHost().markForSave();
     }
 
     private void fixCraftingRecipes()

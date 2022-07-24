@@ -11,7 +11,6 @@ import appeng.tile.inventory.InvOperation;
 import appeng.util.Platform;
 import com.glodblock.github.client.textures.FCPartsTexture;
 import com.glodblock.github.common.item.ItemFluidDrop;
-import com.glodblock.github.common.item.ItemFluidEncodedPattern;
 import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.inventory.InventoryHandler;
 import com.glodblock.github.inventory.gui.GuiType;
@@ -34,12 +33,14 @@ public class PartFluidPatternTerminalEx extends FCBasePart {
     private static final FCPartsTexture FRONT_DARK_ICON = FCPartsTexture.PartFluidPatternTerminal_Colored;
     private static final FCPartsTexture FRONT_COLORED_ICON = FCPartsTexture.PartFluidPatternTerminal_Dark;
 
-    private final AppEngInternalInventory crafting = new AppEngInternalInventory( this, 16 );
-    private final AppEngInternalInventory output = new AppEngInternalInventory( this, 4 );
+    private final AppEngInternalInventory crafting = new AppEngInternalInventory( this, 32 );
+    private final AppEngInternalInventory output = new AppEngInternalInventory( this, 32 );
     private final AppEngInternalInventory pattern = new AppEngInternalInventory( this, 2 );
 
     private boolean substitute = false;
     private boolean combine = false;
+    private boolean inverted = false;
+    private int activePage = 0;
 
     public PartFluidPatternTerminalEx(ItemStack is) {
         super(is, true);
@@ -79,22 +80,32 @@ public class PartFluidPatternTerminalEx extends FCBasePart {
     public void readFromNBT( final NBTTagCompound data )
     {
         super.readFromNBT( data );
+        
         this.setSubstitution( data.getBoolean( "substitute" ) );
         this.setCombineMode( data.getBoolean("combine") );
         this.pattern.readFromNBT( data, "pattern" );
         this.output.readFromNBT( data, "outputList" );
         this.crafting.readFromNBT( data, "craftingGrid" );
+
+        this.setSubstitution( data.getBoolean( "substitute" ) );
+        this.setInverted( data.getBoolean( "inverted" ) );
+        this.setActivePage( data.getInteger( "activePage" ) );
     }
 
     @Override
     public void writeToNBT( final NBTTagCompound data )
     {
         super.writeToNBT( data );
+        
         data.setBoolean( "substitute", this.substitute );
         data.setBoolean( "combine", this.combine );
         this.pattern.writeToNBT( data, "pattern" );
         this.output.writeToNBT( data, "outputList" );
         this.crafting.writeToNBT( data, "craftingGrid" );
+
+        data.setBoolean( "substitute", this.substitute );
+        data.setBoolean( "inverted", this.inverted );
+        data.setInteger( "activePage", this.activePage );
     }
 
     @Override
@@ -117,94 +128,82 @@ public class PartFluidPatternTerminalEx extends FCBasePart {
         return GuiBridge.GUI_ME;
     }
 
-    public void onChangeInventory0(final IInventory inv, final int slot, final InvOperation mc, final ItemStack removedStack, final ItemStack newStack )
-    {
-        if( inv == this.pattern && slot == 1 )
-        {
-            final ItemStack is = this.pattern.getStackInSlot( 1 );
-            if( is != null && is.getItem() instanceof ICraftingPatternItem)
-            {
-                final ICraftingPatternItem pattern = (ICraftingPatternItem) is.getItem();
-                final ICraftingPatternDetails details = pattern.getPatternForItem( is, this.getHost().getTile().getWorldObj() );
-                if( details != null )
-                {
-                    this.setSubstitution( details.canSubstitute() );
-
-                    for( int x = 0; x < this.crafting.getSizeInventory(); x++ )
-                    {
-                        this.crafting.setInventorySlotContents( x, null );
-                    }
-
-                    for( int x = 0; x < this.output.getSizeInventory(); x++ )
-                    {
-                        this.output.setInventorySlotContents( x, null );
-                    }
-
-                    for( int x = 0; x < this.crafting.getSizeInventory() && x < details.getInputs().length; x++ )
-                    {
-                        final IAEItemStack item = details.getInputs()[x];
-                        this.crafting.setInventorySlotContents( x, item == null ? null : item.getItemStack() );
-                    }
-
-                    for( int x = 0; x < this.output.getSizeInventory() && x < details.getOutputs().length; x++ )
-                    {
-                        final IAEItemStack item = details.getOutputs()[x];
-                        this.output.setInventorySlotContents( x, item == null ? null : item.getItemStack() );
-                    }
-                }
-            }
-        }
-
-        this.getHost().markForSave();
-    }
-
     @Override
     public void onChangeInventory(final IInventory inv, final int slot, final InvOperation mc, final ItemStack removedStack, final ItemStack newStack )
     {
         if (inv == this.pattern && slot == 1) {
             final ItemStack is = inv.getStackInSlot(1);
-            if (is != null && is.getItem() instanceof ItemFluidEncodedPattern) {
-                final ItemFluidEncodedPattern pattern = (ItemFluidEncodedPattern) is.getItem();
-                final ICraftingPatternDetails details = pattern.getPatternForItem( is, this.getHost().getTile().getWorldObj() );
-                if( details != null )
-                {
-                    this.setSubstitution( details.canSubstitute() );
 
-                    for( int x = 0; x < this.crafting.getSizeInventory(); x++ )
-                    {
-                        this.crafting.setInventorySlotContents( x, null );
-                    }
+            if (is != null && is.getItem() instanceof ICraftingPatternItem) {
+                final ICraftingPatternItem pattern = (ICraftingPatternItem) is.getItem();
+                final ICraftingPatternDetails details = pattern.getPatternForItem(is, this.getHost().getTile().getWorldObj());
 
-                    for( int x = 0; x < this.output.getSizeInventory(); x++ )
-                    {
-                        this.output.setInventorySlotContents( x, null );
-                    }
+                if (details != null) {
+                    final IAEItemStack[] inItems = details.getInputs();
+                    final IAEItemStack[] outItems = details.getOutputs();
+                    int inputsCount = 0;
+                    int outputCount = 0;
 
-                    for( int x = 0; x < this.crafting.getSizeInventory() && x < details.getInputs().length; x++ )
-                    {
-                        final IAEItemStack item = details.getInputs()[x];
-                        if (item != null && item.getItem() instanceof ItemFluidDrop) {
-                            ItemStack packet = ItemFluidPacket.newStack(ItemFluidDrop.getFluidStack(item.getItemStack()));
-                            this.crafting.setInventorySlotContents(x, packet);
+                    for (int i = 0; i < inItems.length; i++) {
+                        if (inItems[i] != null) {
+                            inputsCount++;
                         }
-                        else this.crafting.setInventorySlotContents( x, item == null ? null : item.getItemStack() );
                     }
 
-                    for( int x = 0; x < this.output.getSizeInventory() && x < details.getOutputs().length; x++ )
-                    {
-                        final IAEItemStack item = details.getOutputs()[x];
-                        if (item != null && item.getItem() instanceof ItemFluidDrop) {
-                            ItemStack packet = ItemFluidPacket.newStack(ItemFluidDrop.getFluidStack(item.getItemStack()));
-                            this.output.setInventorySlotContents(x, packet);
+                    for (int i = 0; i < outItems.length; i++) {
+                        if (outItems[i] != null) {
+                            outputCount++;
                         }
-                        else this.output.setInventorySlotContents( x, item == null ? null : item.getItemStack() );
+                    }
+
+                    this.setSubstitution(details.canSubstitute());
+                    this.setInverted(inputsCount <= 8 && outputCount >= 8);
+                    this.setActivePage(0);
+
+                    for (int i = 0; i < this.crafting.getSizeInventory(); i++) {
+                        this.crafting.setInventorySlotContents(i, null);
+                    }
+
+                    for (int i = 0; i < this.output.getSizeInventory(); i++) {
+                        this.output.setInventorySlotContents(i, null);
+                    }
+
+                    for (int i = 0; i < this.crafting.getSizeInventory() && i < inItems.length; i++) {
+                        final IAEItemStack item = inItems[i];
+                        if (item != null) {
+                            if (item.getItem() instanceof ItemFluidDrop) {
+                                ItemStack packet = ItemFluidPacket.newStack(ItemFluidDrop.getFluidStack(item.getItemStack()));
+                                this.crafting.setInventorySlotContents(i, packet);
+                            } else this.crafting.setInventorySlotContents(i, item.getItemStack());
+                        }
+                    }
+
+                    if (inverted) {
+                        for (int i = 0; i < this.output.getSizeInventory() && i < outItems.length; i++) {
+                            final IAEItemStack item = outItems[i];
+                            if (item != null) {
+                                if (item.getItem() instanceof ItemFluidDrop) {
+                                    ItemStack packet = ItemFluidPacket.newStack(ItemFluidDrop.getFluidStack(item.getItemStack()));
+                                    this.output.setInventorySlotContents(i, packet);
+                                } else this.output.setInventorySlotContents(i, item.getItemStack());
+                            }
+                        }
+                    } else {
+                        for (int i = 0; i < outItems.length && i < 8; i++) {
+                            final IAEItemStack item = outItems[i];
+                            if (item != null) {
+                                if (item.getItem() instanceof ItemFluidDrop) {
+                                    ItemStack packet = ItemFluidPacket.newStack(ItemFluidDrop.getFluidStack(item.getItemStack()));
+                                    this.output.setInventorySlotContents(i >= 4 ? 12 + i : i, packet);
+                                } else
+                                    this.output.setInventorySlotContents(i >= 4 ? 12 + i : i, item.getItemStack());
+                            }
+                        }
                     }
                 }
-                this.getHost().markForSave();
-                return;
             }
         }
-        onChangeInventory0(inv, slot, mc, removedStack, newStack);
+        this.getHost().markForSave();
     }
 
     public boolean shouldCombine()
@@ -281,6 +280,22 @@ public class PartFluidPatternTerminalEx extends FCBasePart {
     @Override
     public boolean isLightSource() {
         return false;
+    }
+
+    public boolean isInverted() {
+        return inverted;
+    }
+
+    public void setInverted(boolean inverted) {
+        this.inverted = inverted;
+    }
+
+    public int getActivePage() {
+        return this.activePage;
+    }
+
+    public void setActivePage(int activePage) {
+        this.activePage = activePage;
     }
 
 }

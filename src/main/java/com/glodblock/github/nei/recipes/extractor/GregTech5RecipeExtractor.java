@@ -3,6 +3,7 @@ package com.glodblock.github.nei.recipes.extractor;
 import codechicken.nei.PositionedStack;
 import com.glodblock.github.nei.object.IRecipeExtractor;
 import com.glodblock.github.nei.object.OrderStack;
+import com.glodblock.github.util.NEIUtil;
 import gregtech.api.enums.ItemList;
 import gregtech.common.items.GT_FluidDisplayItem;
 import net.minecraft.item.ItemStack;
@@ -15,15 +16,16 @@ import java.util.List;
 
 public class GregTech5RecipeExtractor implements IRecipeExtractor {
 
-    boolean r;
+    boolean removeSpecial;
 
     public GregTech5RecipeExtractor(boolean removeSpecial) {
-        r = removeSpecial;
+        this.removeSpecial = removeSpecial;
     }
 
     @Override
     public List<OrderStack<?>> getInputIngredients(List<PositionedStack> rawInputs) {
         if (r) removeSpecial(rawInputs);
+        if (removeSpecial) removeSpecial(rawInputs);
         List<OrderStack<?>> tmp = new LinkedList<>();
         for (int i = 0; i < rawInputs.size(); i ++) {
             if (rawInputs.get(i) == null) continue;

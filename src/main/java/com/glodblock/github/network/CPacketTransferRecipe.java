@@ -27,7 +27,7 @@ public class CPacketTransferRecipe implements IMessage {
     private List<OrderStack<?>> inputs;
     private List<OrderStack<?>> outputs;
     private boolean isCraft;
-    private final static int MAX_INDEX = 16;
+    private final static int MAX_INDEX = 32;
 
     public CPacketTransferRecipe(){
     }
