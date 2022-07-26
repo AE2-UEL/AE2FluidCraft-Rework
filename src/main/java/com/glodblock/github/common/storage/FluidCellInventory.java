@@ -180,8 +180,7 @@ public class FluidCellInventory implements IFluidCellInventory {
 
     @Override
     public long getRemainingFluidCount() {
-        final long remaining = this.getFreeBytes() * 8 + this.getUnusedFluidCount();
-
+        final long remaining = this.getFreeBytes() * 8 * 256 + this.getUnusedFluidCount();
         return remaining > 0 ? remaining : 0;
     }
 
