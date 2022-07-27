@@ -11,6 +11,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -87,7 +88,9 @@ public class FluidPatternDetails implements ICraftingPatternDetails, Comparable<
         if (condensed.length == 0) {
             return false;
         }
-        this.outputs = outputs;
+        this.outputs = Arrays.stream(outputs)
+                .filter(Objects::nonNull)
+                .toArray(IAEItemStack[]::new);
         this.outputsCond = condensed;
         return true;
     }
@@ -159,12 +162,11 @@ public class FluidPatternDetails implements ICraftingPatternDetails, Comparable<
     public static NBTTagList writeStackArray(IAEItemStack[] stacks) {
         NBTTagList listTag = new NBTTagList();
         for (IAEItemStack stack : stacks) {
-            if (stack != null) {
-                // see note at top of class
-                NBTTagCompound stackTag = new NBTTagCompound();
-                stack.writeToNBT(stackTag);
-                listTag.appendTag(stackTag);
-            }
+            // see note at top of class
+            NBTTagCompound stackTag = new NBTTagCompound();
+            if (stack != null) stack.writeToNBT(stackTag);
+
+            listTag.appendTag(stackTag);
         }
         return listTag;
     }
