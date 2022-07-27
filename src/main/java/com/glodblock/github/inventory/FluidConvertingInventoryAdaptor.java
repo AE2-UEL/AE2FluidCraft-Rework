@@ -32,7 +32,7 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
         TileEntity inter = capProvider.getWorldObj().getTileEntity(capProvider.xCoord + f.offsetX, capProvider.yCoord + f.offsetY, capProvider.zCoord + f.offsetZ);
         if (!Config.noFluidPacket && !(inter instanceof TileFluidInterface || (inter instanceof TileCableBus && ((TileCableBus) inter).getPart(f.getOpposite()) instanceof PartFluidInterface)))
             return InventoryAdaptor.getAdaptor(capProvider, f);
-        IInventory item = capProvider instanceof IInventory ? (IInventory) capProvider : null;
+        InventoryAdaptor item = InventoryAdaptor.getAdaptor(capProvider, f);
         IFluidHandler fluid = capProvider instanceof IFluidHandler ? (IFluidHandler) capProvider : null;
         return new FluidConvertingInventoryAdaptor(item, fluid, face);
     }
@@ -41,8 +41,8 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
     private final IFluidHandler invFluids;
     private final ForgeDirection side;
 
-    public FluidConvertingInventoryAdaptor(@Nullable IInventory invItems, @Nullable IFluidHandler invFluids, EnumFacing facing) {
-        this.invItems = invItems != null ? InventoryAdaptor.getAdaptor(invItems, Util.from(facing)) : null;
+    public FluidConvertingInventoryAdaptor(@Nullable InventoryAdaptor invItems, @Nullable IFluidHandler invFluids, EnumFacing facing) {
+        this.invItems = invItems;
         this.invFluids = invFluids;
         this.side = Util.from(facing);
     }
