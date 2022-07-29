@@ -94,12 +94,14 @@ public class CPacketTransferRecipe implements IMessage {
                     outputSlot.setInventorySlotContents(i, null);
                 }
 
-                if (combine) {
-                    message.inputs = NEIUtils.compress(message.inputs);
-                    message.outputs = NEIUtils.compress(message.outputs);
+                if (!message.isCraft) {
+                    if (combine) {
+                        message.inputs = NEIUtils.compress(message.inputs);
+                        message.outputs = NEIUtils.compress(message.outputs);
+                    }
+                    message.inputs = NEIUtils.clearNull(message.inputs);
+                    message.outputs = NEIUtils.clearNull(message.outputs);
                 }
-                message.inputs = NEIUtils.clearNull(message.inputs);
-                message.outputs = NEIUtils.clearNull(message.outputs);
 
                 for (OrderStack<?> stack : message.inputs) {
                     if (stack != null) {
