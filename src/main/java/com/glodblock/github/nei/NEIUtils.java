@@ -45,6 +45,8 @@ public class NEIUtils {
         int upper = 0;
         for (OrderStack<?> orderStack : list) {
             if (orderStack != null && orderStack.getStack() != null) {
+                if (orderStack.getStack() instanceof ItemStack && ((ItemStack) orderStack.getStack()).stackSize == 0)
+                    continue;
                 map.put(orderStack.getIndex(), orderStack.getStack());
                 upper = Math.max(upper, orderStack.getIndex());
             }
