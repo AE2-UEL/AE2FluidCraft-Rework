@@ -94,7 +94,7 @@ public class CPacketTransferRecipe implements IMessage {
                     outputSlot.setInventorySlotContents(i, null);
                 }
 
-                if (!cf.isCraftingMode()) {
+                if (!message.isCraft) {
                     if (combine) {
                         message.inputs = NEIUtils.compress(message.inputs);
                         message.outputs = NEIUtils.compress(message.outputs);
@@ -102,7 +102,7 @@ public class CPacketTransferRecipe implements IMessage {
                     message.inputs = NEIUtils.clearNull(message.inputs);
                     message.outputs = NEIUtils.clearNull(message.outputs);
                 }
-                
+
                 for (OrderStack<?> stack : message.inputs) {
                     if (stack != null) {
                         int index = stack.getIndex();
