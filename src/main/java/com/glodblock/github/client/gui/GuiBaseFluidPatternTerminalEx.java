@@ -71,7 +71,7 @@ public class GuiBaseFluidPatternTerminalEx extends GuiFCBaseMonitor {
         }
         else if( this.combineDisableBtn == btn || this.combineEnableBtn == btn )
         {
-            FluidCraft.proxy.netHandler.sendToServer( new CPacketFluidPatternTermBtns( "PatternTerminal.Combine", this.combineDisableBtn == btn ? "1" : "0" ) );
+            FluidCraft.proxy.netHandler.sendToServer( new CPacketFluidPatternTermBtns( "PatternTerminalEx.Combine", this.combineDisableBtn == btn ? "1" : "0" ) );
         }
         else if (ModAndClassUtil.isDoubleButton && doubleBtn == btn)
         {

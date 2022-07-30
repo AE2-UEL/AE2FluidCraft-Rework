@@ -106,8 +106,9 @@ public class CPacketFluidPatternTermBtns implements IMessage {
                     case "PatternTerminalEx.Double":
                         cpt.doubleStacks(Value.equals("1"));
                         break;
-                    case "PatternTerminal.Combine":
+                    case "PatternTerminalEx.Combine":
                         cpt.getPatternTerminal().setCombineMode(Value.equals("1"));
+                        break;
                     case "PatternTerminalEx.ActivePage":
                         cpt.getPatternTerminal().setActivePage(Integer.parseInt(Value));
                         break;

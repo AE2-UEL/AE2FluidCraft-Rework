@@ -3,7 +3,6 @@ package com.glodblock.github.nei.recipes.extractor;
 import codechicken.nei.PositionedStack;
 import com.glodblock.github.nei.object.IRecipeExtractor;
 import com.glodblock.github.nei.object.OrderStack;
-import com.glodblock.github.util.NEIUtil;
 import gregtech.api.enums.ItemList;
 import gregtech.common.items.GT_FluidDisplayItem;
 import net.minecraft.item.ItemStack;

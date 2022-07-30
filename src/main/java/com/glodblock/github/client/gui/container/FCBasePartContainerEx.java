@@ -60,14 +60,14 @@ public class FCBasePartContainerEx extends FCBaseMonitorContain implements IAEAp
     protected final ProcessingSlotFake[] outputSlots = new ProcessingSlotFake[CRAFTING_GRID_SLOTS * CRAFTING_GRID_PAGES];
     protected final SlotRestrictedInput patternSlotIN;
     protected final SlotRestrictedInput patternSlotOUT;
+    @GuiSync( 96 + (17-9) + 11 )
+    public boolean combine = false;
     @GuiSync( 96 + (17-9) + 12 )
     public boolean substitute = false;
     @GuiSync( 96 + (17-9) + 16 )
     public boolean inverted;
     @GuiSync( 96 + (17-9) + 17 )
     public int activePage = 0;
-    @GuiSync( 95 + (17-9) + 18 )
-    public boolean combine = false;
 
     public FCBasePartContainerEx(final InventoryPlayer ip, final ITerminalHost monitorable )
     {
