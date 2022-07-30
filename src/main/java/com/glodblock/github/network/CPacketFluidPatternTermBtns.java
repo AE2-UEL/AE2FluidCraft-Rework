@@ -84,27 +84,33 @@ public class CPacketFluidPatternTermBtns implements IMessage {
                         cpt.getPatternTerminal().setCombineMode(Value.equals("1"));
                         break;
                 }
-            } else if( Name.startsWith( "PatternTerminal." ) && (c instanceof ContainerFluidPatternTerminalEx))
+            } else if( Name.startsWith( "PatternTerminalEx." ) && (c instanceof ContainerFluidPatternTerminalEx))
             {
                 final ContainerFluidPatternTerminalEx cpt = (ContainerFluidPatternTerminalEx) c;
                 switch (Name) {
-                    case "PatternTerminal.Encode":
+                    case "PatternTerminalEx.Encode":
                         if (Value.equals("2"))
                             cpt.encodeAndMoveToInventory();
                         else
                             cpt.encode();
                         break;
-                    case "PatternTerminal.Clear":
+                    case "PatternTerminalEx.Clear":
                         cpt.clear();
                         break;
-                    case "PatternTerminal.Substitute":
+                    case "PatternTerminalEx.Substitute":
                         cpt.getPatternTerminal().setSubstitution(Value.equals("1"));
                         break;
-                    case "PatternTerminal.Double":
+                    case "PatternTerminalEx.Invert":
+                        cpt.getPatternTerminal().setInverted(Value.equals("1"));
+                        break;
+                    case "PatternTerminalEx.Double":
                         cpt.doubleStacks(Value.equals("1"));
                         break;
-                    case "PatternTerminal.Combine":
+                    case "PatternTerminalEx.Combine":
                         cpt.getPatternTerminal().setCombineMode(Value.equals("1"));
+                        break;
+                    case "PatternTerminalEx.ActivePage":
+                        cpt.getPatternTerminal().setActivePage(Integer.parseInt(Value));
                         break;
                 }
             } else if(Name.equals( "Terminal.Cpu" ) && c instanceof ContainerFluidCraftConfirm) {

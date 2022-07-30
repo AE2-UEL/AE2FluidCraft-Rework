@@ -32,38 +32,64 @@ import java.util.stream.Collectors;
 
 public class FCBasePartContainerEx extends FCBaseMonitorContain implements IAEAppEngInventory, IOptionalSlotHost, IContainerCraftingPacket {
 
+    private static final int CRAFTING_GRID_PAGES = 2;
+    private static final int CRAFTING_GRID_WIDTH = 4;
+    private static final int CRAFTING_GRID_HEIGHT = 4;
+    private static final int CRAFTING_GRID_SLOTS = CRAFTING_GRID_WIDTH * CRAFTING_GRID_HEIGHT;
+
+    private static class ProcessingSlotFake extends OptionalSlotFake {
+
+        private static final int POSITION_SHIFT = 9000;
+        private boolean hidden = false;
+
+        public ProcessingSlotFake(IInventory inv, IOptionalSlotHost containerBus, int idx, int x, int y, int offX, int offY, int groupNum) {
+            super(inv, containerBus, idx, x, y, offX, offY, groupNum);
+            this.setRenderDisabled(false);
+        }
+
+        public void setHidden(boolean hide) {
+            if (this.hidden != hide) {
+                this.hidden = hide;
+                this.xDisplayPosition += (hide ? -1 : 1) * POSITION_SHIFT;
+            }
+        }
+    }
+
     private final PartFluidPatternTerminalEx patternTerminal;
-    protected final SlotFakeCraftingMatrix[] craftingSlots = new SlotFakeCraftingMatrix[16];
-    protected final OptionalSlotFake[] outputSlots = new OptionalSlotFake[4];
+    protected final ProcessingSlotFake[] craftingSlots = new ProcessingSlotFake[CRAFTING_GRID_SLOTS * CRAFTING_GRID_PAGES];
+    protected final ProcessingSlotFake[] outputSlots = new ProcessingSlotFake[CRAFTING_GRID_SLOTS * CRAFTING_GRID_PAGES];
     protected final SlotRestrictedInput patternSlotIN;
     protected final SlotRestrictedInput patternSlotOUT;
-    @GuiSync( 96 )
-    public boolean substitute = false;
-    @GuiSync( 95 )
+    @GuiSync( 96 + (17-9) + 11 )
     public boolean combine = false;
+    @GuiSync( 96 + (17-9) + 12 )
+    public boolean substitute = false;
+    @GuiSync( 96 + (17-9) + 16 )
+    public boolean inverted;
+    @GuiSync( 96 + (17-9) + 17 )
+    public int activePage = 0;
 
     public FCBasePartContainerEx(final InventoryPlayer ip, final ITerminalHost monitorable )
     {
         super( ip, monitorable, false );
         this.patternTerminal = (PartFluidPatternTerminalEx) monitorable;
+        this.inverted = patternTerminal.isInverted();
 
         final IInventory patternInv = this.getPatternTerminal().getInventoryByName( "pattern" );
         final IInventory output = this.getPatternTerminal().getInventoryByName( "output" );
-
         IInventory crafting = this.getPatternTerminal().getInventoryByName("crafting");
 
-        for( int y = 0; y < 4; y++ )
-        {
-            for( int x = 0; x < 4; x++ )
-            {
-                this.addSlotToContainer( this.craftingSlots[x + y * 4] = new SlotFakeCraftingMatrix(crafting, x + y * 4, 15 + x * 18, -83 + y * 18 ) );
+        for (int page = 0; page < CRAFTING_GRID_PAGES; page++) {
+            for (int y = 0; y < CRAFTING_GRID_HEIGHT; y++) {
+                for (int x = 0; x < CRAFTING_GRID_WIDTH; x++) {
+                    this.addSlotToContainer(this.craftingSlots[x + y * CRAFTING_GRID_WIDTH + page * CRAFTING_GRID_SLOTS] = new ProcessingSlotFake(crafting, this, x + y * CRAFTING_GRID_WIDTH + page * CRAFTING_GRID_SLOTS, 15, -83, x, y, x + 4));
+                }
             }
-        }
-
-        for( int y = 0; y < 4; y++ )
-        {
-            this.addSlotToContainer( this.outputSlots[y] = new SlotPatternOutputs( output, this, y, 112, -83, 0, y, 1 ) );
-            this.outputSlots[y].setRenderDisabled( false );
+            for (int x = 0; x < CRAFTING_GRID_WIDTH; x++) {
+                for (int y = 0; y < CRAFTING_GRID_HEIGHT; y++) {
+                    this.addSlotToContainer(this.outputSlots[x * CRAFTING_GRID_HEIGHT + y + page * CRAFTING_GRID_SLOTS] = new ProcessingSlotFake(output, this, x * CRAFTING_GRID_HEIGHT + y + page * CRAFTING_GRID_SLOTS, 112, -83, -x, y, x));
+                }
+            }
         }
 
         this.addSlotToContainer( this.patternSlotIN = new SlotRestrictedInput( SlotRestrictedInput.PlacableItemType.BLANK_PATTERN, patternInv, 0, 147, -72 - 9, this.getInventoryPlayer() ) );
@@ -186,7 +212,7 @@ public class FCBasePartContainerEx extends FCBaseMonitorContain implements IAEAp
 
     private ItemStack[] getInputs()
     {
-        final ItemStack[] input = new ItemStack[16];
+        final ItemStack[] input = new ItemStack[CRAFTING_GRID_SLOTS * CRAFTING_GRID_PAGES];
         boolean hasValue = false;
 
         for( int x = 0; x < this.craftingSlots.length; x++ )
@@ -208,7 +234,7 @@ public class FCBasePartContainerEx extends FCBaseMonitorContain implements IAEAp
 
     private ItemStack[] getOutputs()
     {
-        final List<ItemStack> list = new ArrayList<>( 4 );
+        final List<ItemStack> list = new ArrayList<>( CRAFTING_GRID_SLOTS * CRAFTING_GRID_PAGES );
         boolean hasValue = false;
 
         for( final OptionalSlotFake outputSlot : this.outputSlots )
@@ -262,17 +288,14 @@ public class FCBasePartContainerEx extends FCBaseMonitorContain implements IAEAp
     @Override
     public boolean isSlotEnabled( final int idx )
     {
-        if( idx == 1 )
+        if (idx < 4) // outputs
         {
-            Platform.isServer();
-            return true;
+            return inverted || idx == 0;
         }
-        else if( idx == 2 )
+        else
         {
-            Platform.isServer();
-            return false;
+            return !inverted || idx == 4;
         }
-        return false;
     }
 
     @Override
@@ -283,6 +306,32 @@ public class FCBasePartContainerEx extends FCBaseMonitorContain implements IAEAp
         {
             this.substitute = this.patternTerminal.isSubstitution();
             this.combine = this.patternTerminal.shouldCombine();
+            if (inverted != patternTerminal.isInverted() || activePage != patternTerminal.getActivePage()) {
+                inverted = patternTerminal.isInverted();
+                activePage = patternTerminal.getActivePage();
+                offsetSlots();
+            }
+        }
+    }
+
+    private void offsetSlots()
+    {
+        for (int page = 0; page < CRAFTING_GRID_PAGES; page++) {
+            for (int y = 0; y < CRAFTING_GRID_HEIGHT; y++) {
+                for (int x = 0; x < CRAFTING_GRID_WIDTH; x++) {
+                    this.craftingSlots[x + y * CRAFTING_GRID_WIDTH + page * CRAFTING_GRID_SLOTS].setHidden(page != activePage || x > 0 && inverted);
+                    this.outputSlots[x * CRAFTING_GRID_HEIGHT + y + page * CRAFTING_GRID_SLOTS].setHidden(page != activePage || x > 0 && !inverted);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onUpdate(String field, Object oldValue, Object newValue) {
+        super.onUpdate( field, oldValue, newValue );
+
+        if (field.equals( "inverted" ) || field.equals( "activePage" )) {
+            offsetSlots();
         }
     }
 
@@ -291,13 +340,15 @@ public class FCBasePartContainerEx extends FCBaseMonitorContain implements IAEAp
     {
         if( s == this.patternSlotOUT && Platform.isServer() )
         {
+            inverted = patternTerminal.isInverted();
+
             for( final Object crafter : this.crafters )
             {
                 final ICrafting icrafting = (ICrafting) crafter;
 
                 for( final Object g : this.inventorySlots )
                 {
-                    if( g instanceof OptionalSlotFake || g instanceof SlotFakeCraftingMatrix )
+                    if( g instanceof OptionalSlotFake )
                     {
                         final Slot sri = (Slot) g;
                         icrafting.sendSlotContents( this, sri.slotNumber, sri.getStack() );
@@ -404,6 +455,14 @@ public class FCBasePartContainerEx extends FCBaseMonitorContain implements IAEAp
         List<SlotFake> enabledSlots = Arrays.stream(slots).filter(SlotFake::isEnabled).collect(Collectors.toList());
         long fluid = enabledSlots.stream().filter(s -> Util.isFluidPacket(s.getStack())).count();
         return fluid > 0;
+    }
+
+    public void setActivePage(final int activePage) {
+        this.activePage = activePage;
+    }
+
+    public int getActivePage() {
+        return this.activePage;
     }
 
 }

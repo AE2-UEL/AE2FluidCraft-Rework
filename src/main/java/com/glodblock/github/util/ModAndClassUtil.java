@@ -22,6 +22,7 @@ public final class ModAndClassUtil {
     public static boolean WCT = false;
     public static boolean IC2 = false;
     public static boolean NEI = false;
+    public static boolean GTPP = false;
 
     public static boolean isDoubleButton;
     public static boolean isSaveText;
@@ -118,6 +119,7 @@ public final class ModAndClassUtil {
             IC2 = true;
         if (Loader.isModLoaded("NotEnoughItems"))
             NEI = true;
+        if (Loader.isModLoaded("miscutils"))
+            GTPP = true;
     }
-
 }

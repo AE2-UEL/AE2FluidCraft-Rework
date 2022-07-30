@@ -15,15 +15,15 @@ import java.util.List;
 
 public class GregTech5RecipeExtractor implements IRecipeExtractor {
 
-    boolean r;
+    boolean removeSpecial;
 
     public GregTech5RecipeExtractor(boolean removeSpecial) {
-        r = removeSpecial;
+        this.removeSpecial = removeSpecial;
     }
 
     @Override
     public List<OrderStack<?>> getInputIngredients(List<PositionedStack> rawInputs) {
-        if (r) removeSpecial(rawInputs);
+        if (removeSpecial) removeSpecial(rawInputs);
         List<OrderStack<?>> tmp = new LinkedList<>();
         for (int i = 0; i < rawInputs.size(); i ++) {
             if (rawInputs.get(i) == null) continue;
