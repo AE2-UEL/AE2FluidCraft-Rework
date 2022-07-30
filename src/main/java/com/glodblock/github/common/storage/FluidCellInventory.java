@@ -389,19 +389,19 @@ public class FluidCellInventory implements IFluidCellInventory {
 
         if( this.canHoldNewFluid() ) // room for new type, and for at least one item!
         {
-            final int remainingItemCount = (int) this.getRemainingFluidCount() - this.getBytesPerType() * 8;
+            final long remainingItemCount = this.getRemainingFluidCount() - this.getBytesPerType() * 8;
 
             if( remainingItemCount > 0 )
             {
                 if( input.getStackSize() > remainingItemCount )
                 {
                     final FluidStack toReturn = Util.cloneFluidStack(sharedFluidStack);
-                    toReturn.amount = sharedFluidStack.amount - remainingItemCount;
+                    toReturn.amount = (int) (sharedFluidStack.amount - remainingItemCount);
 
                     if( mode == Actionable.MODULATE )
                     {
                         final FluidStack toWrite = Util.cloneFluidStack( sharedFluidStack );
-                        toWrite.amount = remainingItemCount;
+                        toWrite.amount = (int) remainingItemCount;
 
                         this.cellItems.add( AEFluidStack.create( toWrite ) );
                         this.updateFluidCount( toWrite.amount );

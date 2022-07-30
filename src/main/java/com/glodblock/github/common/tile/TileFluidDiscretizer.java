@@ -1,5 +1,6 @@
 package com.glodblock.github.common.tile;
 
+import appeng.api.AEApi;
 import appeng.api.config.Actionable;
 import appeng.api.networking.GridFlags;
 import appeng.api.networking.crafting.ICraftingGrid;
@@ -19,7 +20,6 @@ import appeng.me.GridAccessException;
 import appeng.me.cache.CraftingGridCache;
 import appeng.me.storage.MEInventoryHandler;
 import appeng.tile.grid.AENetworkTile;
-import appeng.util.Platform;
 import com.glodblock.github.common.item.ItemFluidDrop;
 
 import java.util.ArrayList;
@@ -48,8 +48,6 @@ public class TileFluidDiscretizer extends AENetworkTile implements IPriorityHost
     @Override
     @SuppressWarnings("rawtypes")
     public List<IMEInventoryHandler> getCellArray(StorageChannel channel) {
-        /*conflict = !checkDiscreatizer();
-        if (conflict) return Collections.emptyList();*/
         if (getProxy().isActive()) {
             if (channel == StorageChannel.ITEMS) {
                 return Collections.singletonList(fluidDropInv.invHandler);
@@ -131,6 +129,25 @@ public class TileFluidDiscretizer extends AENetworkTile implements IPriorityHost
         updateState();
     }
 
+    @MENetworkEventSubscribe
+    public void onBootUp(MENetworkBootingStatusChange event) {
+        try {
+            IMEInventory<IAEItemStack> inventory = this.getProxy().getStorage().getItemInventory();
+            IItemList<IAEItemStack> items = inventory.getAvailableItems(AEApi.instance().storage().createItemList());
+            IItemList<IAEItemStack> drops = AEApi.instance().storage().createItemList();
+            for (IAEItemStack item : items) {
+                if (item != null && item.getItem() instanceof ItemFluidDrop) {
+                    drops.add(item);
+                }
+            }
+            for (IAEItemStack drop : drops) {
+                inventory.extractItems(drop, Actionable.MODULATE, ownActionSource);
+                inventory.injectItems(drop, Actionable.MODULATE, ownActionSource);
+            }
+        } catch (GridAccessException ignored) {
+        }
+    }
+
     private class FluidDiscretizingInventory implements IMEInventory<IAEItemStack>, IMEMonitorHandlerReceiver<IAEFluidStack> {
 
         private final MEInventoryHandler<IAEItemStack> invHandler = new MEInventoryHandler<>(this, getChannel());
@@ -142,7 +159,6 @@ public class TileFluidDiscretizer extends AENetworkTile implements IPriorityHost
 
         @Override
         public IAEItemStack injectItems(IAEItemStack request, Actionable type, BaseActionSource src) {
-            /*if (conflict) return request;*/
             IAEFluidStack fluidStack = ItemFluidDrop.getAeFluidStack(request);
             if (fluidStack == null) {
                 return request;
@@ -165,7 +181,6 @@ public class TileFluidDiscretizer extends AENetworkTile implements IPriorityHost
 
         @Override
         public IAEItemStack extractItems(IAEItemStack request, Actionable mode, BaseActionSource src) {
-            /*if (conflict) return null;*/
             IAEFluidStack fluidStack = ItemFluidDrop.getAeFluidStack(request);
             if (fluidStack == null) {
                 return null;
@@ -188,7 +203,6 @@ public class TileFluidDiscretizer extends AENetworkTile implements IPriorityHost
 
         @Override
         public IItemList<IAEItemStack> getAvailableItems(IItemList<IAEItemStack> out) {
-            /*if (conflict) return out;*/
             if (itemCache == null) {
                 itemCache = new ArrayList<>();
                 IMEMonitor<IAEFluidStack> fluidGrid = getFluidGrid();
@@ -253,7 +267,6 @@ public class TileFluidDiscretizer extends AENetworkTile implements IPriorityHost
         @Override
         @SuppressWarnings("rawtypes")
         public IAEFluidStack injectItems(IAEFluidStack input, Actionable type, BaseActionSource src) {
-            /*if (conflict) return null;*/
             ICraftingGrid craftingGrid;
             try {
                 craftingGrid = getProxy().getGrid().getCache(ICraftingGrid.class);
