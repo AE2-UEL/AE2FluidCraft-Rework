@@ -18,6 +18,7 @@ import com.glodblock.github.inventory.GuiType;
 import com.glodblock.github.inventory.InventoryHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
@@ -28,6 +29,8 @@ import net.minecraftforge.items.IItemHandler;
 import javax.annotation.Nonnull;
 
 public class PartFluidPatternTerminal extends PartPatternTerminal {
+
+    private boolean combine = false;
 
     @PartModels
     public static ResourceLocation[] MODELS = new ResourceLocation[] {
@@ -47,6 +50,26 @@ public class PartFluidPatternTerminal extends PartPatternTerminal {
     @Override
     public IPartModel getStaticModels() {
         return this.selectModel(MODELS_OFF, MODELS_ON, MODELS_HAS_CHANNEL);
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        combine = data.getBoolean("combineMode");
+    }
+
+    public void setCombineMode(boolean value) {
+        this.combine = value;
+    }
+
+    public boolean getCombineMode() {
+        return this.combine;
+    }
+
+    @Override
+    public void writeToNBT(NBTTagCompound data) {
+        super.writeToNBT(data);
+        data.setBoolean("combineMode", combine);
     }
 
     @Override

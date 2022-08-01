@@ -155,7 +155,7 @@ public class TileFluidDiscretizer extends AENetworkTile implements ICellContaine
             if (energyGrid == null) {
                 return null;
             }
-            return ItemFluidDrop.newAeStack(Platform.poweredExtraction(energyGrid, fluidGrid, fluidStack, ownActionSource, mode));
+            return ItemFluidDrop.newAeStack(fluidGrid.extractItems(fluidStack, mode, ownActionSource));
         }
 
         @SuppressWarnings("DuplicatedCode")
@@ -174,7 +174,7 @@ public class TileFluidDiscretizer extends AENetworkTile implements ICellContaine
             if (energyGrid == null) {
                 return input;
             }
-            return ItemFluidDrop.newAeStack(Platform.poweredInsert(energyGrid, fluidGrid, fluidStack, ownActionSource, type));
+            return ItemFluidDrop.newAeStack(fluidGrid.injectItems(fluidStack, type, ownActionSource));
         }
 
         @Override

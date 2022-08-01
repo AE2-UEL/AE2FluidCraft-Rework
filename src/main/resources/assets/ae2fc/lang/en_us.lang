@@ -36,6 +36,10 @@ ae2fc.tooltip.empty=Empty
 ae2fc.tooltip.dump_tank=Dump Tank Contents
 ae2fc.tooltip.transpose_in=Transfer Into Tank
 ae2fc.tooltip.transpose_out=Transfer Into Item
+ae2fc.tooltip.not_combine=Merge the same items
+ae2fc.tooltip.not_combine.hint=Disabled
+ae2fc.tooltip.combine=Merge the same items
+ae2fc.tooltip.combine.hint=Enabled
 
 ae2fc.pauto.fluid_processing.name=Fluid Processing
 ae2fc.pauto.fluid_processing.name_short=Fluid

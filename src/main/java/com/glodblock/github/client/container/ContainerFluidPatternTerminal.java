@@ -4,10 +4,12 @@ import appeng.api.AEApi;
 import appeng.api.definitions.IDefinitions;
 import appeng.api.storage.ITerminalHost;
 import appeng.api.storage.data.IAEItemStack;
+import appeng.container.guisync.GuiSync;
 import appeng.container.implementations.ContainerPatternTerm;
 import appeng.container.slot.SlotFakeCraftingMatrix;
 import appeng.container.slot.SlotPatternOutputs;
 import appeng.helpers.InventoryAction;
+import appeng.util.Platform;
 import appeng.util.item.AEItemStack;
 import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidEncodedPattern;
@@ -36,6 +38,9 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
     private final Slot[] outputSlots;
     private final Slot patternSlotIN;
     private final Slot patternSlotOUT;
+
+    @GuiSync(95)
+    public boolean combine = false;
 
     public ContainerFluidPatternTerminal(InventoryPlayer ip, ITerminalHost monitorable) {
         super(ip, monitorable);
@@ -435,6 +440,14 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
                 ItemStack stack = slot.getStack();
                 stack.setCount(stack.getCount() - decrease);
             }
+        }
+    }
+
+    @Override
+    public void detectAndSendChanges() {
+        super.detectAndSendChanges();
+        if (Platform.isServer()) {
+            this.combine = ((PartFluidPatternTerminal) this.getPatternTerminal()).getCombineMode();
         }
     }
 

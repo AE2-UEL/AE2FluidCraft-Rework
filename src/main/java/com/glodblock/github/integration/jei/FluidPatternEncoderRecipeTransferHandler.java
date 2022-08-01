@@ -21,7 +21,8 @@ import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Iterator;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class FluidPatternEncoderRecipeTransferHandler implements IRecipeTransferHandler<ContainerFluidPatternEncoder> {
 
@@ -48,34 +49,56 @@ public class FluidPatternEncoderRecipeTransferHandler implements IRecipeTransfer
             TileFluidPatternEncoder tile = container.getTile();
             IAEItemStack[] crafting = new IAEItemStack[tile.getCraftingSlots().getSlotCount()];
             IAEItemStack[] output = new IAEItemStack[tile.getOutputSlots().getSlotCount()];
-            transferRecipeSlots(recipeLayout, crafting, output, false, ext);
+            transferRecipeSlots(recipeLayout, crafting, output, false, false, ext);
             FluidCraft.proxy.netHandler.sendToServer(new CPacketLoadPattern(crafting, output));
         }
         return null;
     }
 
     public static void transferRecipeSlots(IRecipeLayout recipeLayout, IAEItemStack[] crafting, IAEItemStack[] output,
-                                           boolean retainEmptyInputs, ExtraExtractors ext) {
+                                           boolean retainEmptyInputs, boolean doCompress, ExtraExtractors ext) {
+        //Clear Current Terminal
+        Arrays.fill(crafting, null);
+        Arrays.fill(output, null);
+
         int ndxCrafting = 0, ndxOutput = 0;
+
+        List<ItemStack> inputItems = new ArrayList<>();
+        List<ItemStack> outputItems = new ArrayList<>();
+
         for (IGuiIngredient<ItemStack> ing : recipeLayout.getItemStacks().getGuiIngredients().values()) {
             if (ing.isInput()) {
-                if (ndxCrafting < crafting.length) {
-                    ItemStack stack = ing.getDisplayedIngredient();
-                    if (stack != null) {
-                        crafting[ndxCrafting++] = AEItemStack.fromItemStack(stack);
-                    } else if (retainEmptyInputs) {
-                        crafting[ndxCrafting++] = null;
-                    }
-                }
-            } else {
-                if (ndxOutput < output.length) {
-                    ItemStack stack = ing.getDisplayedIngredient();
-                    if (stack != null) {
-                        output[ndxOutput++] = AEItemStack.fromItemStack(stack);
-                    }
-                }
+                inputItems.add(ing.getDisplayedIngredient());
+            }
+            else {
+                outputItems.add(ing.getDisplayedIngredient());
             }
         }
+
+        if (!retainEmptyInputs) {
+            if (doCompress) {
+                inputItems = compress(inputItems);
+                outputItems = compress(outputItems);
+            } else {
+                inputItems = inputItems.stream().filter(Objects::nonNull).collect(Collectors.toList());
+                outputItems = outputItems.stream().filter(Objects::nonNull).collect(Collectors.toList());
+            }
+        }
+
+        for (int i = 0; i < Math.min(crafting.length, inputItems.size()); i ++) {
+            if (inputItems.get(i) != null) {
+                crafting[i] = AEItemStack.fromItemStack(inputItems.get(i));
+            }
+            ndxCrafting = i + 1;
+        }
+
+        for (int i = 0; i < Math.min(output.length, outputItems.size()); i ++) {
+            if (outputItems.get(i) != null) {
+                output[i] = AEItemStack.fromItemStack(outputItems.get(i));
+            }
+            ndxOutput = i + 1;
+        }
+
         for (IGuiIngredient<FluidStack> ing : recipeLayout.getFluidStacks().getGuiIngredients().values()) {
             if (ing.isInput()) {
                 if (ndxCrafting < crafting.length) {
@@ -100,6 +123,28 @@ public class FluidPatternEncoderRecipeTransferHandler implements IRecipeTransfer
                 }
             }
         }
+    }
+
+    public static List<ItemStack> compress(Collection<ItemStack> list) {
+        List<ItemStack> comp = new LinkedList<>();
+        for (ItemStack item : list) {
+            if (item == null) continue;
+            ItemStack currentStack = item.copy();
+            if (currentStack.isEmpty() || currentStack.getCount() == 0) continue;
+            boolean find = false;
+            for (ItemStack storedStack : comp) {
+                if (storedStack.isEmpty()) continue;
+                boolean areItemStackEqual = storedStack.isItemEqual(currentStack) && ItemStack.areItemStackTagsEqual(storedStack, currentStack);
+                if (areItemStackEqual && (storedStack.getCount() + currentStack.getCount()) <= storedStack.getMaxStackSize()) {
+                    find = true;
+                    storedStack.setCount(storedStack.getCount() + currentStack.getCount());
+                }
+            }
+            if (!find) {
+                comp.add(item.copy());
+            }
+        }
+        return comp.stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 
 }

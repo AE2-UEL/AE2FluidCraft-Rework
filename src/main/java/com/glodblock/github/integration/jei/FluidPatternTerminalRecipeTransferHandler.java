@@ -7,7 +7,6 @@ import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.container.ContainerFluidPatternTerminal;
 import com.glodblock.github.common.part.PartFluidPatternTerminal;
 import com.glodblock.github.network.CPacketLoadPattern;
-import com.glodblock.github.util.NameConst;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
@@ -51,7 +50,7 @@ public class FluidPatternTerminalRecipeTransferHandler implements IRecipeTransfe
             PartFluidPatternTerminal tile = (PartFluidPatternTerminal)container.getPatternTerminal();
             IAEItemStack[] crafting = new IAEItemStack[tile.getInventoryByName("crafting").getSlots()];
             IAEItemStack[] output = new IAEItemStack[tile.getInventoryByName("output").getSlots()];
-            FluidPatternEncoderRecipeTransferHandler.transferRecipeSlots(recipeLayout, crafting, output, container.craftingMode, ext);
+            FluidPatternEncoderRecipeTransferHandler.transferRecipeSlots(recipeLayout, crafting, output, container.craftingMode, container.combine, ext);
             FluidCraft.proxy.netHandler.sendToServer(new CPacketLoadPattern(crafting, output));
         }
         return null;

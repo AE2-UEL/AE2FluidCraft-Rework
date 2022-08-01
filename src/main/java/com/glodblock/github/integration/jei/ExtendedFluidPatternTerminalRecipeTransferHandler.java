@@ -44,7 +44,7 @@ public class ExtendedFluidPatternTerminalRecipeTransferHandler implements IRecip
            PartExtendedFluidPatternTerminal tile = (PartExtendedFluidPatternTerminal)container.part;
            IAEItemStack[] crafting = new IAEItemStack[tile.getInventoryByName("crafting").getSlots()];
            IAEItemStack[] output = new IAEItemStack[tile.getInventoryByName("output").getSlots()];
-           FluidPatternEncoderRecipeTransferHandler.transferRecipeSlots(recipeLayout, crafting, output, false, ext);
+           FluidPatternEncoderRecipeTransferHandler.transferRecipeSlots(recipeLayout, crafting, output, false, container.combine, ext);
            FluidCraft.proxy.netHandler.sendToServer(new CPacketLoadPattern(crafting, output));
        }
        return null;

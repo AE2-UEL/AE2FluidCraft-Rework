@@ -4,15 +4,18 @@ import appeng.api.AEApi;
 import appeng.api.definitions.IDefinitions;
 import appeng.api.storage.ITerminalHost;
 import appeng.api.storage.data.IAEItemStack;
+import appeng.container.guisync.GuiSync;
 import appeng.container.implementations.ContainerExpandedProcessingPatternTerm;
 import appeng.container.slot.SlotFakeCraftingMatrix;
 import appeng.container.slot.SlotPatternOutputs;
 import appeng.helpers.InventoryAction;
+import appeng.util.Platform;
 import appeng.util.item.AEItemStack;
 import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidEncodedPattern;
 import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.common.part.PartExtendedFluidPatternTerminal;
+import com.glodblock.github.common.part.PartFluidPatternTerminal;
 import com.glodblock.github.interfaces.PatternConsumer;
 import com.glodblock.github.loader.FCItems;
 import com.glodblock.github.util.Ae2Reflect;
@@ -37,6 +40,9 @@ public class ContainerExtendedFluidPatternTerminal extends ContainerExpandedProc
     private final Slot patternSlotIN;
     private final Slot patternSlotOUT;
     public final ITerminalHost part;
+
+    @GuiSync(95)
+    public boolean combine = false;
 
     public ContainerExtendedFluidPatternTerminal(InventoryPlayer ip, ITerminalHost monitorable) {
         super(ip, monitorable);
@@ -430,6 +436,14 @@ public class ContainerExtendedFluidPatternTerminal extends ContainerExpandedProc
     public void acceptPattern(IAEItemStack[] inputs, IAEItemStack[] outputs) {
         if (part instanceof PartExtendedFluidPatternTerminal) {
             ((PartExtendedFluidPatternTerminal) part).onChangeCrafting(inputs, outputs);
+        }
+    }
+
+    @Override
+    public void detectAndSendChanges() {
+        super.detectAndSendChanges();
+        if (Platform.isServer()) {
+            this.combine = ((PartExtendedFluidPatternTerminal) this.getExpandedPatternTerminal()).getCombineMode();
         }
     }
 
