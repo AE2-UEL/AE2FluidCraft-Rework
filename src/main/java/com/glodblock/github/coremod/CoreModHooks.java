@@ -1,12 +1,21 @@
 package com.glodblock.github.coremod;
 
+import appeng.api.AEApi;
+import appeng.api.config.Actionable;
 import appeng.api.networking.IGrid;
 import appeng.api.networking.IGridHost;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.IMachineSet;
+import appeng.api.networking.storage.IStorageGrid;
+import appeng.api.storage.IMEInventory;
+import appeng.api.storage.channels.IFluidStorageChannel;
+import appeng.api.storage.channels.IItemStorageChannel;
+import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
+import appeng.crafting.MECraftingInventory;
 import appeng.items.misc.ItemEncodedPattern;
 import appeng.me.MachineSet;
+import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.parts.misc.PartInterface;
 import appeng.tile.misc.TileInterface;
 import appeng.util.InventoryAdaptor;
@@ -129,6 +138,53 @@ public class CoreModHooks {
             return AEItemStack.fromItemStack(ItemFluidPacket.newDisplayStack(fluid));
         }
         else return drop;
+    }
+
+    public static void storeFluidItem(CraftingCPUCluster instance) {
+        final IGrid g = Ae2Reflect.getGrid(instance);
+
+        if( g == null )
+        {
+            return;
+        }
+
+        final IStorageGrid sg = g.getCache( IStorageGrid.class );
+        final IMEInventory<IAEItemStack> ii = sg.getInventory(AEApi.instance().storage().getStorageChannel(IItemStorageChannel.class));
+        final IMEInventory<IAEFluidStack> jj = sg.getInventory(AEApi.instance().storage().getStorageChannel(IFluidStorageChannel.class));
+        final MECraftingInventory inventory = Ae2Reflect.getCPUInventory(instance);
+
+        for( IAEItemStack is : inventory.getItemList() )
+        {
+            is = inventory.extractItems( is.copy(), Actionable.MODULATE, Ae2Reflect.getCPUSource(instance) );
+
+            if( is != null )
+            {
+                Ae2Reflect.postCPUChange(instance, is, Ae2Reflect.getCPUSource(instance));
+                if (is.getItem() instanceof ItemFluidDrop) {
+                    IAEFluidStack fluidDrop = ItemFluidDrop.getAeFluidStack(is);
+                    fluidDrop = jj.injectItems(fluidDrop, Actionable.MODULATE, Ae2Reflect.getCPUSource(instance));
+                    if (fluidDrop == null) {
+                        is = null;
+                    } else {
+                        is.setStackSize(fluidDrop.getStackSize());
+                    }
+                } else {
+                    is = ii.injectItems(is, Actionable.MODULATE, Ae2Reflect.getCPUSource(instance));
+                }
+            }
+
+            if( is != null )
+            {
+                inventory.injectItems( is, Actionable.MODULATE, Ae2Reflect.getCPUSource(instance) );
+            }
+        }
+
+        if( inventory.getItemList().isEmpty() )
+        {
+            Ae2Reflect.setCPUInventory(instance, new MECraftingInventory());
+        }
+
+        Ae2Reflect.markCPUDirty(instance);
     }
 
 }
