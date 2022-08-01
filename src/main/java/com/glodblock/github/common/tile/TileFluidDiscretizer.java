@@ -129,25 +129,6 @@ public class TileFluidDiscretizer extends AENetworkTile implements IPriorityHost
         updateState();
     }
 
-    @MENetworkEventSubscribe
-    public void onBootUp(MENetworkBootingStatusChange event) {
-        try {
-            IMEInventory<IAEItemStack> inventory = this.getProxy().getStorage().getItemInventory();
-            IItemList<IAEItemStack> items = inventory.getAvailableItems(AEApi.instance().storage().createItemList());
-            IItemList<IAEItemStack> drops = AEApi.instance().storage().createItemList();
-            for (IAEItemStack item : items) {
-                if (item != null && item.getItem() instanceof ItemFluidDrop) {
-                    drops.add(item);
-                }
-            }
-            for (IAEItemStack drop : drops) {
-                inventory.extractItems(drop, Actionable.MODULATE, ownActionSource);
-                inventory.injectItems(drop, Actionable.MODULATE, ownActionSource);
-            }
-        } catch (GridAccessException ignored) {
-        }
-    }
-
     private class FluidDiscretizingInventory implements IMEInventory<IAEItemStack>, IMEMonitorHandlerReceiver<IAEFluidStack> {
 
         private final MEInventoryHandler<IAEItemStack> invHandler = new MEInventoryHandler<>(this, getChannel());

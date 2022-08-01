@@ -1,10 +1,16 @@
 package com.glodblock.github.util;
 
 import appeng.api.implementations.IUpgradeableHost;
+import appeng.api.networking.IGrid;
 import appeng.api.networking.crafting.ICraftingCPU;
+import appeng.api.networking.security.BaseActionSource;
+import appeng.api.networking.security.MachineSource;
 import appeng.api.storage.IMEInventory;
+import appeng.api.storage.data.IAEItemStack;
 import appeng.container.implementations.ContainerUpgradeable;
 import appeng.container.implementations.CraftingCPURecord;
+import appeng.crafting.MECraftingInventory;
+import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.me.storage.MEInventoryHandler;
 import appeng.me.storage.MEPassThrough;
 import appeng.util.inv.ItemSlot;
@@ -23,7 +29,12 @@ public class Ae2Reflect {
     private static final Field fCPU_myName;
     private static final Field fCPU_processors;
     private static final Field fCPU_size;
+    private static final Field fCPU_inventory;
+    private static final Field fCPU_machineSrc;
     private static final Method mItemSlot_setExtractable;
+    private static final Method mCPU_getGrid;
+    private static final Method mCPU_postChange;
+    private static final Method mCPU_markDirty;
 
     static {
         try {
@@ -34,7 +45,12 @@ public class Ae2Reflect {
             fCPU_myName = Ae2Reflect.reflectField(CraftingCPURecord.class, "myName");
             fCPU_processors = Ae2Reflect.reflectField(CraftingCPURecord.class, "processors");
             fCPU_size = Ae2Reflect.reflectField(CraftingCPURecord.class, "size");
+            fCPU_inventory = Ae2Reflect.reflectField(CraftingCPUCluster.class, "inventory");
+            fCPU_machineSrc = Ae2Reflect.reflectField(CraftingCPUCluster.class, "machineSrc");
             mItemSlot_setExtractable = reflectMethod(ItemSlot.class, "setExtractable", boolean.class);
+            mCPU_getGrid = reflectMethod(CraftingCPUCluster.class, "getGrid");
+            mCPU_postChange = reflectMethod(CraftingCPUCluster.class, "postChange", IAEItemStack.class, BaseActionSource.class);
+            mCPU_markDirty = reflectMethod(CraftingCPUCluster.class, "markDirty");
         } catch (Exception e) {
             throw new IllegalStateException("Failed to initialize AE2 reflection hacks!", e);
         }
@@ -112,6 +128,42 @@ public class Ae2Reflect {
 
     public static IUpgradeableHost getUpgradeList(ContainerUpgradeable container) {
         return Ae2Reflect.readField(container, fInventory_containerUpgrade);
+    }
+
+    public static IGrid getGrid(CraftingCPUCluster cpu) {
+        try {
+            return (IGrid) mCPU_getGrid.invoke(cpu);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to invoke method: " + mCPU_getGrid, e);
+        }
+    }
+
+    public static MECraftingInventory getCPUInventory(CraftingCPUCluster cpu) {
+        return Ae2Reflect.readField(cpu, fCPU_inventory);
+    }
+
+    public static void setCPUInventory(CraftingCPUCluster cpu, MECraftingInventory value) {
+        Ae2Reflect.writeField(cpu, fCPU_inventory, value);
+    }
+
+    public static MachineSource getCPUSource(CraftingCPUCluster cpu) {
+        return Ae2Reflect.readField(cpu, fCPU_machineSrc);
+    }
+
+    public static void postCPUChange(CraftingCPUCluster cpu, IAEItemStack stack, MachineSource src) {
+        try {
+            mCPU_postChange.invoke(cpu, stack, src);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to invoke method: " + mCPU_postChange, e);
+        }
+    }
+
+    public static void markCPUDirty(CraftingCPUCluster cpu) {
+        try {
+            mCPU_markDirty.invoke(cpu);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to invoke method: " + mCPU_markDirty, e);
+        }
     }
 
 }
