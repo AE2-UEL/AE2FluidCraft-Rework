@@ -1,6 +1,7 @@
 package com.glodblock.github.common.block;
 
 import appeng.block.AEBaseItemBlock;
+import com.glodblock.github.common.tabs.FluidCraftingTabs;
 import com.glodblock.github.common.tile.TileIngredientBuffer;
 import com.glodblock.github.inventory.InventoryHandler;
 import com.glodblock.github.inventory.gui.GuiType;
@@ -41,6 +42,7 @@ public class BlockIngredientBuffer extends FCBaseBlock {
     public BlockIngredientBuffer register() {
         GameRegistry.registerBlock(this, AEBaseItemBlock.class, NameConst.BLOCK_INGREDIENT_BUFFER);
         GameRegistry.registerTileEntity(TileIngredientBuffer.class, NameConst.BLOCK_INGREDIENT_BUFFER);
+        setCreativeTab(FluidCraftingTabs.INSTANCE);
         return this;
     }
 

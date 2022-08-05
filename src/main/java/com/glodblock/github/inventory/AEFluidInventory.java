@@ -21,7 +21,6 @@ public class AEFluidInventory implements IAEFluidTank
     private final IAEFluidStack[] fluids;
     private final IAEFluidInventory handler;
     private final int capacity;
-    private FluidTankInfo[] props = null;
 
     public AEFluidInventory( final IAEFluidInventory handler, final int slots, final int capcity )
     {
@@ -40,9 +39,9 @@ public class AEFluidInventory implements IAEFluidTank
     {
         if( slot >= 0 && slot < this.getSlots() )
         {
-            if( Objects.equals( this.fluids[slot], fluid ) )
+            if( fluid != null && this.fluids[slot] != null && fluid.getFluidStack().isFluidEqual(this.fluids[slot].getFluidStack()) )
             {
-                if( fluid != null && fluid.getStackSize() != this.fluids[slot].getStackSize() )
+                if(fluid.getStackSize() != this.fluids[slot].getStackSize())
                 {
                     this.fluids[slot].setStackSize( Math.min( fluid.getStackSize(), this.capacity ) );
                     this.onContentChanged( slot );
@@ -83,6 +82,15 @@ public class AEFluidInventory implements IAEFluidTank
         return null;
     }
 
+    public FluidStack getFluidStackInSlot( final int slot )
+    {
+        if( getFluidInSlot(slot) != null )
+        {
+            return getFluidInSlot(slot).getFluidStack();
+        }
+        return null;
+    }
+
     @Override
     public int getSlots()
     {
@@ -92,16 +100,12 @@ public class AEFluidInventory implements IAEFluidTank
     @Override
     public FluidTankInfo[] getTankInfo(ForgeDirection from)
     {
-        if( this.props == null )
+        FluidTankInfo[] props = new FluidTankInfo[this.getSlots()];
+        for( int i = 0; i < this.getSlots(); ++i )
         {
-            this.props = new FluidTankInfo[this.getSlots()];
-            for( int i = 0; i < this.getSlots(); ++i )
-            {
-                this.props[i] = new FluidTankInfo(new FluidTankPropertiesWrapper( i ));
-            }
-
+            props[i] = new FluidTankInfo(new FluidTankPropertiesWrapper( i ));
         }
-        return this.props;
+        return props;
     }
 
     public int fill( final int slot, final FluidStack resource, final boolean doFill )
@@ -146,7 +150,7 @@ public class AEFluidInventory implements IAEFluidTank
     public FluidStack drain( final int slot, final FluidStack resource, final boolean doDrain )
     {
         final IAEFluidStack fluid = this.fluids[slot];
-        if(fluid == null || !fluid.getFluidStack().equals(resource))
+        if(fluid == null || !fluid.getFluidStack().isFluidEqual(resource))
         {
             return null;
         }
@@ -217,6 +221,9 @@ public class AEFluidInventory implements IAEFluidTank
         FluidStack totalDrained = null;
         for( int slot = 0; slot < this.getSlots(); ++slot )
         {
+            if (!fluid.isFluidEqual(getFluidStackInSlot(slot))) {
+                continue;
+            }
             FluidStack drain = this.drain( slot, resource, doDrain );
             if( drain != null )
             {
@@ -252,6 +259,10 @@ public class AEFluidInventory implements IAEFluidTank
 
         for( int slot = 0; slot < this.getSlots(); ++slot )
         {
+            if (this.getFluidInSlot(slot) == null) {
+                continue;
+            }
+
             if( totalDrained == null )
             {
                 totalDrained = this.drain( slot, toDrain, doDrain );
@@ -380,7 +391,7 @@ public class AEFluidInventory implements IAEFluidTank
 
         @Override
         public int fill(FluidStack resource, boolean doFill) {
-            if (resource == null || (getFluid() != null && !resource.equals(getFluid()))) return 0;
+            if (resource == null || (getFluid() != null && !resource.isFluidEqual(getFluid()))) return 0;
             int acc = 0;
             if (getFluid() == null) {
                 acc = Math.min(resource.amount, getCapacity());

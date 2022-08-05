@@ -63,11 +63,6 @@ public class FluidPatternDetails implements ICraftingPatternDetails, Comparable<
     }
 
     public boolean setInputs(IAEItemStack[] inputs) {
-        for (IAEItemStack stack : inputs) { // see note at top of class
-            if (stack == null) {
-                return false;
-            }
-        }
         IAEItemStack[] condensed = condenseStacks(inputs);
         if (condensed.length == 0) {
             return false;
@@ -88,11 +83,6 @@ public class FluidPatternDetails implements ICraftingPatternDetails, Comparable<
     }
 
     public boolean setOutputs(IAEItemStack[] outputs) {
-        for (IAEItemStack stack : outputs) { // see note at top of class
-            if (stack == null) {
-                return false;
-            }
-        }
         IAEItemStack[] condensed = condenseStacks(outputs);
         if (condensed.length == 0) {
             return false;
@@ -186,13 +176,13 @@ public class FluidPatternDetails implements ICraftingPatternDetails, Comparable<
         NBTTagCompound tag = Objects.requireNonNull(patternStack.getTagCompound());
         // may be possible to enter a partially-correct state if setInputs succeeds but setOutputs failed
         // but outside code should treat it as completely incorrect and not attempt to make calls
-        return setInputs(readStackArray(tag.getTagList("in", Constants.NBT.TAG_COMPOUND), 16))
-            && setOutputs(readStackArray(tag.getTagList("out", Constants.NBT.TAG_COMPOUND), 4));
+        return setInputs(readStackArray(tag.getTagList("in", Constants.NBT.TAG_COMPOUND)))
+            && setOutputs(readStackArray(tag.getTagList("out", Constants.NBT.TAG_COMPOUND)));
     }
 
-    public static IAEItemStack[] readStackArray(NBTTagList listTag, int maxCount) {
+    public static IAEItemStack[] readStackArray(NBTTagList listTag) {
         // see note at top of class
-        IAEItemStack[] stacks = new IAEItemStack[Math.min(listTag.tagCount(), maxCount)];
+        IAEItemStack[] stacks = new IAEItemStack[listTag.tagCount()];
         for (int i = 0; i < stacks.length; i++) {
             stacks[i] = AEItemStack.loadItemStackFromNBT(listTag.getCompoundTagAt(i));
         }

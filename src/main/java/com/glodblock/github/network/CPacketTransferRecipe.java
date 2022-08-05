@@ -3,6 +3,7 @@ package com.glodblock.github.network;
 import com.glodblock.github.client.gui.container.ContainerFluidPatternTerminal;
 import com.glodblock.github.client.gui.container.ContainerFluidPatternTerminalEx;
 import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.nei.NEIUtils;
 import com.glodblock.github.nei.object.OrderStack;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -18,6 +19,8 @@ import net.minecraftforge.fluids.FluidStack;
 import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class CPacketTransferRecipe implements IMessage {
 
@@ -80,6 +83,7 @@ public class CPacketTransferRecipe implements IMessage {
             Container c = ctx.getServerHandler().playerEntity.openContainer;
             if (c instanceof ContainerFluidPatternTerminal) {
                 ContainerFluidPatternTerminal cf = (ContainerFluidPatternTerminal) c;
+                boolean combine = cf.combine;
                 cf.getPatternTerminal().setCraftingRecipe(message.isCraft);
                 IInventory inputSlot = cf.getInventoryByName("crafting");
                 IInventory outputSlot = cf.getInventoryByName("output");
@@ -89,6 +93,16 @@ public class CPacketTransferRecipe implements IMessage {
                 for (int i = 0; i < outputSlot.getSizeInventory(); i ++) {
                     outputSlot.setInventorySlotContents(i, null);
                 }
+
+                if (!message.isCraft) {
+                    if (combine) {
+                        message.inputs = NEIUtils.compress(message.inputs);
+                        message.outputs = NEIUtils.compress(message.outputs);
+                    }
+                    message.inputs = NEIUtils.clearNull(message.inputs);
+                    message.outputs = NEIUtils.clearNull(message.outputs);
+                }
+
                 for (OrderStack<?> stack : message.inputs) {
                     if (stack != null) {
                         int index = stack.getIndex();
@@ -123,6 +137,7 @@ public class CPacketTransferRecipe implements IMessage {
                 c.onCraftMatrixChanged(outputSlot);
             } else if (c instanceof ContainerFluidPatternTerminalEx) {
                 ContainerFluidPatternTerminalEx cf = (ContainerFluidPatternTerminalEx) c;
+                boolean combine = cf.combine;
                 IInventory inputSlot = cf.getInventoryByName("crafting");
                 IInventory outputSlot = cf.getInventoryByName("output");
                 for (int i = 0; i < inputSlot.getSizeInventory(); i ++) {
@@ -131,6 +146,14 @@ public class CPacketTransferRecipe implements IMessage {
                 for (int i = 0; i < outputSlot.getSizeInventory(); i ++) {
                     outputSlot.setInventorySlotContents(i, null);
                 }
+
+                if (combine) {
+                    message.inputs = NEIUtils.compress(message.inputs);
+                    message.outputs = NEIUtils.compress(message.outputs);
+                }
+                message.inputs = NEIUtils.clearNull(message.inputs);
+                message.outputs = NEIUtils.clearNull(message.outputs);
+
                 for (OrderStack<?> stack : message.inputs) {
                     if (stack != null) {
                         int index = stack.getIndex();

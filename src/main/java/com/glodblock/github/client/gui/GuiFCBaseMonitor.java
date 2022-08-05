@@ -30,13 +30,9 @@ import appeng.util.IConfigManagerHost;
 import appeng.util.Platform;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.gui.container.FCBaseMonitorContain;
-import com.glodblock.github.client.gui.container.FCBasePartContainer;
-import com.glodblock.github.common.parts.PartFluidPatternTerminal;
-import com.glodblock.github.common.parts.PartFluidPatternTerminalEx;
 import com.glodblock.github.network.CPacketInventoryAction;
 import com.glodblock.github.util.Ae2ReflectClient;
 import com.glodblock.github.util.ModAndClassUtil;
-import com.glodblock.github.util.NameConst;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
@@ -64,7 +60,7 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
     private final boolean viewCell;
     private final ItemStack[] myCurrentViewCells = new ItemStack[5];
     public FCBaseMonitorContain monitorableContainer;
-    private GuiTabButton craftingStatusBtn;
+    public GuiTabButton craftingStatusBtn;
     private GuiImgButton craftingStatusImgBtn;
     private FCGuiTextField searchField;
     private int perRow = 9;
@@ -79,11 +75,6 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
     private GuiImgButton searchBoxSettings;
     private GuiImgButton terminalStyleBox;
     private GuiImgButton searchStringSave;
-
-    public GuiFCBaseMonitor(final InventoryPlayer inventoryPlayer, final ITerminalHost te )
-    {
-        this( inventoryPlayer, te, new FCBasePartContainer( inventoryPlayer, te ) );
-    }
 
     public GuiFCBaseMonitor( final InventoryPlayer inventoryPlayer, final ITerminalHost te, final FCBaseMonitorContain c )
     {
@@ -144,8 +135,8 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
             final GuiImgButton iBtn = (GuiImgButton) btn;
             if( iBtn.getSetting() != Settings.ACTIONS )
             {
-                final Enum cv = iBtn.getCurrentValue();
-                final Enum next = Platform.rotateEnum( cv, backwards, iBtn.getSetting().getPossibleValues() );
+                final Enum<?> cv = iBtn.getCurrentValue();
+                final Enum<?> next = Platform.rotateEnum( cv, backwards, iBtn.getSetting().getPossibleValues() );
 
                 if( btn == this.terminalStyleBox )
                 {
@@ -188,6 +179,7 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void initGui()
     {
         Keyboard.enableRepeatEvents( true );
@@ -203,7 +195,7 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
         final int magicNumber = 114 + 1;
         final int extraSpace = this.height - magicNumber - NEI - top - this.reservedSpace;
 
-        this.rows = (int) Math.floor( extraSpace / 18 );
+        this.rows = (int) Math.floor( extraSpace / 18.0 );
         if( this.rows > this.maxRows )
         {
             top += ( this.rows - this.maxRows ) * 18 / 2;
@@ -292,7 +284,7 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
         }
 
         // Enum setting = AEConfig.INSTANCE.getSetting( "Terminal", SearchBoxMode.class, SearchBoxMode.AUTOSEARCH );
-        final Enum setting = AEConfig.instance.settings.getSetting( Settings.SEARCH_MODE );
+        final Enum<?> setting = AEConfig.instance.settings.getSetting( Settings.SEARCH_MODE );
         this.searchField.setFocused( SearchBoxMode.AUTOSEARCH == setting || SearchBoxMode.NEI_AUTOSEARCH == setting );
 
         if (ModAndClassUtil.isSearchBar && (AEConfig.instance.preserveSearchBar || this.isSubGui()))
@@ -354,7 +346,7 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
     @Override
     protected void mouseClicked( final int xCoord, final int yCoord, final int btn )
     {
-        final Enum searchMode = AEConfig.instance.settings.getSetting( Settings.SEARCH_MODE );
+        final Enum<?> searchMode = AEConfig.instance.settings.getSetting( Settings.SEARCH_MODE );
 
         if( searchMode != SearchBoxMode.AUTOSEARCH && searchMode != SearchBoxMode.NEI_AUTOSEARCH )
         {
@@ -376,7 +368,16 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
 
         if( slot instanceof SlotFake)
         {
-            final InventoryAction action = ctrlDown == 1 ? InventoryAction.SPLIT_OR_PLACE_SINGLE : InventoryAction.PICKUP_OR_SET_DOWN;
+            InventoryAction action = ctrlDown == 1 ? InventoryAction.SPLIT_OR_PLACE_SINGLE : InventoryAction.PICKUP_OR_SET_DOWN;
+
+            if (Keyboard.isKeyDown(Keyboard.KEY_LMENU) || Keyboard.isKeyDown(Keyboard.KEY_RMENU)) {
+                if (action == InventoryAction.SPLIT_OR_PLACE_SINGLE) {
+                    action = InventoryAction.MOVE_REGION;
+                }
+                else {
+                    action = InventoryAction.PICKUP_SINGLE;
+                }
+            }
 
             if( Ae2ReflectClient.getDragClick(this).size() > 1 )
             {
@@ -412,7 +413,7 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
                 return; // prevent weird double clicks..
             }
 
-            InventoryAction action = null;
+            InventoryAction action;
             if( isShiftKeyDown() )
             {
                 action = InventoryAction.CRAFT_SHIFT;
@@ -672,19 +673,19 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
     }
 
     @Override
-    public Enum getSortBy()
+    public Enum<?> getSortBy()
     {
         return this.configSrc.getSetting( Settings.SORT_BY );
     }
 
     @Override
-    public Enum getSortDir()
+    public Enum<?> getSortDir()
     {
         return this.configSrc.getSetting( Settings.SORT_DIRECTION );
     }
 
     @Override
-    public Enum getSortDisplay()
+    public Enum<?> getSortDisplay()
     {
         return this.configSrc.getSetting( Settings.VIEW_MODE );
     }
@@ -710,12 +711,12 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
         this.repo.updateView();
     }
 
-    int getReservedSpace()
+    public int getReservedSpace()
     {
         return this.reservedSpace;
     }
 
-    void setReservedSpace( final int reservedSpace )
+    public void setReservedSpace( final int reservedSpace )
     {
         this.reservedSpace = reservedSpace;
     }
@@ -725,7 +726,7 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
         return this.customSortOrder;
     }
 
-    void setCustomSortOrder( final boolean customSortOrder )
+    public void setCustomSortOrder( final boolean customSortOrder )
     {
         this.customSortOrder = customSortOrder;
     }
@@ -735,7 +736,7 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
         return this.standardSize;
     }
 
-    void setStandardSize( final int standardSize )
+    public void setStandardSize( final int standardSize )
     {
         this.standardSize = standardSize;
     }

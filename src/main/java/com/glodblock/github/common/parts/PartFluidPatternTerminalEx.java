@@ -39,6 +39,7 @@ public class PartFluidPatternTerminalEx extends FCBasePart {
     private final AppEngInternalInventory pattern = new AppEngInternalInventory( this, 2 );
 
     private boolean substitute = false;
+    private boolean combine = false;
 
     public PartFluidPatternTerminalEx(ItemStack is) {
         super(is, true);
@@ -79,6 +80,7 @@ public class PartFluidPatternTerminalEx extends FCBasePart {
     {
         super.readFromNBT( data );
         this.setSubstitution( data.getBoolean( "substitute" ) );
+        this.setCombineMode( data.getBoolean("combine") );
         this.pattern.readFromNBT( data, "pattern" );
         this.output.readFromNBT( data, "outputList" );
         this.crafting.readFromNBT( data, "craftingGrid" );
@@ -89,6 +91,7 @@ public class PartFluidPatternTerminalEx extends FCBasePart {
     {
         super.writeToNBT( data );
         data.setBoolean( "substitute", this.substitute );
+        data.setBoolean( "combine", this.combine );
         this.pattern.writeToNBT( data, "pattern" );
         this.output.writeToNBT( data, "outputList" );
         this.crafting.writeToNBT( data, "craftingGrid" );
@@ -202,6 +205,16 @@ public class PartFluidPatternTerminalEx extends FCBasePart {
             }
         }
         onChangeInventory0(inv, slot, mc, removedStack, newStack);
+    }
+
+    public boolean shouldCombine()
+    {
+        return this.combine;
+    }
+
+    public void setCombineMode(boolean shouldCombine)
+    {
+        this.combine = shouldCombine;
     }
 
     public boolean isSubstitution()

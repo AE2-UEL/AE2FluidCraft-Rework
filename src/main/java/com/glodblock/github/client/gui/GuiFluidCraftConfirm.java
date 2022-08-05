@@ -13,6 +13,7 @@ import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.gui.container.ContainerFluidCraftConfirm;
 import com.glodblock.github.common.parts.PartFluidPatternTerminal;
 import com.glodblock.github.common.parts.PartFluidPatternTerminalEx;
+import com.glodblock.github.coremod.hooker.CoreModHooks;
 import com.glodblock.github.inventory.gui.GuiType;
 import com.glodblock.github.network.CPacketFluidPatternTermBtns;
 import com.glodblock.github.network.CPacketSwitchGuis;
@@ -252,7 +253,7 @@ public class GuiFluidCraftConfirm extends AEBaseGui {
 
                     if( this.tooltip == z - viewStart )
                     {
-                        lineList.add( GuiText.FromStorage.getLocal() + ": " + Long.toString( stored.getStackSize() ) );
+                        lineList.add( GuiText.FromStorage.getLocal() + ": " + stored.getStackSize());
                     }
 
                     downY += 5;
@@ -277,7 +278,7 @@ public class GuiFluidCraftConfirm extends AEBaseGui {
 
                     if( this.tooltip == z - viewStart )
                     {
-                        lineList.add( GuiText.Missing.getLocal() + ": " + Long.toString( missingStack.getStackSize() ) );
+                        lineList.add( GuiText.Missing.getLocal() + ": " + missingStack.getStackSize());
                     }
 
                     red = true;
@@ -310,7 +311,7 @@ public class GuiFluidCraftConfirm extends AEBaseGui {
                 final int posX = x * ( 1 + sectionLength ) + xo + sectionLength - 19;
                 final int posY = y * offY + yo;
 
-                final ItemStack is = refStack.copy().getItemStack();
+                final ItemStack is = CoreModHooks.displayFluid(refStack.copy());
 
                 if( this.tooltip == z - viewStart )
                 {

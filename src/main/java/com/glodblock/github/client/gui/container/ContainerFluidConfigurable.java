@@ -69,18 +69,18 @@ public abstract class ContainerFluidConfigurable extends ContainerUpgradeable {
         final IInventory inv = Ae2Reflect.getUpgradeList(this).getInventoryByName( "config" );
         final int y = 40;
         final int x = 80;
-        this.addSlotToContainer( new OptionalFluidSlotFakeTypeOnly( inv, this, 0, x, y, 0, 0, 0 ) );
+        this.addSlotToContainer( new OptionalFluidSlotFakeTypeOnly( inv, null, this, 0, x, y, 0, 0, 0 ) );
         if( this.supportCapacity() )
         {
-            this.addSlotToContainer( new OptionalFluidSlotFakeTypeOnly( inv, this, 1, x, y, -1, 0, 1 ) );
-            this.addSlotToContainer( new OptionalFluidSlotFakeTypeOnly( inv, this, 2, x, y, 1, 0, 1 ) );
-            this.addSlotToContainer( new OptionalFluidSlotFakeTypeOnly( inv, this, 3, x, y, 0, -1, 1 ) );
-            this.addSlotToContainer( new OptionalFluidSlotFakeTypeOnly( inv, this, 4, x, y, 0, 1, 1 ) );
+            this.addSlotToContainer( new OptionalFluidSlotFakeTypeOnly( inv, null, this, 1, x, y, -1, 0, 1 ) );
+            this.addSlotToContainer( new OptionalFluidSlotFakeTypeOnly( inv, null, this, 2, x, y, 1, 0, 1 ) );
+            this.addSlotToContainer( new OptionalFluidSlotFakeTypeOnly( inv, null, this, 3, x, y, 0, -1, 1 ) );
+            this.addSlotToContainer( new OptionalFluidSlotFakeTypeOnly( inv, null, this, 4, x, y, 0, 1, 1 ) );
 
-            this.addSlotToContainer( new OptionalFluidSlotFakeTypeOnly( inv, this, 5, x, y, -1, -1, 2 ) );
-            this.addSlotToContainer( new OptionalFluidSlotFakeTypeOnly( inv, this, 6, x, y, 1, -1, 2 ) );
-            this.addSlotToContainer( new OptionalFluidSlotFakeTypeOnly( inv, this, 7, x, y, -1, 1, 2 ) );
-            this.addSlotToContainer( new OptionalFluidSlotFakeTypeOnly( inv, this, 8, x, y, 1, 1, 2 ) );
+            this.addSlotToContainer( new OptionalFluidSlotFakeTypeOnly( inv, null, this, 5, x, y, -1, -1, 2 ) );
+            this.addSlotToContainer( new OptionalFluidSlotFakeTypeOnly( inv, null, this, 6, x, y, 1, -1, 2 ) );
+            this.addSlotToContainer( new OptionalFluidSlotFakeTypeOnly( inv, null, this, 7, x, y, -1, 1, 2 ) );
+            this.addSlotToContainer( new OptionalFluidSlotFakeTypeOnly( inv, null, this, 8, x, y, 1, 1, 2 ) );
         }
     }
 
@@ -128,14 +128,4 @@ public abstract class ContainerFluidConfigurable extends ContainerUpgradeable {
         super.standardDetectAndSendChanges();
     }
 
-    public void setFluid(int id, IAEFluidStack fluidStack) {
-        final AppEngInternalAEInventory inv = this.getFakeFluidInv();
-        if (inv != null && this.isValidForConfig(id, AEFluidStack.create(fluidStack))) {
-            ItemStack tmp = ItemFluidPacket.newStack(fluidStack.getFluidStack());
-            if (tmp != null) {
-                tmp.setStackDisplayName(fluidStack.getFluidStack().getLocalizedName());
-            }
-            inv.setInventorySlotContents(id, tmp);
-        }
-    }
 }

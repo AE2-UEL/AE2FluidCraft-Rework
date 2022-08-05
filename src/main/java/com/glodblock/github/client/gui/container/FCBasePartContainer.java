@@ -58,6 +58,8 @@ public class FCBasePartContainer extends FCBaseMonitorContain implements IAEAppE
     public boolean craftingMode = true;
     @GuiSync( 96 )
     public boolean substitute = false;
+    @GuiSync( 95 )
+    public boolean combine = false;
 
     public FCBasePartContainer(final InventoryPlayer ip, final ITerminalHost monitorable )
     {
@@ -457,6 +459,7 @@ public class FCBasePartContainer extends FCBaseMonitorContain implements IAEAppE
             }
 
             this.substitute = this.patternTerminal.isSubstitution();
+            this.combine = this.patternTerminal.shouldCombine();
         }
     }
 

@@ -141,6 +141,14 @@ public class ContainerFluidPatternTerminalEx extends FCBasePartContainerEx imple
             super.doAction(player, action, slotId, id);
             return;
         }
+        if (action == InventoryAction.MOVE_REGION) {
+            super.doAction(player, InventoryAction.SPLIT_OR_PLACE_SINGLE, slotId, id);
+            return;
+        }
+        if (action == InventoryAction.PICKUP_SINGLE) {
+            super.doAction(player, InventoryAction.PICKUP_OR_SET_DOWN, slotId, id);
+            return;
+        }
         Slot slot = getSlot(slotId);
         ItemStack stack = player.inventory.getItemStack();
         if (Util.getFluidFromItem(stack) == null || Util.getFluidFromItem(stack).amount <= 0) {

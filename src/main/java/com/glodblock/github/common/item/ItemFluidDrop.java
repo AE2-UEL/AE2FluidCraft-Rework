@@ -11,7 +11,6 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -19,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -46,7 +46,7 @@ public class ItemFluidDrop extends Item {
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
         FluidStack fluid = getFluidStack(stack);
-        return I18n.format("item.fluid_drop.name", fluid == null ? "???" : fluid.getLocalizedName());
+        return StatCollector.translateToLocalFormatted("item.fluid_drop.name", fluid == null ? "???" : fluid.getLocalizedName());
     }
 
     @Override
@@ -57,7 +57,7 @@ public class ItemFluidDrop extends Item {
         if (fluid != null) {
             tooltip.add(String.format(EnumChatFormatting.GRAY + "%s, 1 mB", fluid.getLocalizedName()));
         } else {
-            tooltip.add(EnumChatFormatting.RED + I18n.format(NameConst.TT_INVALID_FLUID));
+            tooltip.add(EnumChatFormatting.RED + StatCollector.translateToLocalFormatted(NameConst.TT_INVALID_FLUID));
         }
     }
 

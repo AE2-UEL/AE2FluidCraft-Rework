@@ -47,6 +47,19 @@ public class DefaultExtractorLoader implements Runnable {
             FluidRecipe.addRecipeMap(null, new ForestryRecipeExtractor(new NEIHandlerStill()));
         }
 
+        if (ModAndClassUtil.IC2) {
+            FluidRecipe.addRecipeMap("blastfurnace", new IndustrialCraftRecipeExtractor());
+            FluidRecipe.addRecipeMap("BlockCutter", new IndustrialCraftRecipeExtractor());
+            FluidRecipe.addRecipeMap("centrifuge", new IndustrialCraftRecipeExtractor());
+            FluidRecipe.addRecipeMap("compressor", new IndustrialCraftRecipeExtractor());
+            FluidRecipe.addRecipeMap("extractor", new IndustrialCraftRecipeExtractor());
+            FluidRecipe.addRecipeMap("fluidcanner", new IndustrialCraftRecipeExtractor());
+            FluidRecipe.addRecipeMap("macerator", new IndustrialCraftRecipeExtractor());
+            FluidRecipe.addRecipeMap("metalformer", new IndustrialCraftRecipeExtractor());
+            FluidRecipe.addRecipeMap("oreWashing", new IndustrialCraftRecipeExtractor());
+            FluidRecipe.addRecipeMap("solidcanner", new IndustrialCraftRecipeExtractor());
+        }
+
     }
 
 }

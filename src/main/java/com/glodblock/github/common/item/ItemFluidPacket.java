@@ -9,13 +9,13 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.StatCollector;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -34,6 +34,10 @@ public class ItemFluidPacket extends Item {
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
         FluidStack fluid = getFluidStack(stack);
+        boolean display = isDisplay(stack);
+        if (display) {
+            return fluid != null ? fluid.getLocalizedName() : super.getItemStackDisplayName(stack);
+        }
         return fluid != null ? String.format("%s, %,d mB", fluid.getLocalizedName(), fluid.amount)
             : super.getItemStackDisplayName(stack);
     }
@@ -42,13 +46,22 @@ public class ItemFluidPacket extends Item {
     @SuppressWarnings("unchecked")
     public void addInformation(ItemStack stack, EntityPlayer player, List tooltip, boolean flags) {
         FluidStack fluid = getFluidStack(stack);
+        boolean display = isDisplay(stack);
+        if (display) return;
         if (fluid != null) {
-            for (String line : I18n.format(NameConst.TT_FLUID_PACKET).split("\\\\n")) {
+            for (String line : StatCollector.translateToLocalFormatted(NameConst.TT_FLUID_PACKET).split("\\\\n")) {
                 tooltip.add(EnumChatFormatting.GRAY + line);
             }
         } else {
-            tooltip.add(EnumChatFormatting.RED + I18n.format(NameConst.TT_INVALID_FLUID));
+            tooltip.add(EnumChatFormatting.RED + StatCollector.translateToLocalFormatted(NameConst.TT_INVALID_FLUID));
         }
+    }
+
+    public static boolean isDisplay(ItemStack stack) {
+        if (stack == null || !stack.hasTagCompound() || stack.getTagCompound() == null) {
+            return false;
+        }
+        return stack.getTagCompound().getBoolean("DisplayOnly");
     }
 
     public static FluidStack getFluidStack(ItemStack stack) {
@@ -72,6 +85,22 @@ public class ItemFluidPacket extends Item {
         NBTTagCompound fluidTag = new NBTTagCompound();
         fluid.writeToNBT(fluidTag);
         tag.setTag("FluidStack", fluidTag);
+        stack.setTagCompound(tag);
+        return stack;
+    }
+
+    public static ItemStack newDisplayStack(@Nullable FluidStack fluid) {
+        if (fluid == null) {
+            return null;
+        }
+        FluidStack copy = fluid.copy();
+        copy.amount = 1000;
+        ItemStack stack = new ItemStack(ItemAndBlockHolder.PACKET);
+        NBTTagCompound tag = new NBTTagCompound();
+        NBTTagCompound fluidTag = new NBTTagCompound();
+        copy.writeToNBT(fluidTag);
+        tag.setTag("FluidStack", fluidTag);
+        tag.setBoolean("DisplayOnly", true);
         stack.setTagCompound(tag);
         return stack;
     }

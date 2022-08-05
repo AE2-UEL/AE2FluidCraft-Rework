@@ -1,6 +1,7 @@
 package com.glodblock.github.common.block;
 
 import appeng.block.AEBaseItemBlock;
+import com.glodblock.github.common.tabs.FluidCraftingTabs;
 import com.glodblock.github.common.tile.TileFluidDiscretizer;
 import com.glodblock.github.util.NameConst;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -19,6 +20,7 @@ public class BlockFluidDiscretizer extends FCBaseBlock {
     public BlockFluidDiscretizer register() {
         GameRegistry.registerBlock(this, AEBaseItemBlock.class, NameConst.BLOCK_FLUID_DISCRETIZER);
         GameRegistry.registerTileEntity(TileFluidDiscretizer.class, NameConst.BLOCK_FLUID_DISCRETIZER);
+        setCreativeTab(FluidCraftingTabs.INSTANCE);
         return this;
     }
 

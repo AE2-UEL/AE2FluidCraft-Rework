@@ -30,7 +30,7 @@ public class GuiBaseFluidPatternTerminal extends GuiFCBaseMonitor {
     private static final String CRAFTMODE_CRFTING = "1";
     private static final String CRAFTMODE_PROCESSING = "0";
 
-    public final FCBasePartContainer container;
+    public FCBasePartContainer container;
 
     private GuiTabButton tabCraftButton;
     private GuiTabButton tabProcessButton;
@@ -40,11 +40,14 @@ public class GuiBaseFluidPatternTerminal extends GuiFCBaseMonitor {
     private GuiImgButton clearBtn;
     private GuiImgButton doubleBtn;
 
+    private GuiFCImgButton combineEnableBtn;
+    private GuiFCImgButton combineDisableBtn;
+
     public GuiBaseFluidPatternTerminal(final InventoryPlayer inventoryPlayer, final ITerminalHost te )
     {
         super( inventoryPlayer, te, new FCBasePartContainer( inventoryPlayer, te ) );
         this.container = (FCBasePartContainer) this.inventorySlots;
-        Ae2ReflectClient.setReservedSpace(this, 81);
+        setReservedSpace(81);
     }
 
     @Override
@@ -67,6 +70,10 @@ public class GuiBaseFluidPatternTerminal extends GuiFCBaseMonitor {
         else if( this.substitutionsEnabledBtn == btn || this.substitutionsDisabledBtn == btn )
         {
             FluidCraft.proxy.netHandler.sendToServer( new CPacketFluidPatternTermBtns( "PatternTerminal.Substitute", this.substitutionsEnabledBtn == btn ? SUBSITUTION_DISABLE : SUBSITUTION_ENABLE ) );
+        }
+        else if( this.combineDisableBtn == btn || this.combineEnableBtn == btn )
+        {
+            FluidCraft.proxy.netHandler.sendToServer( new CPacketFluidPatternTermBtns( "PatternTerminal.Combine", this.combineDisableBtn == btn ? "1" : "0" ) );
         }
         else if (ModAndClassUtil.isDoubleButton && doubleBtn == btn)
         {
@@ -100,11 +107,22 @@ public class GuiBaseFluidPatternTerminal extends GuiFCBaseMonitor {
         this.encodeBtn = new GuiImgButton( this.guiLeft + 147, this.guiTop + this.ySize - 142, Settings.ACTIONS, ActionItems.ENCODE );
         this.buttonList.add( this.encodeBtn );
 
+        int combineLeft = 74;
+
         if (ModAndClassUtil.isDoubleButton) {
             this.doubleBtn = new GuiImgButton( this.guiLeft + 74, this.guiTop + this.ySize - 153, Settings.ACTIONS, ActionItems.DOUBLE );
             this.doubleBtn.setHalfSize( true );
             this.buttonList.add( this.doubleBtn );
+            combineLeft = 84;
         }
+
+        this.combineEnableBtn = new GuiFCImgButton( this.guiLeft + combineLeft, this.guiTop + this.ySize - 153, "FORCE_COMBINE", "DO_COMBINE" );
+        this.combineEnableBtn.setHalfSize( true );
+        this.buttonList.add( this.combineEnableBtn );
+
+        this.combineDisableBtn = new GuiFCImgButton( this.guiLeft + combineLeft, this.guiTop + this.ySize - 153, "NOT_COMBINE", "DONT_COMBINE" );
+        this.combineDisableBtn.setHalfSize( true );
+        this.buttonList.add( this.combineDisableBtn );
     }
 
     @Override
@@ -136,8 +154,27 @@ public class GuiBaseFluidPatternTerminal extends GuiFCBaseMonitor {
             this.substitutionsDisabledBtn.visible = true;
         }
 
+        if (!this.container.isCraftingMode())
+        {
+            if ( this.container.combine )
+            {
+                this.combineEnableBtn.visible = true;
+                this.combineDisableBtn.visible = false;
+            }
+            else
+            {
+                this.combineEnableBtn.visible = false;
+                this.combineDisableBtn.visible = true;
+            }
+        }
+        else
+        {
+            this.combineEnableBtn.visible = false;
+            this.combineDisableBtn.visible = false;
+        }
+
         super.drawFG( offsetX, offsetY, mouseX, mouseY );
-        this.fontRendererObj.drawString(StatCollector.translateToLocal(NameConst.GUI_FLUID_PATTERN_TERMINAL), 8, this.ySize - 96 + 2 - Ae2ReflectClient.getReservedSpace(this), 4210752 );
+        this.fontRendererObj.drawString(StatCollector.translateToLocal(NameConst.GUI_FLUID_PATTERN_TERMINAL), 8, this.ySize - 96 + 2 - getReservedSpace(), 4210752 );
     }
 
     @Override

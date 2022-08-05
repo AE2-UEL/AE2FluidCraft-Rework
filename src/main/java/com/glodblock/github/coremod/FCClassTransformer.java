@@ -1,9 +1,6 @@
 package com.glodblock.github.coremod;
 
-import com.glodblock.github.coremod.transform.ContainerInterfaceTerminalTransformer;
-import com.glodblock.github.coremod.transform.CraftingCpuTransformer;
-import com.glodblock.github.coremod.transform.CraftingTreeNodeTransformer;
-import com.glodblock.github.coremod.transform.DualityInterfaceTransformer;
+import com.glodblock.github.coremod.transform.*;
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -26,6 +23,11 @@ public class FCClassTransformer implements IClassTransformer {
                 break;
             case "appeng.container.implementations.ContainerInterfaceTerminal":
                 tform = ContainerInterfaceTerminalTransformer.INSTANCE;
+                break;
+            case "appeng.client.gui.implementations.GuiCraftingCPU":
+            case "appeng.client.gui.implementations.GuiCraftConfirm":
+            case "net.p455w0rd.wirelesscraftingterminal.client.gui.GuiCraftConfirm":
+                tform = GuiCraftingTransformer.INSTANCE;
                 break;
             default:
                 return code;

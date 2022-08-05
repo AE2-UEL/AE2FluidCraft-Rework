@@ -28,6 +28,8 @@ import com.glodblock.github.inventory.InventoryHandler;
 import com.glodblock.github.inventory.gui.GuiType;
 import com.glodblock.github.network.SPacketMEInventoryUpdate;
 import com.glodblock.github.util.Ae2Reflect;
+import com.glodblock.github.util.BlockPos;
+import com.glodblock.github.util.Util;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -39,6 +41,7 @@ import net.minecraft.world.World;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.concurrent.Future;
 
 public class ContainerFluidCraftConfirm extends AEBaseContainer {
@@ -312,7 +315,7 @@ public class ContainerFluidCraftConfirm extends AEBaseContainer {
             this.setAutoStart( false );
             if( g != null && originalGui != null && this.getOpenContext() != null )
             {
-                InventoryHandler.switchGui(originalGui);
+                InventoryHandler.openGui(this.getInventoryPlayer().player, getWorld(), new BlockPos(this.getOpenContext().getTile()), Objects.requireNonNull(Util.from(this.getOpenContext().getSide())), originalGui);
             }
         }
     }

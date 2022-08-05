@@ -2,8 +2,10 @@ package com.glodblock.github.client.render;
 
 import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.loader.ItemAndBlockHolder;
+import com.glodblock.github.util.RenderUtil;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
@@ -22,12 +24,12 @@ public class ItemPacketRender implements IItemRenderer {
 
     @Override
     public boolean handleRenderType(ItemStack item, ItemRenderType type) {
-        return type == ItemRenderType.INVENTORY;
+        return type != ItemRenderType.FIRST_PERSON_MAP;
     }
 
     @Override
     public boolean shouldUseRenderHelper(ItemRenderType type, ItemStack item, ItemRendererHelper helper) {
-        return false;
+        return type == ItemRenderType.ENTITY;
     }
 
     @Override
@@ -50,18 +52,11 @@ public class ItemPacketRender implements IItemRenderer {
             GL11.glColor3f((RGB >> 16 & 0xFF) / 255.0F, (RGB >> 8 & 0xFF) / 255.0F, (RGB & 0xFF) / 255.0F);
         }
 
-        Tessellator tess = Tessellator.instance;
-        tess.startDrawingQuads();
-        // draw a simple rectangle for the inventory icon
-        final float x_min = icon.getMinU();
-        final float x_max = icon.getMaxU();
-        final float y_min = icon.getMinV();
-        final float y_max = icon.getMaxV();
-        tess.addVertexWithUV( 0, 16, 0, x_min, y_max);
-        tess.addVertexWithUV(16, 16, 0, x_max, y_max);
-        tess.addVertexWithUV(16,  0, 0, x_max, y_min);
-        tess.addVertexWithUV( 0,  0, 0, x_min, y_min);
-        tess.draw();
+        if (type.equals(ItemRenderType.INVENTORY)) {
+            RenderUtil.renderItemIcon(icon, 16.0D, 0.001D, 0.0F, 0.0F, -1.0F);
+        } else {
+            ItemRenderer.renderItemIn2D(Tessellator.instance, icon.getMaxU(), icon.getMinV(), icon.getMinU(), icon.getMaxV(), icon.getIconWidth(), icon.getIconHeight(), 0.0625F);
+        }
 
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glDisable(GL11.GL_ALPHA_TEST);

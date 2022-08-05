@@ -11,7 +11,6 @@ import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.inventory.InventoryHandler;
 import com.glodblock.github.inventory.gui.GuiType;
 import com.glodblock.github.inventory.slot.SlotSingleItem;
-import com.glodblock.github.util.Ae2Reflect;
 import com.glodblock.github.util.Ae2ReflectClient;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -27,13 +26,15 @@ public class GuiFluidPatternTerminal extends GuiBaseFluidPatternTerminal {
         ContainerFluidPatternTerminal container = new ContainerFluidPatternTerminal(inventoryPlayer, te);
         container.setGui(this);
         this.inventorySlots = container;
-        Ae2ReflectClient.setGuiContainer(this, container);
+        this.container = container;
+        this.monitorableContainer = container;
+        this.configSrc = container.getConfigManager();
     }
 
     @Override
     public void initGui() {
         super.initGui();
-        craftingStatusBtn = Ae2ReflectClient.getCraftingStatusButton(this);
+        craftingStatusBtn = super.craftingStatusBtn;
     }
 
     @Override

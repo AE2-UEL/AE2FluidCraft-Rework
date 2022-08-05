@@ -40,6 +40,7 @@ public class PartFluidPatternTerminal extends FCBasePart {
 
     private boolean craftingMode = true;
     private boolean substitute = false;
+    private boolean combine = false;
 
     public PartFluidPatternTerminal(ItemStack is) {
         super(is, true);
@@ -81,6 +82,7 @@ public class PartFluidPatternTerminal extends FCBasePart {
         super.readFromNBT( data );
         this.setCraftingRecipe( data.getBoolean( "craftingMode" ) );
         this.setSubstitution( data.getBoolean( "substitute" ) );
+        this.setCombineMode( data.getBoolean("combine") );
         this.pattern.readFromNBT( data, "pattern" );
         this.output.readFromNBT( data, "outputList" );
         this.crafting.readFromNBT( data, "craftingGrid" );
@@ -92,6 +94,7 @@ public class PartFluidPatternTerminal extends FCBasePart {
         super.writeToNBT( data );
         data.setBoolean( "craftingMode", this.craftingMode );
         data.setBoolean( "substitute", this.substitute );
+        data.setBoolean( "combine", this.combine );
         this.pattern.writeToNBT( data, "pattern" );
         this.output.writeToNBT( data, "outputList" );
         this.crafting.writeToNBT( data, "craftingGrid" );
@@ -244,9 +247,19 @@ public class PartFluidPatternTerminal extends FCBasePart {
         return this.substitute;
     }
 
+    public boolean shouldCombine()
+    {
+        return this.combine;
+    }
+
     public void setSubstitution( boolean canSubstitute )
     {
         this.substitute = canSubstitute;
+    }
+
+    public void setCombineMode(boolean shouldCombine)
+    {
+        this.combine = shouldCombine;
     }
 
     public void onChangeCrafting(IAEItemStack[] newCrafting, IAEItemStack[] newOutput) {

@@ -4,6 +4,7 @@ import appeng.api.AEApi;
 import appeng.api.parts.IPartItem;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.common.parts.PartFluidInterface;
+import com.glodblock.github.common.tabs.FluidCraftingTabs;
 import com.glodblock.github.util.NameConst;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -37,6 +38,7 @@ public class ItemPartFluidInterface extends Item implements IPartItem {
 
     public ItemPartFluidInterface register() {
         GameRegistry.registerItem(this, NameConst.ITEM_PART_FLUID_INTERFACE, FluidCraft.MODID);
+        setCreativeTab(FluidCraftingTabs.INSTANCE);
         return this;
     }
 

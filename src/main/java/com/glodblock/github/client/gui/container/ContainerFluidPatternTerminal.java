@@ -148,14 +148,21 @@ public class ContainerFluidPatternTerminal extends FCBasePartContainer implement
             super.doAction(player, action, slotId, id);
             return;
         }
+        if (action == InventoryAction.MOVE_REGION) {
+            super.doAction(player, InventoryAction.SPLIT_OR_PLACE_SINGLE, slotId, id);
+            return;
+        }
+        if (action == InventoryAction.PICKUP_SINGLE) {
+            super.doAction(player, InventoryAction.PICKUP_OR_SET_DOWN, slotId, id);
+            return;
+        }
         Slot slot = getSlot(slotId);
         ItemStack stack = player.inventory.getItemStack();
         if (Util.getFluidFromItem(stack) == null || Util.getFluidFromItem(stack).amount <= 0) {
             super.doAction(player, action, slotId, id);
             return;
         }
-        if ((slot instanceof SlotFakeCraftingMatrix || slot instanceof SlotPatternOutputs) && stack != null
-            && (stack.getItem() instanceof IFluidContainerItem || FluidContainerRegistry.isContainer(stack))) {
+        if ((slot instanceof SlotFakeCraftingMatrix || slot instanceof SlotPatternOutputs) && (stack.getItem() instanceof IFluidContainerItem || FluidContainerRegistry.isContainer(stack))) {
             FluidStack fluid = null;
             switch (action) {
                 case PICKUP_OR_SET_DOWN:
@@ -177,11 +184,6 @@ public class ContainerFluidPatternTerminal extends FCBasePartContainer implement
                 return;
             }
             return;
-        }
-        if (action == InventoryAction.SPLIT_OR_PLACE_SINGLE) {
-            if (stack == null && slot.getStack() != null && slot.getStack().getItem() instanceof ItemFluidPacket) {
-                return;
-            }
         }
         super.doAction(player, action, slotId, id);
     }

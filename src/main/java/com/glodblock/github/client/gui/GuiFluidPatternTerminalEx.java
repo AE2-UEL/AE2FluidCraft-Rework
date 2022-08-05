@@ -35,7 +35,7 @@ public class GuiFluidPatternTerminalEx extends GuiBaseFluidPatternTerminalEx {
     @Override
     public void initGui() {
         super.initGui();
-        craftingStatusBtn = Ae2ReflectClient.getCraftingStatusButton(this);
+        craftingStatusBtn = super.craftingStatusBtn;
     }
 
     @Override

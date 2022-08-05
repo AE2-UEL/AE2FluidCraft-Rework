@@ -20,7 +20,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-@Mod(modid = FluidCraft.MODID, version = FluidCraft.VERSION, name = FluidCraft.MODNAME)
+@Mod(modid = FluidCraft.MODID, version = FluidCraft.VERSION, name = FluidCraft.MODNAME, dependencies = "required-after:appliedenergistics2")
 public class FluidCraft {
 
     public static final String MODID = "GRADLETOKEN_MODID";
@@ -43,15 +43,19 @@ public class FluidCraft {
     @Mod.EventHandler
     public static void init(FMLInitializationEvent event) {
         ModAndClassUtil.init();
-        AEApi.instance().registries().cell().addCellHandler(new FluidCellHandler());
-        ItemAndBlockHolder.loadSetting();
         proxy.init(event);
     }
 
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent event) {
         NetworkRegistry.INSTANCE.registerGuiHandler(FluidCraft.INSTANCE, new InventoryHandler());
-        (new RecipeLoader()).run();
+
+        AEApi.instance().registries().cell().addCellHandler(new FluidCellHandler());
+        ItemAndBlockHolder.loadSetting();
+
+        if (!Config.removeRecipe) {
+            (new RecipeLoader()).run();
+        }
 
         if (ModAndClassUtil.isBigInterface) {
             Upgrades.PATTERN_CAPACITY.registerItem(new ItemStack(ItemAndBlockHolder.FLUID_INTERFACE), 3 );
