@@ -16,7 +16,7 @@ public class FluidConvertingInventoryCrafting extends InventoryCrafting {
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
-        if (stack.getItem() instanceof ItemFluidDrop) {
+        if (stack != null && stack.getItem() instanceof ItemFluidDrop) {
             FluidStack fluid = ItemFluidDrop.getFluidStack(stack);
             if (fluid != null) {
                 super.setInventorySlotContents(index, ItemFluidPacket.newStack(new FluidStack(fluid, stack.stackSize)));
