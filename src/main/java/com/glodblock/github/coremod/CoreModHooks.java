@@ -140,6 +140,13 @@ public class CoreModHooks {
         else return drop;
     }
 
+    public static long getFluidSize(IAEItemStack aeStack) {
+        if (aeStack.getDefinition() != null && !aeStack.getDefinition().isEmpty() && aeStack.getDefinition().getItem() instanceof ItemFluidDrop) {
+            return (long) Math.max(aeStack.getStackSize() / 1000D, 1);
+        }
+        else return aeStack.getStackSize();
+    }
+
     public static void storeFluidItem(CraftingCPUCluster instance) {
         final IGrid g = Ae2Reflect.getGrid(instance);
 
