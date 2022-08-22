@@ -13,6 +13,7 @@ import com.glodblock.github.client.textures.FCPartsTexture;
 import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidEncodedPattern;
 import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.inventory.AEStackInternalInventory;
 import com.glodblock.github.inventory.InventoryHandler;
 import com.glodblock.github.inventory.gui.GuiType;
 import com.glodblock.github.util.BlockPos;
@@ -34,9 +35,9 @@ public class PartFluidPatternTerminal extends FCBasePart {
     private static final FCPartsTexture FRONT_DARK_ICON = FCPartsTexture.PartFluidPatternTerminal_Colored;
     private static final FCPartsTexture FRONT_COLORED_ICON = FCPartsTexture.PartFluidPatternTerminal_Dark;
 
-    private final AppEngInternalInventory crafting = new AppEngInternalInventory( this, 9 );
-    private final AppEngInternalInventory output = new AppEngInternalInventory( this, 3 );
-    private final AppEngInternalInventory pattern = new AppEngInternalInventory( this, 2 );
+    private final AEStackInternalInventory crafting = new AEStackInternalInventory( this, 9 );
+    private final AEStackInternalInventory output = new AEStackInternalInventory( this, 3 );
+    private final AEStackInternalInventory pattern = new AEStackInternalInventory( this, 2 );
 
     private boolean craftingMode = true;
     private boolean substitute = false;

@@ -20,6 +20,18 @@ import java.util.List;
 
 public enum GuiType {
 
+    ITEM_AMOUNT_SET(new PartGuiFactory<FCBasePart>(FCBasePart.class) {
+        @Override
+        protected Object createServerGui(EntityPlayer player, FCBasePart inv) {
+            return new ContainerItemAmountChange(player.inventory, inv);
+        }
+
+        @Override
+        protected Object createClientGui(EntityPlayer player, FCBasePart inv) {
+            return new GuiItemAmountChange(player.inventory, inv);
+        }
+    }),
+
     OC_PATTERN_EDITOR(new TileGuiFactory<TileOCPatternEditor>(TileOCPatternEditor.class) {
         @Override
         protected Object createServerGui(EntityPlayer player, TileOCPatternEditor inv) {

@@ -90,7 +90,7 @@ public class ItemDropRender implements IItemRenderer {
                 colourCache.put(fluid.getName(), colour);
                 return colour;
             }
-            
+
             if (sprite != null && sprite.getFrameCount() > 0) {
                 int[][] image = sprite.getFrameTextureData(0);
                 int r = 0, g = 0, b = 0, count = 0;

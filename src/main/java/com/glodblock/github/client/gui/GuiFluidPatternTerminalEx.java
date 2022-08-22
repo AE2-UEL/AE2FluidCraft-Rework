@@ -55,8 +55,6 @@ public class GuiFluidPatternTerminalEx extends GuiBaseFluidPatternTerminalEx {
                 if (ItemFluidPacket.getFluidStack(stack) != null && ItemFluidPacket.getFluidStack(stack).amount > 0)
                     fake.setStackSize(ItemFluidPacket.getFluidStack(stack).amount);
             }
-            else
-                return true;
             stackSizeRenderer.setAeStack(fake);
             stackSizeRenderer.renderItemOverlayIntoGUI(fontRendererObj, mc.getTextureManager(), stack.getItemStack(), slot.xDisplayPosition, slot.yDisplayPosition);
             return false;
