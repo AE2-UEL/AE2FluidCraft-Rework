@@ -4,6 +4,7 @@ import appeng.api.AEApi;
 import appeng.api.config.Upgrades;
 import com.glodblock.github.common.Config;
 import com.glodblock.github.common.storage.FluidCellHandler;
+import com.glodblock.github.crossmod.opencomputers.OCDriverInit;
 import com.glodblock.github.inventory.InventoryHandler;
 import com.glodblock.github.loader.ChannelLoader;
 import com.glodblock.github.loader.ItemAndBlockHolder;
@@ -43,6 +44,9 @@ public class FluidCraft {
     @Mod.EventHandler
     public static void init(FMLInitializationEvent event) {
         ModAndClassUtil.init();
+        if (ModAndClassUtil.OC) {
+            OCDriverInit.run();
+        }
         proxy.init(event);
     }
 
