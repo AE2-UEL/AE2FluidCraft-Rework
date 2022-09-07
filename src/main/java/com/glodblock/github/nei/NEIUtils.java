@@ -24,7 +24,7 @@ public class NEIUtils {
             if (currentStack.stackSize == 0) continue;
             boolean find = false;
             for (OrderStack<?> storedStack : comp) {
-                if (storedStack == null || !(orderStack.getStack() instanceof ItemStack)) continue;
+                if (storedStack == null || !(storedStack.getStack() instanceof ItemStack)) continue;
                 ItemStack firstStack = (ItemStack) storedStack.getStack();
                 boolean areItemStackEqual = firstStack.isItemEqual(currentStack) && ItemStack.areItemStackTagsEqual(firstStack, currentStack);
                 if (areItemStackEqual && (firstStack.stackSize + currentStack.stackSize) <= firstStack.getMaxStackSize()) {
