@@ -3,10 +3,12 @@ itemGroup.ae2fc=AE2 Жидкостный крафт
 tile.ae2fc:fluid_discretizer.name=ME Дискретизатор жидкости
 tile.ae2fc:fluid_pattern_encoder.name=ME Кодировщик жидкостных шаблонов
 tile.ae2fc:fluid_packet_decoder.name=ME Декодер жидкостных пакетов
-tile.ae2fc:ingredient_buffer.name=ME Буфер ингредиентов
+tile.ae2fc:ingredient_buffer.name=Буфер ингредиентов
+tile.ae2fc:large_ingredient_buffer.name=Большой буфер ингредиентов
 tile.ae2fc:burette.name=Точная бюретка
 tile.ae2fc:dual_interface.name=ME Двойной интерфейс
-tile.ae2fc:part_dual_interface.name=ME Двойной интерфейс 
+tile.ae2fc:part_dual_interface.name=ME Двойной интерфейс
+tile.ae2fc:fluid_level_maintainer.name=ME Устройство поддержания уровня жидкости 
 
 item.ae2fc:fluid_drop.name=Капля из %s
 item.ae2fc:fluid_packet.name=Жидкостный пакет
@@ -17,8 +19,13 @@ item.ae2fc:part_fluid_pattern_ex_terminal.name=ME Терминал расшир�
 
 ae2fc.gui.fluid_pattern_encoder=ME Кодировщик жидкостных шаблонов
 ae2fc.gui.fluid_packet_decoder=ME Декодер жидкостных пакетов
-ae2fc.gui.ingredient_buffer=ME Буфер ингредиентов
+ae2fc.gui.ingredient_buffer=Буфер ингредиентов
+ae2fc.gui.large_ingredient_buffer=Большой буфер ингредиентов
 ae2fc.gui.burette=Точная бюретка
+ae2fc.gui.fluid_level_maintainer=ME Устройство поддержания уровня жидкости 
+
+ae2fc.misc.threshold=Порог
+ae2fc.misc.request=Размер партии
 
 ae2fc.tooltip.fluid_packet=Используйте декодер жидких пакетов, чтобы\nпреобразовать это обратно в флюид.
 ae2fc.tooltip.invalid_fluid=Недопустимая жидкость!
@@ -29,6 +36,10 @@ ae2fc.tooltip.empty=Пусто
 ae2fc.tooltip.dump_tank=Сброс содержимого резервуара
 ae2fc.tooltip.transpose_in=Перенести в резервуар
 ae2fc.tooltip.transpose_out=Перенести в предмет
+ae2fc.tooltip.not_combine=Объединить одинаковые предметы
+ae2fc.tooltip.not_combine.hint=Отключено
+ae2fc.tooltip.combine=Объединить одинаковые предметы
+ae2fc.tooltip.combine.hint=Включено
 
 ae2fc.pauto.fluid_processing.name=Обработка жидкости
 ae2fc.pauto.fluid_processing.name_short=Жидкость
