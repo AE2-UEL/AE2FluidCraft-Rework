@@ -1,9 +1,7 @@
 package com.glodblock.github.coremod.transform;
 
 import com.glodblock.github.coremod.FCClassTransformer;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.*;
 
 public class DualityInterfaceTransformer extends FCClassTransformer.ClassMapper {
 
@@ -15,6 +13,9 @@ public class DualityInterfaceTransformer extends FCClassTransformer.ClassMapper 
 
     @Override
     protected ClassVisitor getClassMapper(ClassVisitor downstream) {
+        FieldVisitor fv = downstream.visitField(Opcodes.ACC_PUBLIC, "fluidPacket", "Z", null, false);
+        fv.visitEnd();
+
         return new TransformDualityInterface(Opcodes.ASM5, downstream);
     }
 
@@ -33,8 +34,43 @@ public class DualityInterfaceTransformer extends FCClassTransformer.ClassMapper 
                     return new TransformInvAdaptorCalls(api, super.visitMethod(access, name, desc, signature, exceptions));
                 case "isCustomInvBlocking":
                     return new TransformBlockAdaptorCalls(api, super.visitMethod(access, name, desc, signature, exceptions));
+                case "writeToNBT":
+                    return new TransformNBTIO(api, super.visitMethod(access, name, desc, signature, exceptions), false);
+                case "readFromNBT":
+                    return new TransformNBTIO(api, super.visitMethod(access, name, desc, signature, exceptions), true);
                 default:
                     return super.visitMethod(access, name, desc, signature, exceptions);
+            }
+        }
+
+    }
+
+    private static class TransformNBTIO extends MethodVisitor {
+
+        boolean in;
+
+        TransformNBTIO(int api, MethodVisitor mv, boolean mode) {
+            super(api, mv);
+            this.in = mode;
+        }
+
+        @Override
+        public void visitCode() {
+            super.visitCode();
+            super.visitVarInsn(Opcodes.ALOAD, 0);
+            super.visitVarInsn(Opcodes.ALOAD, 1);
+            if (in) {
+                super.visitMethodInsn(Opcodes.INVOKESTATIC,
+                        "com/glodblock/github/coremod/CoreModHooks",
+                        "readExtraNBTInterface",
+                        "(Lappeng/helpers/DualityInterface;Lnet/minecraft/nbt/NBTTagCompound;)V",
+                        false);
+            } else {
+                super.visitMethodInsn(Opcodes.INVOKESTATIC,
+                        "com/glodblock/github/coremod/CoreModHooks",
+                        "writeExtraNBTInterface",
+                        "(Lappeng/helpers/DualityInterface;Lnet/minecraft/nbt/NBTTagCompound;)V",
+                        false);
             }
         }
 

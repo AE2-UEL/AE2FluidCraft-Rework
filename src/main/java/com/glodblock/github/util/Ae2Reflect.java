@@ -10,9 +10,15 @@ import appeng.container.slot.OptionalSlotFake;
 import appeng.container.slot.SlotFakeCraftingMatrix;
 import appeng.container.slot.SlotRestrictedInput;
 import appeng.crafting.MECraftingInventory;
+import appeng.helpers.DualityInterface;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
+import appeng.parts.reporting.PartExpandedProcessingPatternTerminal;
+import appeng.parts.reporting.PartPatternTerminal;
 import appeng.recipes.game.DisassembleRecipe;
+import appeng.tile.inventory.AppEngInternalInventory;
 import appeng.util.inv.ItemSlot;
+import appeng.util.inv.filter.IAEItemFilter;
+import com.glodblock.github.inventory.ExAppEngInternalInventory;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
 
@@ -39,6 +45,12 @@ public class Ae2Reflect {
     private static final Field fInventory_container;
     private static final Field fCPU_inventory;
     private static final Field fCPU_machineSrc;
+    private static final Field fDualInterface_fluidPacket;
+    private static final Field fAppEngInternalInventory_filter;
+    private static final Field fPartExpanded_crafting;
+    private static final Field fPartExpanded_output;
+    private static final Field fPart_crafting;
+    private static final Field fPart_output;
 
     static {
         try {
@@ -58,6 +70,12 @@ public class Ae2Reflect {
             fContainerExPatternTerm_patternSlotOUT = reflectField(ContainerExpandedProcessingPatternTerm.class, "patternSlotOUT");
             fCPU_inventory = Ae2Reflect.reflectField(CraftingCPUCluster.class, "inventory");
             fCPU_machineSrc = Ae2Reflect.reflectField(CraftingCPUCluster.class, "machineSrc");
+            fDualInterface_fluidPacket = Ae2Reflect.reflectField(DualityInterface.class, "fluidPacket");
+            fAppEngInternalInventory_filter = Ae2Reflect.reflectField(AppEngInternalInventory.class, "filter");
+            fPartExpanded_crafting = Ae2Reflect.reflectField(PartExpandedProcessingPatternTerminal.class, "crafting");
+            fPartExpanded_output = Ae2Reflect.reflectField(PartExpandedProcessingPatternTerminal.class, "output");
+            fPart_crafting = Ae2Reflect.reflectField(PartPatternTerminal.class, "crafting");
+            fPart_output = Ae2Reflect.reflectField(PartPatternTerminal.class, "output");
         } catch (Exception e) {
             throw new IllegalStateException("Failed to initialize AE2 reflection hacks!", e);
         }
@@ -185,4 +203,25 @@ public class Ae2Reflect {
         }
     }
 
+    public static boolean getFluidPacketMode(DualityInterface owner) {
+        return readField(owner, fDualInterface_fluidPacket);
+    }
+
+    public static void setFluidPacketMode(DualityInterface owner, boolean value) {
+        writeField(owner, fDualInterface_fluidPacket, value);
+    }
+
+    public static IAEItemFilter getInventoryFilter(AppEngInternalInventory owner) {
+        return readField(owner, fAppEngInternalInventory_filter);
+    }
+
+    public static void setInventoryForPart(PartExpandedProcessingPatternTerminal part, ExAppEngInternalInventory craft, ExAppEngInternalInventory output) {
+        writeField(part, fPartExpanded_crafting, craft);
+        writeField(part, fPartExpanded_output, output);
+    }
+
+    public static void setInventoryForPart(PartPatternTerminal part, ExAppEngInternalInventory craft, ExAppEngInternalInventory output) {
+        writeField(part, fPart_crafting, craft);
+        writeField(part, fPart_output, output);
+    }
 }

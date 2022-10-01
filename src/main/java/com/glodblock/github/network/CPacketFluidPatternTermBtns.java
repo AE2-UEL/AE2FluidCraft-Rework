@@ -2,6 +2,8 @@ package com.glodblock.github.network;
 
 import com.glodblock.github.client.container.ContainerExtendedFluidPatternTerminal;
 import com.glodblock.github.client.container.ContainerFluidPatternTerminal;
+import com.glodblock.github.client.container.ContainerItemDualInterface;
+import com.glodblock.github.client.container.ContainerWrapInterface;
 import com.glodblock.github.common.part.PartExtendedFluidPatternTerminal;
 import com.glodblock.github.common.part.PartFluidPatternTerminal;
 import io.netty.buffer.ByteBuf;
@@ -67,12 +69,32 @@ public class CPacketFluidPatternTermBtns implements IMessage {
                     case "PatternTerminal.Combine":
                         ((PartFluidPatternTerminal) cpt.getPatternTerminal()).setCombineMode(Value.equals("1"));
                         break;
+                    case "PatternTerminal.Fluid":
+                        ((PartFluidPatternTerminal) cpt.getPatternTerminal()).setFluidPlaceMode(Value.equals("1"));
+                        break;
                 }
             } else if (c instanceof ContainerExtendedFluidPatternTerminal) {
                 final ContainerExtendedFluidPatternTerminal cpt = (ContainerExtendedFluidPatternTerminal) c;
                 switch (Name) {
                     case "PatternTerminal.Combine":
                         ((PartExtendedFluidPatternTerminal) cpt.getExpandedPatternTerminal()).setCombineMode(Value.equals("1"));
+                        break;
+                    case "PatternTerminal.Fluid":
+                        ((PartExtendedFluidPatternTerminal) cpt.getExpandedPatternTerminal()).setFluidPlaceMode(Value.equals("1"));
+                        break;
+                }
+            } else if (c instanceof ContainerItemDualInterface) {
+                final ContainerItemDualInterface cdi = (ContainerItemDualInterface) c;
+                switch (Name) {
+                    case "DualInterface.FluidPacket":
+                        cdi.setFluidPacketInTile(Value.equals("1"));
+                        break;
+                }
+            } else if (c instanceof ContainerWrapInterface) {
+                final ContainerWrapInterface cdi = (ContainerWrapInterface) c;
+                switch (Name) {
+                    case "WrapDualInterface.FluidPacket":
+                        cdi.setFluidPacketInTile(Value.equals("1"));
                         break;
                 }
             }

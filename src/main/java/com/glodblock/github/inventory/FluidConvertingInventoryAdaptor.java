@@ -1,6 +1,10 @@
 package com.glodblock.github.inventory;
 
 import appeng.api.config.FuzzyMode;
+import appeng.api.parts.IPart;
+import appeng.helpers.DualityInterface;
+import appeng.helpers.IInterfaceHost;
+import appeng.tile.networking.TileCableBus;
 import appeng.util.InventoryAdaptor;
 import appeng.util.inv.AdaptorItemHandler;
 import appeng.util.inv.IInventoryDestination;
@@ -9,6 +13,7 @@ import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.util.Ae2Reflect;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidStack;
@@ -26,15 +31,30 @@ import java.util.Objects;
 
 public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
 
-    public static FluidConvertingInventoryAdaptor wrap(ICapabilityProvider capProvider, EnumFacing face) {
+    public static InventoryAdaptor wrap(ICapabilityProvider capProvider, EnumFacing face) {
         // sometimes i wish i had the monadic version from 1.15
-        return new FluidConvertingInventoryAdaptor(
-                capProvider.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face)
-                        ? Objects.requireNonNull(capProvider.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face))
-                        : null,
-                capProvider.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, face)
-                        ? Objects.requireNonNull(capProvider.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, face))
-                        : null);
+        TileEntity cap = (TileEntity) capProvider;
+        TileEntity inter = cap.getWorld().getTileEntity(cap.getPos().add(face.getDirectionVec()));
+        DualityInterface dualInterface = null;
+        if (inter instanceof IInterfaceHost) {
+            dualInterface = ((IInterfaceHost) inter).getInterfaceDuality();
+        } else if (inter instanceof TileCableBus) {
+            IPart part = ((TileCableBus) inter).getPart(face.getOpposite());
+            if (part instanceof IInterfaceHost) {
+                dualInterface = ((IInterfaceHost) part).getInterfaceDuality();
+            }
+        }
+
+        if (dualInterface != null && !Ae2Reflect.getFluidPacketMode(dualInterface)) {
+            return new FluidConvertingInventoryAdaptor(
+                    capProvider.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face)
+                            ? Objects.requireNonNull(capProvider.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face))
+                            : null,
+                    capProvider.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, face)
+                            ? Objects.requireNonNull(capProvider.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, face))
+                            : null);
+        }
+        return InventoryAdaptor.getAdaptor(cap, face);
     }
 
     @Nullable

@@ -24,6 +24,9 @@ public class FCClassTransformer implements IClassTransformer {
             case "appeng.items.parts.PartType":
                 tform = PartTypeTransformer.INSTANCE;
                 break;
+            case "appeng.core.sync.GuiBridge":
+                tform = GuiBridgeTransformer.INSTANCE;
+                break;
             case "thelm.packagedauto.integration.appeng.recipe.PackageCraftingPatternHelper":
                 tform = PautoCraftingPatternHelperTransformer.TFORM_INPUTS;
                 break;
@@ -33,7 +36,11 @@ public class FCClassTransformer implements IClassTransformer {
             case "thelm.packagedauto.tile.TileUnpackager":
                 tform = TileUnpackagerTransformer.INSTANCE;
                 break;
+            case "mezz.jei.input.GuiContainerWrapper":
+                tform = GuiContainerWrapperTransformer.INSTANCE;
+                break;
             case "appeng.container.implementations.ContainerInterfaceTerminal":
+            case "appeng.container.implementations.ContainerInterfaceConfigurationTerminal":
                 tform = ContainerInterfaceTerminalTransformer.INSTANCE;
                 break;
             case "appeng.client.gui.implementations.GuiCraftingCPU":

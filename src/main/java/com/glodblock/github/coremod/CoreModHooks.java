@@ -13,17 +13,15 @@ import appeng.api.storage.channels.IItemStorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.crafting.MECraftingInventory;
-import appeng.items.misc.ItemEncodedPattern;
+import appeng.helpers.DualityInterface;
 import appeng.me.MachineSet;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.parts.misc.PartInterface;
 import appeng.tile.misc.TileInterface;
 import appeng.util.InventoryAdaptor;
 import appeng.util.inv.BlockingInventoryAdaptor;
-import appeng.util.inv.filter.IAEItemFilter;
 import appeng.util.item.AEItemStack;
 import com.glodblock.github.common.item.ItemFluidDrop;
-import com.glodblock.github.common.item.ItemFluidEncodedPattern;
 import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.common.part.PartDualInterface;
 import com.glodblock.github.common.tile.TileDualInterface;
@@ -34,8 +32,10 @@ import com.glodblock.github.inventory.FluidConvertingInventoryCrafting;
 import com.glodblock.github.loader.FCItems;
 import com.glodblock.github.util.Ae2Reflect;
 import com.glodblock.github.util.SetBackedMachineSet;
+import com.google.common.collect.Sets;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -48,7 +48,6 @@ import net.minecraftforge.items.IItemHandler;
 import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
-import com.google.common.collect.Sets;
 
 public class CoreModHooks {
 
@@ -74,6 +73,25 @@ public class CoreModHooks {
     @Nullable
     public static BlockingInventoryAdaptor wrapBlockInventory(@Nullable TileEntity tile, EnumFacing face) {
         return tile != null ? BlockingFluidInventoryAdaptor.getAdaptor(tile, face) : null;
+    }
+
+    public static void writeExtraNBTInterface(DualityInterface dual, NBTTagCompound nbt) {
+        nbt.setBoolean("fluidPacket", Ae2Reflect.getFluidPacketMode(dual));
+    }
+
+    public static void readExtraNBTInterface(DualityInterface dual, NBTTagCompound nbt) {
+        Ae2Reflect.setFluidPacketMode(dual, nbt.getBoolean("fluidPacket"));
+    }
+
+    public static ItemStack removeFluidPackets(InventoryCrafting inv, int index) {
+        ItemStack stack = inv.getStackInSlot(index);
+        if (stack != ItemStack.EMPTY && stack.getItem() instanceof ItemFluidPacket) {
+            FluidStack fluid = ItemFluidPacket.getFluidStack(stack);
+            return ItemFluidDrop.newStack(fluid);
+        }
+        else {
+            return stack;
+        }
     }
 
     public static long getCraftingByteCost(IAEItemStack stack) {
@@ -107,6 +125,13 @@ public class CoreModHooks {
         } else {
             return grid.getMachines(c);
         }
+    }
+
+    public static Object wrapFluidPacket(ItemStack stack) {
+        if (stack.getItem() instanceof ItemFluidPacket) {
+            return ItemFluidPacket.getFluidStack(stack);
+        }
+        return stack;
     }
 
     private static IMachineSet unionMachineSets(IMachineSet a, IMachineSet b) {

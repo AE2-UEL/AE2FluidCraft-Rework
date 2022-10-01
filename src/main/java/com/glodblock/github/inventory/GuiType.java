@@ -7,7 +7,6 @@ import appeng.api.util.AEPartLocation;
 import appeng.container.AEBaseContainer;
 import appeng.container.ContainerOpenContext;
 import appeng.container.implementations.ContainerCraftingStatus;
-import appeng.container.implementations.ContainerInterface;
 import appeng.container.implementations.ContainerPriority;
 import appeng.fluids.container.ContainerFluidInterface;
 import appeng.fluids.helper.IFluidInterfaceHost;
@@ -31,6 +30,18 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public enum GuiType {
+
+    ITEM_AMOUNT_SET(new PartOrTileGuiFactory<ITerminalHost>(ITerminalHost.class) {
+        @Override
+        protected Object createServerGui(EntityPlayer player, ITerminalHost inv) {
+            return new ContainerItemAmountChange(player.inventory, inv);
+        }
+
+        @Override
+        protected Object createClientGui(EntityPlayer player, ITerminalHost inv) {
+            return new GuiItemAmountChange(player.inventory, inv);
+        }
+    }),
 
     FLUID_LEVEL_MAINTAINER(new PartOrTileGuiFactory<TileFluidLevelMaintainer>(TileFluidLevelMaintainer.class) {
         @Override
@@ -119,7 +130,7 @@ public enum GuiType {
     DUAL_ITEM_INTERFACE(new PartOrTileGuiFactory<IInterfaceHost>(IInterfaceHost.class) {
         @Override
         protected Object createServerGui(EntityPlayer player, IInterfaceHost inv) {
-            return new ContainerInterface(player.inventory, inv);
+            return new ContainerItemDualInterface(player.inventory, inv);
         }
 
         @Override

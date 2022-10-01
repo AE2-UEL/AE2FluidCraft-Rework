@@ -15,6 +15,7 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.Objects;
@@ -80,11 +81,13 @@ public class BlockingFluidInventoryAdaptor extends BlockingInventoryAdaptor {
         return !(fluidPass && itemPass);
     }
 
+    @Nonnull
     @Override
     public Iterator<ItemSlot> iterator() {
         return new ItemHandlerIterator(this.invItems);
     }
 
+    @SuppressWarnings("rawtypes")
     boolean isBlockableItem(ItemStack stack) {
         Object2ObjectOpenHashMap map = NonBlockingItems.INSTANCE.getMap().get(this.domain);
         if (map.get(stack.getItem()) != null) {

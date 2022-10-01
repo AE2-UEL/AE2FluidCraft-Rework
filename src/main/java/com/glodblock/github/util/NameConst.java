@@ -39,6 +39,8 @@ public final class NameConst {
     public static final String GUI_LARGE_INGREDIENT_BUFFER = GUI_KEY + BLOCK_LARGE_INGREDIENT_BUFFER;
     public static final String GUI_BURETTE = GUI_KEY + BLOCK_BURETTE;
     public static final String GUI_FLUID_LEVEL_MAINTAINER = GUI_KEY + BLOCK_FLUID_LEVEL_MAINTAINER;
+    public static final String GUI_ITEM_AMOUNT_SET = GUI_KEY + "item_amount_set";
+    public static final String GUI_ITEM_AMOUNT_SET_CONFIRM = GUI_KEY + "set";
 
     public static final String MISC = FluidCraft.MODID + ".misc.";
     public static final String MISC_THRESHOLD = MISC + "threshold";

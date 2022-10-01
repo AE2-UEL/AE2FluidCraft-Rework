@@ -1,7 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "ae2fc:items/fluid_packet",
-    "layer1": "ae2fc:items/fluid_packet_overlay"
+    "layer0": "ae2fc:items/fluid_packet"
   }
 }

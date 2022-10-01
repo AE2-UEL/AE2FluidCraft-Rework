@@ -14,8 +14,10 @@ import com.glodblock.github.FluidCraft;
 import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidEncodedPattern;
 import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.inventory.ExAppEngInternalInventory;
 import com.glodblock.github.inventory.GuiType;
 import com.glodblock.github.inventory.InventoryHandler;
+import com.glodblock.github.util.Ae2Reflect;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -31,6 +33,7 @@ import javax.annotation.Nonnull;
 public class PartFluidPatternTerminal extends PartPatternTerminal {
 
     private boolean combine = false;
+    private boolean fluidFirst = false;
 
     @PartModels
     public static ResourceLocation[] MODELS = new ResourceLocation[] {
@@ -44,6 +47,9 @@ public class PartFluidPatternTerminal extends PartPatternTerminal {
 
     public PartFluidPatternTerminal(ItemStack is) {
         super(is);
+        ExAppEngInternalInventory exCraft = new ExAppEngInternalInventory((AppEngInternalInventory) getInventoryByName("crafting"));
+        ExAppEngInternalInventory exOutput = new ExAppEngInternalInventory((AppEngInternalInventory) getInventoryByName("output"));
+        Ae2Reflect.setInventoryForPart(this, exCraft, exOutput);
     }
 
     @Nonnull
@@ -56,6 +62,7 @@ public class PartFluidPatternTerminal extends PartPatternTerminal {
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         combine = data.getBoolean("combineMode");
+        fluidFirst = data.getBoolean("fluidFirst");
     }
 
     public void setCombineMode(boolean value) {
@@ -66,10 +73,19 @@ public class PartFluidPatternTerminal extends PartPatternTerminal {
         return this.combine;
     }
 
+    public void setFluidPlaceMode(boolean value) {
+        this.fluidFirst = value;
+    }
+
+    public boolean getFluidPlaceMode() {
+        return this.fluidFirst;
+    }
+
     @Override
     public void writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setBoolean("combineMode", combine);
+        data.setBoolean("fluidFirst", fluidFirst);
     }
 
     @Override

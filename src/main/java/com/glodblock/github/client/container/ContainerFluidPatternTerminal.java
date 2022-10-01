@@ -41,6 +41,8 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
 
     @GuiSync(95)
     public boolean combine = false;
+    @GuiSync(96)
+    public boolean fluidFirst = false;
 
     public ContainerFluidPatternTerminal(InventoryPlayer ip, ITerminalHost monitorable) {
         super(ip, monitorable);
@@ -448,6 +450,7 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
         super.detectAndSendChanges();
         if (Platform.isServer()) {
             this.combine = ((PartFluidPatternTerminal) this.getPatternTerminal()).getCombineMode();
+            this.fluidFirst = ((PartFluidPatternTerminal) this.getPatternTerminal()).getFluidPlaceMode();
         }
     }
 

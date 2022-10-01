@@ -38,6 +38,10 @@ public class GuiFCImgButton extends GuiButton implements ITooltip {
             appearances = new HashMap<>();
             this.registerApp( 0, "NOT_COMBINE", "DONT_COMBINE", "not_combine" );
             this.registerApp( 1, "FORCE_COMBINE", "DO_COMBINE", "combine" );
+            this.registerApp( 2, "SEND_FLUID", "REAL_FLUID", "real_fluid" );
+            this.registerApp( 3, "SEND_PACKET", "FLUID_PACKET", "fake_packet" );
+            this.registerApp( 4, "FLUID_FIRST", "FLUID", "fluid_first" );
+            this.registerApp( 5, "ORIGIN_ORDER", "ITEM", "origin_order" );
         }
     }
 
@@ -231,6 +235,10 @@ public class GuiFCImgButton extends GuiButton implements ITooltip {
             }
             else
             {
+                GL11.glPushMatrix();
+                GL11.glTranslatef( this.x, this.y, 0.0F );
+                GL11.glScalef( 1f / 16 * 3, 1f / 16 * 3, 1f / 16 * 3 );
+
                 if( this.enabled )
                 {
                     GL11.glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
@@ -246,9 +254,11 @@ public class GuiFCImgButton extends GuiButton implements ITooltip {
                 final int uv_y = (int) Math.floor( iconIndex / 3.0 );
                 final int uv_x = iconIndex - uv_y * 3;
 
-                this.drawTexturedModalRect( this.x, this.y, 32, 32, 16, 16 );
-                this.drawTexturedModalRect( this.x, this.y, uv_x * 16, uv_y * 16, 16, 16 );
+                this.drawTexturedModalRect( 0, 0, Math.round(32F * 16F / 3F), Math.round(32F * 16F / 3F), Math.round(16F * 16F / 3F), Math.round(16F * 16F / 3F) );
+                this.drawTexturedModalRect( 0, 0, Math.round(uv_x * 16F * 16F / 3F), Math.round(uv_y * 16F * 16F / 3F), Math.round(16F * 16F / 3F), Math.round(16F * 16F / 3F) );
                 this.mouseDragged( par1Minecraft, par2, par3 );
+
+                GL11.glPopMatrix();
             }
         }
         GL11.glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );

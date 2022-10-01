@@ -9,6 +9,7 @@ import appeng.container.implementations.ContainerExpandedProcessingPatternTerm;
 import appeng.container.slot.SlotFakeCraftingMatrix;
 import appeng.container.slot.SlotPatternOutputs;
 import appeng.helpers.InventoryAction;
+import appeng.items.misc.ItemEncodedPattern;
 import appeng.util.Platform;
 import appeng.util.item.AEItemStack;
 import com.glodblock.github.common.item.ItemFluidDrop;
@@ -32,6 +33,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class ContainerExtendedFluidPatternTerminal extends ContainerExpandedProcessingPatternTerm implements PatternConsumer {
 
@@ -43,6 +45,8 @@ public class ContainerExtendedFluidPatternTerminal extends ContainerExpandedProc
 
     @GuiSync(95)
     public boolean combine = false;
+    @GuiSync(96)
+    public boolean fluidFirst = false;
 
     public ContainerExtendedFluidPatternTerminal(InventoryPlayer ip, ITerminalHost monitorable) {
         super(ip, monitorable);
@@ -444,6 +448,7 @@ public class ContainerExtendedFluidPatternTerminal extends ContainerExpandedProc
         super.detectAndSendChanges();
         if (Platform.isServer()) {
             this.combine = ((PartExtendedFluidPatternTerminal) this.getExpandedPatternTerminal()).getCombineMode();
+            this.fluidFirst = ((PartExtendedFluidPatternTerminal) this.getExpandedPatternTerminal()).getFluidPlaceMode();
         }
     }
 

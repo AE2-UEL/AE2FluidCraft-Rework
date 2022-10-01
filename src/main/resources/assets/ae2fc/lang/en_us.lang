@@ -23,6 +23,8 @@ ae2fc.gui.ingredient_buffer=Ingredient Buffer
 ae2fc.gui.large_ingredient_buffer=Large Ingredient Buffer
 ae2fc.gui.burette=Precision Burette
 ae2fc.gui.fluid_level_maintainer=ME Fluid Level Maintainer
+ae2fc.gui.item_amount_set=Set Amount
+ae2fc.gui.set=Set
 
 ae2fc.misc.threshold=Threshold
 ae2fc.misc.request=Batch Size
@@ -40,6 +42,14 @@ ae2fc.tooltip.not_combine=Merge the same items
 ae2fc.tooltip.not_combine.hint=Disabled
 ae2fc.tooltip.combine=Merge the same items
 ae2fc.tooltip.combine.hint=Enabled
+ae2fc.tooltip.real_fluid=Send Real Fluid
+ae2fc.tooltip.real_fluid.hint=The real fluid will be sent to target container
+ae2fc.tooltip.fake_packet=Send Fluid Packet
+ae2fc.tooltip.fake_packet.hint=The fluid packet item will be sent to target container
+ae2fc.tooltip.fluid_first=Place Fluid First In Pattern
+ae2fc.tooltip.fluid_first.hint=Enable
+ae2fc.tooltip.origin_order=Place Fluid First In Pattern
+ae2fc.tooltip.origin_order.hint=Disabled
 
 ae2fc.pauto.fluid_processing.name=Fluid Processing
 ae2fc.pauto.fluid_processing.name_short=Fluid

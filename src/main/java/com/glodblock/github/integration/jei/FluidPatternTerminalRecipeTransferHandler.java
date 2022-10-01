@@ -50,7 +50,7 @@ public class FluidPatternTerminalRecipeTransferHandler implements IRecipeTransfe
             PartFluidPatternTerminal tile = (PartFluidPatternTerminal)container.getPatternTerminal();
             IAEItemStack[] crafting = new IAEItemStack[tile.getInventoryByName("crafting").getSlots()];
             IAEItemStack[] output = new IAEItemStack[tile.getInventoryByName("output").getSlots()];
-            FluidPatternEncoderRecipeTransferHandler.transferRecipeSlots(recipeLayout, crafting, output, container.craftingMode, container.combine, ext);
+            FluidPatternEncoderRecipeTransferHandler.transferRecipeSlots(recipeLayout, crafting, output, container.craftingMode, container.combine, container.fluidFirst, ext);
             FluidCraft.proxy.netHandler.sendToServer(new CPacketLoadPattern(crafting, output));
         }
         return null;
