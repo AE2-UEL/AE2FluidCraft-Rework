@@ -1,5 +1,6 @@
 package com.glodblock.github.inventory.gui;
 
+import appeng.client.gui.AEBaseGui;
 import com.glodblock.github.util.Ae2ReflectClient;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -40,6 +41,7 @@ public class MouseRegionManager {
             if (region.containsMouse(mX, mY)) {
                 List<String> tooltip = region.handler.getTooltip();
                 if (tooltip != null) {
+                    ((AEBaseGui) gui).drawTooltip(mX, mY, 0, String.join("\n", tooltip));
                     return;
                 }
             }

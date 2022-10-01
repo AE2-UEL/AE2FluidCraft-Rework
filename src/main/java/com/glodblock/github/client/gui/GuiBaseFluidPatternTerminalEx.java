@@ -47,7 +47,7 @@ public class GuiBaseFluidPatternTerminalEx extends GuiFCBaseMonitor {
 
         if( this.encodeBtn == btn )
         {
-            FluidCraft.proxy.netHandler.sendToServer( new CPacketFluidPatternTermBtns( "PatternTerminal.Encode", isShiftKeyDown() ? "2" : "1" ) );
+            FluidCraft.proxy.netHandler.sendToServer( new CPacketFluidPatternTermBtns( "PatternTerminal.Encode", isShiftKeyDown() ? (isCtrlKeyDown() ? "3" : "2") : "1" ) );
         }
         else if( this.clearBtn == btn )
         {

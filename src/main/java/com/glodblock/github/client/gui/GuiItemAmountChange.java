@@ -1,7 +1,6 @@
 package com.glodblock.github.client.gui;
 
 import appeng.api.storage.ITerminalHost;
-import appeng.core.localization.GuiText;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.gui.container.ContainerItemAmountChange;
 import com.glodblock.github.network.CPacketPatternValueSet;

@@ -68,7 +68,7 @@ public class GuiDualInterface extends GuiUpgradeable {
             this.interfaceMode.setState( ( (ContainerInterface) this.cvb ).getInterfaceTerminalMode() == YesNo.YES );
         }
 
-        this.fontRendererObj.drawString( StatCollector.translateToLocal(NameConst.GUI_FLUID_INTERFACE), 8, 6, 4210752 );
+        this.fontRendererObj.drawString( getGuiDisplayName( StatCollector.translateToLocal(NameConst.GUI_FLUID_INTERFACE) ), 8, 6, 4210752 );
     }
 
     @Override

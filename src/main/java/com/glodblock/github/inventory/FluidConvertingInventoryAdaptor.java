@@ -1,15 +1,19 @@
 package com.glodblock.github.inventory;
 
 import appeng.api.config.FuzzyMode;
+import appeng.tile.misc.TileInterface;
 import appeng.tile.networking.TileCableBus;
 import appeng.util.InventoryAdaptor;
 import appeng.util.inv.IInventoryDestination;
 import appeng.util.inv.ItemSlot;
+import cofh.api.transport.IItemDuct;
 import com.glodblock.github.common.Config;
 import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.common.parts.PartFluidInterface;
 import com.glodblock.github.common.tile.TileFluidInterface;
 import com.glodblock.github.util.Ae2Reflect;
+import com.glodblock.github.util.BlockPos;
+import com.glodblock.github.util.ModAndClassUtil;
 import com.glodblock.github.util.Util;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -34,17 +38,31 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
             return InventoryAdaptor.getAdaptor(capProvider, f);
         InventoryAdaptor item = InventoryAdaptor.getAdaptor(capProvider, f);
         IFluidHandler fluid = capProvider instanceof IFluidHandler ? (IFluidHandler) capProvider : null;
-        return new FluidConvertingInventoryAdaptor(item, fluid, face);
+        boolean onmi = false;
+        if (inter instanceof TileInterface) {
+            onmi = ((TileInterface) inter).getTargets().size() > 1;
+        }
+        Object conduct = null;
+        if (ModAndClassUtil.COFH && capProvider instanceof IItemDuct) {
+            conduct = capProvider;
+        }
+        return new FluidConvertingInventoryAdaptor(item, fluid, face, new BlockPos(inter), onmi, conduct);
     }
 
     private final InventoryAdaptor invItems;
     private final IFluidHandler invFluids;
     private final ForgeDirection side;
+    private final BlockPos posInterface;
+    private final Object eioDuct;
+    private final boolean onmi;
 
-    public FluidConvertingInventoryAdaptor(@Nullable InventoryAdaptor invItems, @Nullable IFluidHandler invFluids, EnumFacing facing) {
+    public FluidConvertingInventoryAdaptor(@Nullable InventoryAdaptor invItems, @Nullable IFluidHandler invFluids, EnumFacing facing, BlockPos pos, boolean isOnmi, Object eioConduct) {
         this.invItems = invItems;
         this.invFluids = invFluids;
         this.side = Util.from(facing);
+        this.posInterface = pos;
+        this.eioDuct = eioConduct;
+        this.onmi = isOnmi;
     }
 
     @Override
@@ -62,12 +80,34 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
             }
             return toBeAdded;
         }
+        if (eioDuct != null) {
+            return ((IItemDuct) eioDuct).insertItem(side, toBeAdded);
+        }
         return invItems != null ? invItems.addItems(toBeAdded) : toBeAdded;
     }
 
     @Override
     public ItemStack simulateAdd(ItemStack toBeSimulated) {
         if (toBeSimulated.getItem() instanceof ItemFluidPacket) {
+            if (onmi) {
+                boolean sus = false;
+                FluidStack fluid = ItemFluidPacket.getFluidStack(toBeSimulated);
+                if (fluid != null) {
+                    for (ForgeDirection dir : ForgeDirection.values()) {
+                        TileEntity te = posInterface.getOffSet(dir).getTileEntity();
+                        if (te instanceof IFluidHandler) {
+                            int filled = ((IFluidHandler) te).fill(dir.getOpposite(), fluid, false);
+                            if (filled > 0) {
+                                sus = true;
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    sus = true;
+                }
+                return sus ? null : toBeSimulated;
+            }
             if (invFluids != null) {
                 FluidStack fluid = ItemFluidPacket.getFluidStack(toBeSimulated);
                 if (fluid != null) {
@@ -79,6 +119,10 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
                 }
             }
             return toBeSimulated;
+        }
+        //Assert EIO conduct can hold all item, as it is the origin practice in AE2
+        if (eioDuct != null) {
+            return null;
         }
         return invItems != null ? invItems.simulateAdd(toBeSimulated) : toBeSimulated;
     }

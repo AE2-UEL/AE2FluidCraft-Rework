@@ -142,4 +142,12 @@ public abstract class ContainerFluidConfigurable extends ContainerUpgradeable {
         super.standardDetectAndSendChanges();
     }
 
+    @Override
+    public boolean isSlotEnabled( final int idx ) {
+        if (idx == 0) {
+            return true;
+        }
+        return super.isSlotEnabled(idx);
+    }
+
 }

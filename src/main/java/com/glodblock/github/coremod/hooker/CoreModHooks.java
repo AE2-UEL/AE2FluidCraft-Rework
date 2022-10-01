@@ -52,6 +52,17 @@ public class CoreModHooks {
         return stack;
     }
 
+    public static ItemStack removeFluidPackets(InventoryCrafting inv, int index) {
+        ItemStack stack = inv.getStackInSlot(index);
+        if (stack != null && stack.getItem() instanceof ItemFluidPacket) {
+            FluidStack fluid = ItemFluidPacket.getFluidStack(stack);
+            return ItemFluidDrop.newStack(fluid);
+        }
+        else {
+            return stack;
+        }
+    }
+
     @Nullable
     public static InventoryAdaptor wrapInventory(@Nullable TileEntity tile, ForgeDirection face) {
         return tile != null ? FluidConvertingInventoryAdaptor.wrap(tile, Util.from(face)) : null;

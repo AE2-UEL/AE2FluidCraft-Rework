@@ -158,6 +158,9 @@ public class ContainerFluidPatternTerminal extends FCBasePartContainer implement
         }
         Slot slot = getSlot(slotId);
         ItemStack stack = player.inventory.getItemStack();
+        if (action == InventoryAction.SPLIT_OR_PLACE_SINGLE && slot.getStack() != null && stack == null && slot.getStack().stackSize == 1) {
+            return;
+        }
         if (Util.getFluidFromItem(stack) == null || Util.getFluidFromItem(stack).amount <= 0) {
             super.doAction(player, action, slotId, id);
             return;

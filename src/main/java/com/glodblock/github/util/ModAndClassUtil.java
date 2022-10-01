@@ -6,6 +6,7 @@ import appeng.api.config.Upgrades;
 import appeng.core.AEConfig;
 import appeng.core.localization.ButtonToolTips;
 import appeng.core.localization.GuiText;
+import appeng.items.parts.PartType;
 import cpw.mods.fml.common.Loader;
 
 import java.lang.reflect.Field;
@@ -22,6 +23,7 @@ public final class ModAndClassUtil {
     public static boolean WCT = false;
     public static boolean IC2 = false;
     public static boolean NEI = false;
+    public static boolean COFH = false;
 
     public static boolean isDoubleButton;
     public static boolean isSaveText;
@@ -30,11 +32,20 @@ public final class ModAndClassUtil {
     public static boolean isSearchBar;
     public static boolean isShiftTooltip;
     public static boolean isBigInterface;
+    public static boolean isExPatternTerminal;
 
     public static Class<?> essentiaGas;
 
     @SuppressWarnings("all")
     public static void init() {
+
+        try {
+            Field d = PartType.class.getDeclaredField("PatternTerminalEx");
+            if (d == null) isExPatternTerminal = false;
+            isExPatternTerminal = true;
+        } catch (NoSuchFieldException e) {
+            isExPatternTerminal = false;
+        }
 
         try {
             Field d = Upgrades.class.getDeclaredField("PATTERN_CAPACITY");
@@ -118,6 +129,8 @@ public final class ModAndClassUtil {
             IC2 = true;
         if (Loader.isModLoaded("NotEnoughItems"))
             NEI = true;
+        if (Loader.isModLoaded("CoFHCore"))
+            COFH = true;
     }
 
 }

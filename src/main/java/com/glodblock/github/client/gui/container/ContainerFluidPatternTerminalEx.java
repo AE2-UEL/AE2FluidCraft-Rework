@@ -14,6 +14,7 @@ import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.inventory.PatternConsumer;
 import com.glodblock.github.loader.ItemAndBlockHolder;
 import com.glodblock.github.util.FluidPatternDetails;
+import com.glodblock.github.util.ModAndClassUtil;
 import com.glodblock.github.util.Util;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -34,7 +35,7 @@ public class ContainerFluidPatternTerminalEx extends FCBasePartContainerEx imple
 
     @Override
     public void encode() {
-        if (!checkHasFluidPattern()) {
+        if (!checkHasFluidPattern() && ModAndClassUtil.isExPatternTerminal) {
             super.encode();
             return;
         }
@@ -151,12 +152,14 @@ public class ContainerFluidPatternTerminalEx extends FCBasePartContainerEx imple
         }
         Slot slot = getSlot(slotId);
         ItemStack stack = player.inventory.getItemStack();
+        if (action == InventoryAction.SPLIT_OR_PLACE_SINGLE && slot.getStack() != null && stack == null && slot.getStack().stackSize == 1) {
+            return;
+        }
         if (Util.getFluidFromItem(stack) == null || Util.getFluidFromItem(stack).amount <= 0) {
             super.doAction(player, action, slotId, id);
             return;
         }
-        if ((slot instanceof SlotFakeCraftingMatrix || slot instanceof SlotPatternOutputs) && stack != null
-            && (stack.getItem() instanceof IFluidContainerItem || FluidContainerRegistry.isContainer(stack))) {
+        if ((slot instanceof SlotFakeCraftingMatrix || slot instanceof SlotPatternOutputs) && (stack.getItem() instanceof IFluidContainerItem || FluidContainerRegistry.isContainer(stack))) {
             FluidStack fluid = null;
             switch (action) {
                 case PICKUP_OR_SET_DOWN:
