@@ -45,7 +45,7 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
             }
         }
 
-        if (dualInterface != null && !Ae2Reflect.getFluidPacketMode(dualInterface)) {
+        if (dualInterface == null || !Ae2Reflect.getFluidPacketMode(dualInterface)) {
             return new FluidConvertingInventoryAdaptor(
                     capProvider.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face)
                             ? Objects.requireNonNull(capProvider.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face))
