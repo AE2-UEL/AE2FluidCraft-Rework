@@ -31,6 +31,7 @@ public class Ae2Reflect {
     private static final Field fCPU_size;
     private static final Field fCPU_inventory;
     private static final Field fCPU_machineSrc;
+    private static final Field fContainerUpgradeable_upgradeable;
     private static final Method mItemSlot_setExtractable;
     private static final Method mCPU_getGrid;
     private static final Method mCPU_postChange;
@@ -48,6 +49,7 @@ public class Ae2Reflect {
             fCPU_inventory = Ae2Reflect.reflectField(CraftingCPUCluster.class, "inventory");
             fCPU_machineSrc = Ae2Reflect.reflectField(CraftingCPUCluster.class, "machineSrc");
             mItemSlot_setExtractable = reflectMethod(ItemSlot.class, "setExtractable", boolean.class);
+            fContainerUpgradeable_upgradeable = Ae2Reflect.reflectField(ContainerUpgradeable.class, "upgradeable");
             mCPU_getGrid = reflectMethod(CraftingCPUCluster.class, "getGrid");
             mCPU_postChange = reflectMethod(CraftingCPUCluster.class, "postChange", IAEItemStack.class, BaseActionSource.class);
             mCPU_markDirty = reflectMethod(CraftingCPUCluster.class, "markDirty");
@@ -92,6 +94,10 @@ public class Ae2Reflect {
         } catch (Exception e) {
             throw new IllegalStateException("Failed to write field: " + field);
         }
+    }
+
+    public static IUpgradeableHost getUpgradeableHost(ContainerUpgradeable owner) {
+        return Ae2Reflect.readField(owner, fContainerUpgradeable_upgradeable);
     }
 
     public static IPartitionList<?> getPartitionList(MEInventoryHandler<?> me) {

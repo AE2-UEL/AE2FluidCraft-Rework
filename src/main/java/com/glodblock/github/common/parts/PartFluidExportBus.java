@@ -2,6 +2,10 @@ package com.glodblock.github.common.parts;
 
 import appeng.api.config.*;
 import appeng.api.networking.IGridNode;
+import appeng.api.networking.crafting.ICraftingGrid;
+import appeng.api.networking.crafting.ICraftingLink;
+import appeng.api.networking.crafting.ICraftingRequester;
+import appeng.api.networking.energy.IEnergyGrid;
 import appeng.api.networking.security.BaseActionSource;
 import appeng.api.networking.security.MachineSource;
 import appeng.api.networking.ticking.TickRateModulation;
@@ -10,11 +14,20 @@ import appeng.api.parts.IPartCollisionHelper;
 import appeng.api.parts.IPartRenderHelper;
 import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.data.IAEFluidStack;
+import appeng.api.storage.data.IAEItemStack;
 import appeng.client.texture.CableBusTextures;
+import appeng.core.AELog;
+import appeng.helpers.MultiCraftingTracker;
 import appeng.me.GridAccessException;
+import appeng.util.InventoryAdaptor;
 import appeng.util.item.AEFluidStack;
+import appeng.util.item.AEItemStack;
 import com.glodblock.github.client.textures.FCPartsTexture;
+import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.inventory.FluidConvertingInventoryAdaptor;
+import com.glodblock.github.util.Util;
+import com.google.common.collect.ImmutableSet;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -23,9 +36,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.fluids.IFluidHandler;
 
-public class PartFluidExportBus extends PartSharedFluidBus {
+public class PartFluidExportBus extends PartSharedFluidBus implements ICraftingRequester {
 
     private final BaseActionSource source;
+    private final MultiCraftingTracker craftingTracker = new MultiCraftingTracker( this, 9 );
 
     public PartFluidExportBus( ItemStack is )
     {
@@ -74,6 +88,8 @@ public class PartFluidExportBus extends PartSharedFluidBus {
         {
             try
             {
+                final InventoryAdaptor destination = this.getHandler(te);
+                final ICraftingGrid cg = this.getProxy().getCrafting();
                 final IFluidHandler fh = (IFluidHandler) te;
                 final IMEMonitor<IAEFluidStack> inv = this.getProxy().getStorage().getFluidInventory();
 
@@ -82,13 +98,19 @@ public class PartFluidExportBus extends PartSharedFluidBus {
                     IAEFluidStack fluid = AEFluidStack.create(ItemFluidPacket.getFluidStack(this.getInventoryByName("config").getStackInSlot(i)));
                     if( fluid != null )
                     {
+                        boolean isAllowed = true;
                         final IAEFluidStack toExtract = fluid.copy();
 
                         toExtract.setStackSize( this.calculateAmountToSend() );
 
+                        if( this.craftOnly() )
+                        {
+                            isAllowed = this.craftingTracker.handleCrafting( i, toExtract.getStackSize(), ItemFluidDrop.newAeStack(toExtract), destination, this.getTile().getWorldObj(), this.getProxy().getGrid(), cg, this.source );
+                        }
+
                         final IAEFluidStack out = inv.extractItems( toExtract, Actionable.SIMULATE, this.source );
 
-                        if( out != null )
+                        if( out != null && isAllowed )
                         {
                             int wasInserted = fh.fill( this.getSide().getOpposite(), out.getFluidStack(), true );
 
@@ -99,6 +121,10 @@ public class PartFluidExportBus extends PartSharedFluidBus {
 
                                 return TickRateModulation.FASTER;
                             }
+                        }
+
+                        if( this.isCraftingEnabled() ) {
+                            this.craftingTracker.handleCrafting( i, toExtract.getStackSize(), ItemFluidDrop.newAeStack(toExtract), destination, this.getTile().getWorldObj(), this.getProxy().getGrid(), cg, this.source );
                         }
                     }
                 }
@@ -112,6 +138,16 @@ public class PartFluidExportBus extends PartSharedFluidBus {
         }
 
         return TickRateModulation.SLEEP;
+    }
+
+    private boolean craftOnly()
+    {
+        return this.getConfigManager().getSetting(Settings.CRAFT_ONLY) == YesNo.YES;
+    }
+
+    private boolean isCraftingEnabled()
+    {
+        return this.getInstalledUpgrades( Upgrades.CRAFTING ) > 0;
     }
 
     @Override
@@ -167,6 +203,58 @@ public class PartFluidExportBus extends PartSharedFluidBus {
     public RedstoneMode getRSMode()
     {
         return (RedstoneMode) this.getConfigManager().getSetting( Settings.REDSTONE_CONTROLLED );
+    }
+
+    @Override
+    public ImmutableSet<ICraftingLink> getRequestedJobs() {
+        return this.craftingTracker.getRequestedJobs();
+    }
+
+    protected InventoryAdaptor getHandler(TileEntity target) {
+        return target != null ? FluidConvertingInventoryAdaptor.wrap(target, Util.from(this.getSide().getOpposite())) : null;
+    }
+
+    @Override
+    public IAEItemStack injectCraftedItems(ICraftingLink link, IAEItemStack items, Actionable mode) {
+        final InventoryAdaptor d = this.getHandler(getConnectedTE());
+
+        try
+        {
+            if( d != null && this.getProxy().isActive() )
+            {
+                final IEnergyGrid energy = this.getProxy().getEnergy();
+                final double power = Math.ceil(items.getStackSize() / 1000D);
+
+                if( energy.extractAEPower( power, mode, PowerMultiplier.CONFIG ) > power - 0.01 )
+                {
+                    ItemStack inputStack = items.getItemStack();
+
+                    ItemStack remaining;
+
+                    if( mode == Actionable.SIMULATE )
+                    {
+                        remaining = d.simulateAdd( inputStack );
+                    }
+                    else
+                    {
+                        remaining = d.addItems( inputStack );
+                    }
+
+                    return AEItemStack.create( remaining );
+                }
+            }
+        }
+        catch( final GridAccessException e )
+        {
+            AELog.debug( e );
+        }
+
+        return items;
+    }
+
+    @Override
+    public void jobStateChange(ICraftingLink link) {
+        this.craftingTracker.jobStateChange( link );
     }
 
 }
