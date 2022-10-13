@@ -2,6 +2,8 @@ package com.glodblock.github.network;
 
 import appeng.api.networking.IGridHost;
 import appeng.container.ContainerOpenContext;
+import appeng.container.slot.SlotFake;
+import appeng.core.AELog;
 import com.glodblock.github.client.container.ContainerExtendedFluidPatternTerminal;
 import com.glodblock.github.client.container.ContainerFluidPatternTerminal;
 import com.glodblock.github.client.container.ContainerItemAmountChange;
@@ -17,6 +19,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+
+import java.util.ConcurrentModificationException;
 
 public class CPacketPatternValueSet implements IMessage {
 
@@ -60,22 +64,28 @@ public class CPacketPatternValueSet implements IMessage {
                     final ContainerOpenContext context = cpv.getOpenContext();
                     if (context != null) {
                         final TileEntity te = context.getTile();
-                        InventoryHandler.openGui(player, player.world, te.getPos(), context.getSide().getFacing(), message.originGui);
-                        if (player.openContainer instanceof ContainerFluidPatternTerminal || player.openContainer instanceof ContainerExtendedFluidPatternTerminal) {
-                            Slot slot = player.openContainer.getSlot(message.valueIndex);
-                            if (slot.getHasStack()) {
-                                ItemStack stack = slot.getStack().copy();
-                                if (stack.getItem() instanceof ItemFluidPacket) {
-                                    FluidStack fluidStack = ItemFluidPacket.getFluidStack(stack);
-                                    if (fluidStack != null) {
-                                        fluidStack.amount = message.amount;
+                        try {
+                            InventoryHandler.openGui(player, player.world, te.getPos(), context.getSide().getFacing(), message.originGui);
+                            if (player.openContainer instanceof ContainerFluidPatternTerminal || player.openContainer instanceof ContainerExtendedFluidPatternTerminal) {
+                                Slot slot = player.openContainer.getSlot(message.valueIndex);
+                                if (slot instanceof SlotFake) {
+                                    if (slot.getHasStack()) {
+                                        ItemStack stack = slot.getStack().copy();
+                                        if (stack.getItem() instanceof ItemFluidPacket) {
+                                            FluidStack fluidStack = ItemFluidPacket.getFluidStack(stack);
+                                            if (fluidStack != null) {
+                                                fluidStack.amount = message.amount;
+                                            }
+                                            slot.putStack(ItemFluidPacket.newStack(fluidStack));
+                                        } else {
+                                            stack.setCount(message.amount);
+                                            slot.putStack(stack);
+                                        }
                                     }
-                                    slot.putStack(ItemFluidPacket.newStack(fluidStack));
-                                } else {
-                                    stack.setCount(message.amount);
-                                    slot.putStack(stack);
                                 }
                             }
+                        } catch (ConcurrentModificationException e) {
+                            AELog.warn("catch CME when trying to modify slot #%s in %s.", message.valueIndex, player.openContainer.getClass());
                         }
                     }
                 }

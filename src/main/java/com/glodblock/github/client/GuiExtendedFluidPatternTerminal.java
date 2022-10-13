@@ -132,14 +132,12 @@ public class GuiExtendedFluidPatternTerminal extends GuiExpandedProcessingPatter
                 if (slot.getHasStack()) {
                     IAEItemStack stack = AEItemStack.fromItemStack(slot.getStack());
                     ((AEBaseContainer) this.inventorySlots).setTargetStack(stack);
-                    int x = 0;
                     for (int i = 0; i < this.inventorySlots.inventorySlots.size(); i ++) {
                         if (this.inventorySlots.inventorySlots.get(i).equals(slot)) {
-                            x = i;
+                            FluidCraft.proxy.netHandler.sendToServer(new CPacketInventoryAction(1, i, 0, stack));
                             break;
                         }
                     }
-                    FluidCraft.proxy.netHandler.sendToServer(new CPacketInventoryAction(1, x, 0, stack));
                     return;
                 }
             }

@@ -220,7 +220,7 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
             }
             else if (!slot.getStack().isEmpty()) {
                 long amt = slot.getStack().getCount();
-                if (amt * multiple > slot.getStack().getMaxStackSize()) {
+                if (amt * multiple > Integer.MAX_VALUE) {
                     return;
                 }
             }
@@ -235,7 +235,7 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
             }
             else if (!slot.getStack().isEmpty()) {
                 long amt = slot.getStack().getCount();
-                if (amt * multiple > slot.getStack().getMaxStackSize()) {
+                if (amt * multiple > Integer.MAX_VALUE) {
                     return;
                 }
             }
@@ -338,7 +338,7 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
             }
             else if (!slot.getStack().isEmpty()) {
                 long amt = slot.getStack().getCount();
-                if (amt + increase > slot.getStack().getMaxStackSize()) {
+                if (amt + increase > Integer.MAX_VALUE) {
                     return;
                 }
             }
@@ -353,7 +353,7 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
             }
             else if (!slot.getStack().isEmpty()) {
                 long amt = slot.getStack().getCount();
-                if (amt + increase > slot.getStack().getMaxStackSize()) {
+                if (amt + increase > Integer.MAX_VALUE) {
                     return;
                 }
             }
