@@ -38,6 +38,7 @@ public class CraftingTreeNodeTransformer extends FCClassTransformer.ClassMapper 
     private static class TransformRequest extends MethodVisitor {
 
         private boolean writingBytes = false;
+        private int cnt = 0;
 
         TransformRequest(int api, MethodVisitor mv) {
             super(api, mv);
@@ -62,6 +63,7 @@ public class CraftingTreeNodeTransformer extends FCClassTransformer.ClassMapper 
             if (writingBytes && opcode == Opcodes.INVOKEINTERFACE
                 && owner.equals("appeng/api/storage/data/IAEItemStack") && name.equals("getStackSize")) {
                 writingBytes = false;
+                cnt ++;
                 super.visitMethodInsn(Opcodes.INVOKESTATIC,
                     "com/glodblock/github/coremod/hooker/CoreModHooks",
                     "getCraftingByteCost",
@@ -70,6 +72,27 @@ public class CraftingTreeNodeTransformer extends FCClassTransformer.ClassMapper 
             } else {
                 super.visitMethodInsn(opcode, owner, name, desc, itf);
             }
+        }
+
+        @Override
+        public void visitInsn(int opcode) {
+            if (writingBytes && cnt == 5 && opcode == Opcodes.LADD) {
+                super.visitVarInsn(Opcodes.ALOAD, 0);
+                super.visitFieldInsn(Opcodes.GETFIELD,
+                    "appeng/crafting/CraftingTreeNode",
+                    "what",
+                    "Lappeng/api/storage/data/IAEItemStack;"
+                );
+                super.visitMethodInsn(Opcodes.INVOKESTATIC,
+                    "com/glodblock/github/coremod/hooker/CoreModHooks",
+                    "getFluidDropsByteCost",
+                    "(JJLappeng/api/storage/data/IAEItemStack;)J",
+                    false);
+                writingBytes = false;
+                cnt ++;
+                return;
+            }
+            super.visitInsn(opcode);
         }
 
     }
