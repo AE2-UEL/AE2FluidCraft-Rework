@@ -31,6 +31,7 @@ tile.oc_pattern_editor.name=OC редактор шаблонов
 
 ae2fc.tooltip.invalid_fluid=Неверная жидкость!
 ae2fc.tooltip.encode_pattern=Закодировать шаблон
+ae2fc.tooltip.filter=Фильтр
 ae2fc.tooltip.fluid_packet=Используйте декодер жидкостных пакетов,\nчтобы преобразовать это обратно в жидкость.
 ae2fc.tooltip.empty=Пусто
 ae2fc.tooltip.dump_tank=Слить содержимое резервуара
@@ -54,5 +55,8 @@ ae2fc.gui.fluid_interface.3=Юг
 ae2fc.gui.fluid_interface.4=Зап
 ae2fc.gui.fluid_interface.5=Вос
 ae2fc.gui.oc_pattern_editor=OC редактор шаблонов
+ae2fc.gui.set=Задать
+ae2fc.gui.part_fluid_import=МЭ жидкостная шина импорта
+ae2fc.gui.part_fluid_export=МЭ жидкостная шина экспорта
 
 itemGroup.ae2fc=Fluid Craft For AE2
