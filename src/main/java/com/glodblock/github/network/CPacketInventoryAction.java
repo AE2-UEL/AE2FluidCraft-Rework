@@ -6,6 +6,7 @@ import appeng.container.ContainerOpenContext;
 import appeng.container.implementations.ContainerCraftAmount;
 import appeng.helpers.InventoryAction;
 import appeng.util.item.AEItemStack;
+import com.glodblock.github.client.gui.container.ContainerItemAmountChange;
 import com.glodblock.github.inventory.InventoryHandler;
 import com.glodblock.github.inventory.gui.GuiType;
 import com.glodblock.github.util.BlockPos;
@@ -23,7 +24,7 @@ import java.util.Objects;
 
 public class CPacketInventoryAction implements IMessage {
 
-    private InventoryAction action;
+    private int action;
     private int slot;
     private long id;
     private IAEItemStack stack;
@@ -32,16 +33,16 @@ public class CPacketInventoryAction implements IMessage {
     public CPacketInventoryAction() {
     }
 
-    public CPacketInventoryAction( final InventoryAction action, final int slot, final int id ) {
+    public CPacketInventoryAction( final int action, final int slot, final int id, IAEItemStack stack ) {
         this.action = action;
         this.slot = slot;
         this.id = id;
-        this.stack = null;
-        this.isEmpty = true;
+        this.stack = stack;
+        this.isEmpty = stack == null;
     }
 
-    public CPacketInventoryAction(final InventoryAction action, final int slot, final int id , IAEItemStack stack) {
-        this.action = action;
+    public CPacketInventoryAction(final InventoryAction action, final int slot, final int id, IAEItemStack stack) {
+        this.action = action.ordinal();
         this.slot = slot;
         this.id = id;
         this.stack = stack;
@@ -50,7 +51,7 @@ public class CPacketInventoryAction implements IMessage {
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(action.ordinal());
+        buf.writeInt(action);
         buf.writeInt(slot);
         buf.writeLong(id);
         buf.writeBoolean(isEmpty);
@@ -65,7 +66,7 @@ public class CPacketInventoryAction implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        action = InventoryAction.values()[buf.readInt()];
+        action = buf.readInt();
         slot = buf.readInt();
         id = buf.readLong();
         isEmpty = buf.readBoolean();
@@ -87,7 +88,35 @@ public class CPacketInventoryAction implements IMessage {
             if( sender.openContainer instanceof AEBaseContainer )
             {
                 final AEBaseContainer baseContainer = (AEBaseContainer) sender.openContainer;
-                if( message.action == InventoryAction.AUTO_CRAFT )
+
+                if (message.action < 0)
+                {
+                    if (message.action == -1)
+                    {
+                        final ContainerOpenContext context = baseContainer.getOpenContext();
+                        if( context != null )
+                        {
+                            final TileEntity te = context.getTile();
+                            InventoryHandler.openGui( sender, te.getWorldObj(), new BlockPos(te), Objects.requireNonNull(Util.from(baseContainer.getOpenContext().getSide())), GuiType.ITEM_AMOUNT_SET );
+                            if( sender.openContainer instanceof ContainerItemAmountChange )
+                            {
+                                final ContainerItemAmountChange iac = (ContainerItemAmountChange) sender.openContainer;
+
+                                if( baseContainer.getTargetStack() != null )
+                                {
+                                    iac.getPatternValue().putStack( baseContainer.getTargetStack().getItemStack() );
+                                    iac.setValueIndex( message.slot );
+                                }
+                                iac.detectAndSendChanges();
+                            }
+                        }
+                    }
+                    return null;
+                }
+
+                InventoryAction action = InventoryAction.values()[message.action % InventoryAction.values().length];
+
+                if( action == InventoryAction.AUTO_CRAFT )
                 {
                     final ContainerOpenContext context = baseContainer.getOpenContext();
                     if( context != null )
@@ -104,14 +133,13 @@ public class CPacketInventoryAction implements IMessage {
                                 cca.getCraftingItem().putStack( baseContainer.getTargetStack().getItemStack() );
                                 cca.setItemToCraft( baseContainer.getTargetStack() );
                             }
-
                             cca.detectAndSendChanges();
                         }
                     }
                 }
                 else
                 {
-                    baseContainer.doAction( sender, message.action, message.slot, message.id );
+                    baseContainer.doAction( sender, action, message.slot, message.id );
                 }
             }
             return null;

@@ -82,8 +82,15 @@ public class ItemDropRender implements IItemRenderer {
         }
         int colour = fluid.getColor();
         if (colour == 0xFFFFFF) {
-            TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks()
-                .getTextureExtry(fluid.getStillIcon().getIconName());
+            TextureAtlasSprite sprite;
+            try {
+                sprite = Minecraft.getMinecraft().getTextureMapBlocks()
+                    .getTextureExtry(fluid.getStillIcon().getIconName());
+            } catch (NullPointerException npe) {
+                colourCache.put(fluid.getName(), colour);
+                return colour;
+            }
+
             if (sprite != null && sprite.getFrameCount() > 0) {
                 int[][] image = sprite.getFrameTextureData(0);
                 int r = 0, g = 0, b = 0, count = 0;

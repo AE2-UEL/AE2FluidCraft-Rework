@@ -30,6 +30,7 @@ import com.google.common.base.Optional;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -135,6 +136,14 @@ public class ItemBasicFluidStorageCell extends AEBaseItem implements IStorageFlu
                 lines.add( cellInventory.getUsedBytes() + " " + GuiText.Of.getLocal() + ' ' + cellInventory.getTotalBytes() + ' ' + GuiText.BytesUsed.getLocal() );
 
                 lines.add( cellInventory.getStoredFluidTypes() + " " + GuiText.Of.getLocal() + ' ' + cellInventory.getTotalFluidTypes() + ' ' + GuiText.Types.getLocal() );
+
+                if (GuiScreen.isShiftKeyDown())
+                {
+                    lines.add(StatCollector.translateToLocal("ae2fc.tooltip.filter") + ": ");
+                    for (IAEFluidStack aeFluidStack : handler.getPartitionInv()) {
+                        if (aeFluidStack != null) lines.add("  " + aeFluidStack.getFluidStack().getLocalizedName());
+                    }
+                }
 
                 if( handler.isPreformatted() )
                 {

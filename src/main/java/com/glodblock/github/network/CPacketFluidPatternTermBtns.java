@@ -66,7 +66,9 @@ public class CPacketFluidPatternTermBtns implements IMessage {
                         cpt.getPatternTerminal().setCraftingRecipe(Value.equals("1"));
                         break;
                     case "PatternTerminal.Encode":
-                        if (Value.equals("2"))
+                        if (Value.equals("3"))
+                            cpt.encodeAllItemAndMoveToInventory();
+                        else if (Value.equals("2"))
                             cpt.encodeAndMoveToInventory();
                         else
                             cpt.encode();
@@ -89,7 +91,9 @@ public class CPacketFluidPatternTermBtns implements IMessage {
                 final ContainerFluidPatternTerminalEx cpt = (ContainerFluidPatternTerminalEx) c;
                 switch (Name) {
                     case "PatternTerminal.Encode":
-                        if (Value.equals("2"))
+                        if (Value.equals("3"))
+                            cpt.encodeAllItemAndMoveToInventory();
+                        else if (Value.equals("2"))
                             cpt.encodeAndMoveToInventory();
                         else
                             cpt.encode();

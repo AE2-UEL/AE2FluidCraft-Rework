@@ -101,6 +101,19 @@ public class FCBasePartContainerEx extends FCBaseMonitorContain implements IAEAp
 
     }
 
+    public void encodeAllItemAndMoveToInventory() {
+        encode();
+        ItemStack output = this.patternSlotOUT.getStack();
+        if(output != null) {
+            if(this.patternSlotIN.getStack() != null) output.stackSize += this.patternSlotIN.getStack().stackSize;
+            if (!getPlayerInv().addItemStackToInventory(output)) {
+                getPlayerInv().player.entityDropItem(output, 0);
+            }
+            this.patternSlotOUT.putStack(null);
+            this.patternSlotIN.putStack(null);
+        }
+    }
+
     public void encodeAndMoveToInventory()
     {
         encode();
@@ -180,6 +193,7 @@ public class FCBasePartContainerEx extends FCBaseMonitorContain implements IAEAp
         encodedValue.setTag( "in", tagIn );
         encodedValue.setTag( "out", tagOut );
         encodedValue.setBoolean( "substitute", this.isSubstitute() );
+        encodedValue.setBoolean( "crafting", false );
 
         output.setTagCompound( encodedValue );
     }

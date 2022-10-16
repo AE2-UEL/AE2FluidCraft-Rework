@@ -33,7 +33,7 @@ public class FluidCellInventory implements IFluidCellInventory {
     private final ItemStack cellItem;
     private final ISaveProvider container;
     private final static int MAX_TYPE = 1;
-    private int storedFluidCount;
+    private long storedFluidCount;
     private short storedFluids;
     private IItemList<IAEFluidStack> cellItems;
     private final NBTTagCompound tagCompound;
@@ -80,7 +80,7 @@ public class FluidCellInventory implements IFluidCellInventory {
         this.container = container;
         this.tagCompound = Platform.openNbtData( o );
         this.storedFluids = this.tagCompound.getShort( FLUID_TYPE_TAG );
-        this.storedFluidCount = this.tagCompound.getInteger( FLUID_COUNT_TAG );
+        this.storedFluidCount = this.tagCompound.getLong( FLUID_COUNT_TAG );
         this.cellItems = null;
     }
 
@@ -223,14 +223,15 @@ public class FluidCellInventory implements IFluidCellInventory {
         for( int x = 0; x < types; x++ )
         {
             final FluidStack t = FluidStack.loadFluidStackFromNBT( this.tagCompound.getCompoundTag( fluidSlots[x] ) );
+            final AEFluidStack aet = AEFluidStack.create( t );
 
-            if( t != null )
+            if( aet != null )
             {
-                t.amount = this.tagCompound.getInteger( fluidSlotCount[x] );
+                aet.setStackSize( this.tagCompound.getLong( fluidSlotCount[x] ) );
 
-                if( t.amount > 0 )
+                if( aet.getStackSize() > 0 )
                 {
-                    this.cellItems.add( AEFluidStack.create( t ) );
+                    this.cellItems.add( aet );
                 }
             }
         }
@@ -249,12 +250,12 @@ public class FluidCellInventory implements IFluidCellInventory {
     private void updateFluidCount( final long delta )
     {
         this.storedFluidCount += delta;
-        this.tagCompound.setInteger( FLUID_COUNT_TAG, this.storedFluidCount );
+        this.tagCompound.setLong( FLUID_COUNT_TAG, this.storedFluidCount );
     }
 
     private void saveChanges()
     {
-        int itemCount = 0;
+        long itemCount = 0;
 
         int x = 0;
 
@@ -279,7 +280,7 @@ public class FluidCellInventory implements IFluidCellInventory {
              * NBTBase tagSlotCount = tagCompound.getTag( itemSlotCount[x] ); if ( tagSlotCount instanceof
              * NBTTagInt ) ((NBTTagInt) tagSlotCount).data = (int) v.getStackSize(); else
              */
-            this.tagCompound.setInteger( fluidSlotCount[x], (int) v.getStackSize() );
+            this.tagCompound.setLong( fluidSlotCount[x], v.getStackSize() );
 
             x++;
         }
@@ -314,7 +315,7 @@ public class FluidCellInventory implements IFluidCellInventory {
         }
         else
         {
-            this.tagCompound.setInteger( FLUID_COUNT_TAG, itemCount );
+            this.tagCompound.setLong( FLUID_COUNT_TAG, itemCount );
         }
 
         // clean any old crusty stuff...

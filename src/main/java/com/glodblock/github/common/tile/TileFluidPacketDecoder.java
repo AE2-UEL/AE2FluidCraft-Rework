@@ -64,12 +64,13 @@ public class TileFluidPacketDecoder extends AENetworkTile implements IGridTickab
             inventory.setInventorySlotContents(0, null);
             return TickRateModulation.SLEEP;
         }
-        IAEFluidStack aeFluid = AEFluidStack.create(fluid);
+        IAEFluidStack aeFluid = AEFluidStack.create(fluid.copy());
         IEnergyGrid energyGrid = node.getGrid().getCache(IEnergyGrid.class);
         IMEMonitor<IAEFluidStack> fluidGrid = node.getGrid().<IStorageGrid>getCache(IStorageGrid.class).getFluidInventory();
         IAEFluidStack remaining = Platform.poweredInsert(energyGrid, fluidGrid, aeFluid, ownActionSource);
         if (remaining != null) {
             if (remaining.getStackSize() == aeFluid.getStackSize()) {
+                inventory.setInventorySlotContents(0, ItemFluidPacket.newStack(remaining.getFluidStack()));
                 return TickRateModulation.SLOWER;
             }
             inventory.setInventorySlotContents(0, ItemFluidPacket.newStack(remaining.getFluidStack()));

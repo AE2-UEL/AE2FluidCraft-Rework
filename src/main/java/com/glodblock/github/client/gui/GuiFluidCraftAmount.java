@@ -1,8 +1,5 @@
 package com.glodblock.github.client.gui;
 
-import appeng.api.AEApi;
-import appeng.api.definitions.IDefinitions;
-import appeng.api.definitions.IParts;
 import appeng.api.storage.ITerminalHost;
 import appeng.client.gui.AEBaseGui;
 import appeng.client.gui.widgets.GuiNumberBox;
@@ -14,39 +11,48 @@ import appeng.core.localization.GuiText;
 import appeng.helpers.Reflected;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.common.parts.PartFluidPatternTerminal;
+import com.glodblock.github.common.parts.PartFluidPatternTerminalEx;
 import com.glodblock.github.inventory.gui.GuiType;
 import com.glodblock.github.loader.ItemAndBlockHolder;
 import com.glodblock.github.network.CPacketCraftRequest;
 import com.glodblock.github.network.CPacketSwitchGuis;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 
 public class GuiFluidCraftAmount extends AEBaseGui
 {
-    private GuiNumberBox amountToCraft;
-    private GuiTabButton originalGuiBtn;
+    protected GuiNumberBox amountToCraft;
+    protected GuiTabButton originalGuiBtn;
 
-    private GuiButton next;
+    protected GuiButton next;
 
-    private GuiButton plus1;
-    private GuiButton plus10;
-    private GuiButton plus100;
-    private GuiButton plus1000;
-    private GuiButton minus1;
-    private GuiButton minus10;
-    private GuiButton minus100;
-    private GuiButton minus1000;
+    protected GuiButton plus1;
+    protected GuiButton plus10;
+    protected GuiButton plus100;
+    protected GuiButton plus1000;
+    protected GuiButton minus1;
+    protected GuiButton minus10;
+    protected GuiButton minus100;
+    protected GuiButton minus1000;
 
-    private GuiType originalGui;
+    protected GuiType originalGui;
 
     @Reflected
-    public GuiFluidCraftAmount(final InventoryPlayer inventoryPlayer, final ITerminalHost te )
+    public GuiFluidCraftAmount(final InventoryPlayer inventoryPlayer, final ITerminalHost te)
     {
         super( new ContainerCraftAmount( inventoryPlayer, te ) );
     }
 
+    @Reflected
+    public GuiFluidCraftAmount(Container container)
+    {
+        super(container);
+    }
+
     @Override
+    @SuppressWarnings("unchecked")
     public void initGui()
     {
         super.initGui();
@@ -70,13 +76,16 @@ public class GuiFluidCraftAmount extends AEBaseGui
 
         ItemStack myIcon = null;
         final Object target = ( (AEBaseContainer) this.inventorySlots ).getTarget();
-        final IDefinitions definitions = AEApi.instance().definitions();
-        final IParts parts = definitions.parts();
 
         if( target instanceof PartFluidPatternTerminal)
         {
             myIcon = new ItemStack(ItemAndBlockHolder.FLUID_TERMINAL, 1);
             this.originalGui = GuiType.FLUID_PATTERN_TERMINAL;
+        }
+        else if( target instanceof PartFluidPatternTerminalEx)
+        {
+            myIcon = new ItemStack(ItemAndBlockHolder.FLUID_TERMINAL_EX, 1);
+            this.originalGui = GuiType.FLUID_PATTERN_TERMINAL_EX;
         }
 
         if( this.originalGui != null && myIcon != null )
@@ -204,7 +213,7 @@ public class GuiFluidCraftAmount extends AEBaseGui
         }
     }
 
-    private void addQty( final int i )
+    protected void addQty( final int i )
     {
         try
         {
@@ -250,8 +259,4 @@ public class GuiFluidCraftAmount extends AEBaseGui
         }
     }
 
-    protected String getBackground()
-    {
-        return "guis/craftAmt.png";
-    }
 }

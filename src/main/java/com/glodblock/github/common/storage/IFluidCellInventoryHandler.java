@@ -1,6 +1,7 @@
 package com.glodblock.github.common.storage;
 
 import appeng.api.config.IncludeExclude;
+import appeng.api.storage.data.IAEFluidStack;
 
 public interface IFluidCellInventoryHandler {
 
@@ -9,5 +10,7 @@ public interface IFluidCellInventoryHandler {
     boolean isPreformatted();
 
     IncludeExclude getIncludeExcludeMode();
+
+    Iterable<IAEFluidStack> getPartitionInv();
 
 }

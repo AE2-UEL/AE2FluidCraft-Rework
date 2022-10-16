@@ -76,6 +76,7 @@ public class GuiFluidCraftConfirm extends AEBaseGui {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void initGui()
     {
         super.initGui();

@@ -77,4 +77,10 @@ public class FluidCellInventoryHandler extends MEInventoryHandler<IAEFluidStack>
 
         return val;
     }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Iterable<IAEFluidStack> getPartitionInv() {
+        return (Iterable<IAEFluidStack>) Ae2Reflect.getPartitionList(this).getItems();
+    }
 }

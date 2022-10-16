@@ -32,7 +32,7 @@ public class FCClassTransformer implements IClassTransformer {
             default:
                 return code;
         }
-        System.out.println("[FCAE2] Transforming class: " + transformedName);
+        System.out.println("[AE2FC] Transforming class: " + transformedName);
         return tform.transformClass(code);
     }
 

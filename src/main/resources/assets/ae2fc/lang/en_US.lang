@@ -31,6 +31,7 @@ tile.oc_pattern_editor.name=OC Pattern Editor
 
 ae2fc.tooltip.invalid_fluid=Invalid fluid!
 ae2fc.tooltip.encode_pattern=Encode Patter
+ae2fc.tooltip.filter=Filter
 ae2fc.tooltip.fluid_packet=Use a Fluid Packet Decoder to\nconvert this back into fluid.
 ae2fc.tooltip.empty=Empty
 ae2fc.tooltip.dump_tank=Dump Tank Contents
@@ -54,5 +55,8 @@ ae2fc.gui.fluid_interface.3=S
 ae2fc.gui.fluid_interface.4=W
 ae2fc.gui.fluid_interface.5=E
 ae2fc.gui.oc_pattern_editor=OC Pattern Editor
+ae2fc.gui.set=Set
+ae2fc.gui.part_fluid_import=ME Fluid Import Bus
+ae2fc.gui.part_fluid_export=ME Fluid Export Bus
 
 itemGroup.ae2fc=Fluid Craft For AE2

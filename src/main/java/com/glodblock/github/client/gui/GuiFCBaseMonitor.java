@@ -28,6 +28,7 @@ import appeng.integration.IntegrationRegistry;
 import appeng.integration.IntegrationType;
 import appeng.util.IConfigManagerHost;
 import appeng.util.Platform;
+import appeng.util.item.AEItemStack;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.gui.container.FCBaseMonitorContain;
 import com.glodblock.github.network.CPacketInventoryAction;
@@ -365,6 +366,24 @@ public class GuiFCBaseMonitor extends AEBaseMEGui implements ISortSource, IConfi
     protected void handleMouseClick( final Slot slot, final int slotIdx, final int ctrlDown, final int mouseButton )
     {
         final EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+
+        if (mouseButton == 3 ){
+            if (slot instanceof OptionalSlotFake || slot instanceof SlotFakeCraftingMatrix) {
+                if (slot.getHasStack()) {
+                    IAEItemStack stack = AEItemStack.create(slot.getStack());
+                    ((AEBaseContainer) this.inventorySlots).setTargetStack(stack);
+                    int x = 0;
+                    for (int i = 0; i < this.inventorySlots.inventorySlots.size(); i ++) {
+                        if (this.inventorySlots.inventorySlots.get(i).equals(slot)) {
+                            x = i;
+                            break;
+                        }
+                    }
+                    FluidCraft.proxy.netHandler.sendToServer(new CPacketInventoryAction(-1, x, 0, stack));
+                    return;
+                }
+            }
+        }
 
         if( slot instanceof SlotFake)
         {

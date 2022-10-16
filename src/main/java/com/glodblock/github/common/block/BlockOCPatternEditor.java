@@ -3,7 +3,6 @@ package com.glodblock.github.common.block;
 import appeng.block.AEBaseItemBlock;
 import com.glodblock.github.common.tabs.FluidCraftingTabs;
 import com.glodblock.github.common.tile.TileOCPatternEditor;
-import com.glodblock.github.crossmod.opencomputers.OCDriverInit;
 import com.glodblock.github.inventory.InventoryHandler;
 import com.glodblock.github.inventory.gui.GuiType;
 import com.glodblock.github.util.BlockPos;
@@ -44,7 +43,6 @@ public class BlockOCPatternEditor extends FCBaseBlock {
         if (ModAndClassUtil.OC) {
             GameRegistry.registerBlock(this, AEBaseItemBlock.class, NameConst.BLOCK_OC_PATTERN_EDITOR);
             GameRegistry.registerTileEntity(TileOCPatternEditor.class, NameConst.BLOCK_OC_PATTERN_EDITOR);
-            OCDriverInit.run();
             setCreativeTab(FluidCraftingTabs.INSTANCE);
             return this;
         }

@@ -28,4 +28,8 @@ public class ItemFluidEncodedPattern extends ItemEncodedPattern {
         return this;
     }
 
+    public ItemStack stack() {
+        return new ItemStack(this, 1);
+    }
+
 }

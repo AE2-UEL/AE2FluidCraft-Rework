@@ -4,6 +4,7 @@ import appeng.api.AEApi;
 import appeng.api.config.Upgrades;
 import com.glodblock.github.common.Config;
 import com.glodblock.github.common.storage.FluidCellHandler;
+import com.glodblock.github.crossmod.opencomputers.OCDriverInit;
 import com.glodblock.github.inventory.InventoryHandler;
 import com.glodblock.github.loader.ChannelLoader;
 import com.glodblock.github.loader.ItemAndBlockHolder;
@@ -43,6 +44,9 @@ public class FluidCraft {
     @Mod.EventHandler
     public static void init(FMLInitializationEvent event) {
         ModAndClassUtil.init();
+        if (ModAndClassUtil.OC) {
+            OCDriverInit.run();
+        }
         proxy.init(event);
     }
 
@@ -71,6 +75,7 @@ public class FluidCraft {
             Upgrades.REDSTONE.registerItem(new ItemStack(ItemAndBlockHolder.FLUID_IMPORT_BUS), 1 );
             Upgrades.SPEED.registerItem(new ItemStack(ItemAndBlockHolder.FLUID_EXPORT_BUS), 4 );
             Upgrades.SPEED.registerItem(new ItemStack(ItemAndBlockHolder.FLUID_IMPORT_BUS), 4 );
+            Upgrades.CRAFTING.registerItem(new ItemStack(ItemAndBlockHolder.FLUID_EXPORT_BUS), 1 );
         }
 
         proxy.postInit(event);

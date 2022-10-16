@@ -159,6 +159,19 @@ public class FCBasePartContainer extends FCBaseMonitorContain implements IAEAppE
 
     }
 
+    public void encodeAllItemAndMoveToInventory() {
+        encode();
+        ItemStack output = this.patternSlotOUT.getStack();
+        if(output != null) {
+            if(this.patternSlotIN.getStack() != null) output.stackSize += this.patternSlotIN.getStack().stackSize;
+            if (!getPlayerInv().addItemStackToInventory(output)) {
+                getPlayerInv().player.entityDropItem(output, 0);
+            }
+            this.patternSlotOUT.putStack(null);
+            this.patternSlotIN.putStack(null);
+        }
+    }
+
     public void encodeAndMoveToInventory()
     {
         encode();
