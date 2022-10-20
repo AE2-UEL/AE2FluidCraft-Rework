@@ -49,7 +49,8 @@ public class PartFluidPatternTerminal extends PartPatternTerminal {
         super(is);
         ExAppEngInternalInventory exCraft = new ExAppEngInternalInventory((AppEngInternalInventory) getInventoryByName("crafting"));
         ExAppEngInternalInventory exOutput = new ExAppEngInternalInventory((AppEngInternalInventory) getInventoryByName("output"));
-        Ae2Reflect.setInventoryForPart(this, exCraft, exOutput);
+        this.crafting = exCraft;
+        this.output = exOutput;
     }
 
     @Nonnull

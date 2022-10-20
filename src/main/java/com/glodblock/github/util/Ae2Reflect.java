@@ -5,6 +5,7 @@ import appeng.api.networking.IGrid;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.container.implementations.ContainerExpandedProcessingPatternTerm;
+import appeng.container.implementations.ContainerPatternEncoder;
 import appeng.container.implementations.ContainerPatternTerm;
 import appeng.container.slot.OptionalSlotFake;
 import appeng.container.slot.SlotFakeCraftingMatrix;
@@ -12,6 +13,7 @@ import appeng.container.slot.SlotRestrictedInput;
 import appeng.crafting.MECraftingInventory;
 import appeng.helpers.DualityInterface;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
+import appeng.parts.reporting.AbstractPartEncoder;
 import appeng.parts.reporting.PartExpandedProcessingPatternTerminal;
 import appeng.parts.reporting.PartPatternTerminal;
 import appeng.recipes.game.DisassembleRecipe;
@@ -34,23 +36,11 @@ public class Ae2Reflect {
     private static final Method mCPU_postChange;
     private static final Method mCPU_markDirty;
     private static final Field fDisassembleRecipe_nonCellMappings;
-    private static final Field fContainerPatternTerm_craftingSlots;
-    private static final Field fContainerPatternTerm_outputSlots;
-    private static final Field fContainerPatternTerm_patternSlotIN;
-    private static final Field fContainerPatternTerm_patternSlotOUT;
-    private static final Field fContainerExPatternTerm_craftingSlots;
-    private static final Field fContainerExPatternTerm_outputSlots;
-    private static final Field fContainerExPatternTerm_patternSlotIN;
-    private static final Field fContainerExPatternTerm_patternSlotOUT;
     private static final Field fInventory_container;
     private static final Field fCPU_inventory;
     private static final Field fCPU_machineSrc;
     private static final Field fDualInterface_fluidPacket;
     private static final Field fAppEngInternalInventory_filter;
-    private static final Field fPartExpanded_crafting;
-    private static final Field fPartExpanded_output;
-    private static final Field fPart_crafting;
-    private static final Field fPart_output;
 
     static {
         try {
@@ -60,22 +50,10 @@ public class Ae2Reflect {
             mCPU_markDirty = reflectMethod(CraftingCPUCluster.class, "markDirty");
             fInventory_container = reflectField(InventoryCrafting.class, "eventHandler", "field_70465_c", "c");
             fDisassembleRecipe_nonCellMappings = reflectField(DisassembleRecipe.class, "nonCellMappings");
-            fContainerPatternTerm_craftingSlots = reflectField(ContainerPatternTerm.class, "craftingSlots");
-            fContainerPatternTerm_outputSlots = reflectField(ContainerPatternTerm.class, "outputSlots");
-            fContainerPatternTerm_patternSlotIN = reflectField(ContainerPatternTerm.class, "patternSlotIN");
-            fContainerPatternTerm_patternSlotOUT = reflectField(ContainerPatternTerm.class, "patternSlotOUT");
-            fContainerExPatternTerm_craftingSlots = reflectField(ContainerExpandedProcessingPatternTerm.class, "gridSlots");
-            fContainerExPatternTerm_outputSlots = reflectField(ContainerExpandedProcessingPatternTerm.class, "outputSlots");
-            fContainerExPatternTerm_patternSlotIN = reflectField(ContainerExpandedProcessingPatternTerm.class, "patternSlotIN");
-            fContainerExPatternTerm_patternSlotOUT = reflectField(ContainerExpandedProcessingPatternTerm.class, "patternSlotOUT");
             fCPU_inventory = Ae2Reflect.reflectField(CraftingCPUCluster.class, "inventory");
             fCPU_machineSrc = Ae2Reflect.reflectField(CraftingCPUCluster.class, "machineSrc");
             fDualInterface_fluidPacket = Ae2Reflect.reflectField(DualityInterface.class, "fluidPacket");
             fAppEngInternalInventory_filter = Ae2Reflect.reflectField(AppEngInternalInventory.class, "filter");
-            fPartExpanded_crafting = Ae2Reflect.reflectField(PartExpandedProcessingPatternTerminal.class, "crafting");
-            fPartExpanded_output = Ae2Reflect.reflectField(PartExpandedProcessingPatternTerminal.class, "output");
-            fPart_crafting = Ae2Reflect.reflectField(PartPatternTerminal.class, "crafting");
-            fPart_output = Ae2Reflect.reflectField(PartPatternTerminal.class, "output");
         } catch (Exception e) {
             throw new IllegalStateException("Failed to initialize AE2 reflection hacks!", e);
         }
@@ -135,38 +113,6 @@ public class Ae2Reflect {
         return readField(recipe, fDisassembleRecipe_nonCellMappings);
     }
 
-    public static SlotFakeCraftingMatrix[] getCraftingSlots(ContainerPatternTerm cont) {
-        return readField(cont, fContainerPatternTerm_craftingSlots);
-    }
-
-    public static OptionalSlotFake[] getOutputSlots(ContainerPatternTerm cont) {
-        return readField(cont, fContainerPatternTerm_outputSlots);
-    }
-
-    public static SlotRestrictedInput getPatternSlotIn(ContainerPatternTerm cont) {
-        return readField(cont, fContainerPatternTerm_patternSlotIN);
-    }
-
-    public static SlotRestrictedInput getPatternSlotOut(ContainerPatternTerm cont) {
-        return readField(cont, fContainerPatternTerm_patternSlotOUT);
-    }
-
-    public static SlotFakeCraftingMatrix[] getExCraftingSlots(ContainerExpandedProcessingPatternTerm cont) {
-        return readField(cont, fContainerExPatternTerm_craftingSlots);
-    }
-
-    public static OptionalSlotFake[] getExOutputSlots(ContainerExpandedProcessingPatternTerm cont) {
-        return readField(cont, fContainerExPatternTerm_outputSlots);
-    }
-
-    public static SlotRestrictedInput getExPatternSlotIn(ContainerExpandedProcessingPatternTerm cont) {
-        return readField(cont, fContainerExPatternTerm_patternSlotIN);
-    }
-
-    public static SlotRestrictedInput getExPatternSlotOut(ContainerExpandedProcessingPatternTerm cont) {
-        return readField(cont, fContainerExPatternTerm_patternSlotOUT);
-    }
-
     public static IGrid getGrid(CraftingCPUCluster cpu) {
         try {
             return (IGrid) mCPU_getGrid.invoke(cpu);
@@ -215,13 +161,4 @@ public class Ae2Reflect {
         return readField(owner, fAppEngInternalInventory_filter);
     }
 
-    public static void setInventoryForPart(PartExpandedProcessingPatternTerminal part, ExAppEngInternalInventory craft, ExAppEngInternalInventory output) {
-        writeField(part, fPartExpanded_crafting, craft);
-        writeField(part, fPartExpanded_output, output);
-    }
-
-    public static void setInventoryForPart(PartPatternTerminal part, ExAppEngInternalInventory craft, ExAppEngInternalInventory output) {
-        writeField(part, fPart_crafting, craft);
-        writeField(part, fPart_output, output);
-    }
 }

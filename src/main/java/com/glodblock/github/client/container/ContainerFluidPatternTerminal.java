@@ -33,23 +33,13 @@ import java.util.List;
 import java.util.Objects;
 
 public class ContainerFluidPatternTerminal extends ContainerPatternTerm implements PatternConsumer {
-
-    private final Slot[] craftingSlots;
-    private final Slot[] outputSlots;
-    private final Slot patternSlotIN;
-    private final Slot patternSlotOUT;
-
-    @GuiSync(95)
+    @GuiSync(105)
     public boolean combine = false;
-    @GuiSync(96)
+    @GuiSync(106)
     public boolean fluidFirst = false;
 
     public ContainerFluidPatternTerminal(InventoryPlayer ip, ITerminalHost monitorable) {
         super(ip, monitorable);
-        craftingSlots = Ae2Reflect.getCraftingSlots(this);
-        outputSlots = Ae2Reflect.getOutputSlots(this);
-        patternSlotIN = Ae2Reflect.getPatternSlotIn(this);
-        patternSlotOUT = Ae2Reflect.getPatternSlotOut(this);
     }
 
     @Override
@@ -156,8 +146,8 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
 
     @Override
     public void acceptPattern(IAEItemStack[] inputs, IAEItemStack[] outputs) {
-        if (getPatternTerminal() instanceof PartFluidPatternTerminal) {
-            ((PartFluidPatternTerminal)getPatternTerminal()).onChangeCrafting(inputs, outputs);
+        if (getPart() instanceof PartFluidPatternTerminal) {
+            ((PartFluidPatternTerminal) getPart()).onChangeCrafting(inputs, outputs);
         }
     }
 
@@ -332,7 +322,7 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
         for (Slot slot : this.craftingSlots) {
             if (ItemFluidPacket.isFluidPacket(slot.getStack()) && ItemFluidPacket.getFluidStack(slot.getStack()) != null) {
                 long amt = Objects.requireNonNull(ItemFluidPacket.getFluidStack(slot.getStack())).amount;
-                if (amt + increase * 1000 > Integer.MAX_VALUE) {
+                if (amt + increase * 1000L > Integer.MAX_VALUE) {
                     return;
                 }
             }
@@ -347,7 +337,7 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
         for (Slot slot : this.outputSlots) {
             if (ItemFluidPacket.isFluidPacket(slot.getStack()) && ItemFluidPacket.getFluidStack(slot.getStack()) != null) {
                 long amt = Objects.requireNonNull(ItemFluidPacket.getFluidStack(slot.getStack())).amount;
-                if (amt + increase * 1000 > Integer.MAX_VALUE) {
+                if (amt + increase * 1000L > Integer.MAX_VALUE) {
                     return;
                 }
             }
@@ -391,7 +381,7 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
         for (Slot slot : this.craftingSlots) {
             if (ItemFluidPacket.isFluidPacket(slot.getStack()) && ItemFluidPacket.getFluidStack(slot.getStack()) != null) {
                 long amt = Objects.requireNonNull(ItemFluidPacket.getFluidStack(slot.getStack())).amount;
-                if (amt - decrease * 1000 < 1) {
+                if (amt - decrease * 1000L < 1) {
                     return;
                 }
             }
@@ -406,7 +396,7 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
         for (Slot slot : this.outputSlots) {
             if (ItemFluidPacket.isFluidPacket(slot.getStack()) && ItemFluidPacket.getFluidStack(slot.getStack()) != null) {
                 long amt = Objects.requireNonNull(ItemFluidPacket.getFluidStack(slot.getStack())).amount;
-                if (amt - decrease * 1000 < 1) {
+                if (amt - decrease * 1000L < 1) {
                     return;
                 }
             }
@@ -449,8 +439,8 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
         if (Platform.isServer()) {
-            this.combine = ((PartFluidPatternTerminal) this.getPatternTerminal()).getCombineMode();
-            this.fluidFirst = ((PartFluidPatternTerminal) this.getPatternTerminal()).getFluidPlaceMode();
+            this.combine = ((PartFluidPatternTerminal) this.getPart()).getCombineMode();
+            this.fluidFirst = ((PartFluidPatternTerminal) this.getPart()).getFluidPlaceMode();
         }
     }
 

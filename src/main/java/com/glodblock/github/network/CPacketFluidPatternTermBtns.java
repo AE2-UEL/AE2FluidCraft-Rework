@@ -67,20 +67,20 @@ public class CPacketFluidPatternTermBtns implements IMessage {
                 final ContainerFluidPatternTerminal cpt = (ContainerFluidPatternTerminal) c;
                 switch (Name) {
                     case "PatternTerminal.Combine":
-                        ((PartFluidPatternTerminal) cpt.getPatternTerminal()).setCombineMode(Value.equals("1"));
+                        ((PartFluidPatternTerminal) cpt.getPart()).setCombineMode(Value.equals("1"));
                         break;
                     case "PatternTerminal.Fluid":
-                        ((PartFluidPatternTerminal) cpt.getPatternTerminal()).setFluidPlaceMode(Value.equals("1"));
+                        ((PartFluidPatternTerminal) cpt.getPart()).setFluidPlaceMode(Value.equals("1"));
                         break;
                 }
             } else if (c instanceof ContainerExtendedFluidPatternTerminal) {
                 final ContainerExtendedFluidPatternTerminal cpt = (ContainerExtendedFluidPatternTerminal) c;
                 switch (Name) {
                     case "PatternTerminal.Combine":
-                        ((PartExtendedFluidPatternTerminal) cpt.getExpandedPatternTerminal()).setCombineMode(Value.equals("1"));
+                        ((PartExtendedFluidPatternTerminal) cpt.getPart()).setCombineMode(Value.equals("1"));
                         break;
                     case "PatternTerminal.Fluid":
-                        ((PartExtendedFluidPatternTerminal) cpt.getExpandedPatternTerminal()).setFluidPlaceMode(Value.equals("1"));
+                        ((PartExtendedFluidPatternTerminal) cpt.getPart()).setFluidPlaceMode(Value.equals("1"));
                         break;
                 }
             } else if (c instanceof ContainerItemDualInterface) {

@@ -16,11 +16,11 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = FluidCraft.MODID, version = FluidCraft.VERSION, useMetadata = true)
+@Mod(modid = FluidCraft.MODID, version = FluidCraft.VERSION, useMetadata = true, dependencies = "required:appliedenergistics2@[v0.54.1,)")
 public class FluidCraft {
 
     public static final String MODID = "ae2fc";
-    public static final String VERSION = "2.4.2-r";
+    public static final String VERSION = "2.4.3-r";
 
     @Mod.Instance(MODID)
     public static FluidCraft INSTANCE;

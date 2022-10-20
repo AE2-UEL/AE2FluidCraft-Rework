@@ -36,25 +36,17 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class ContainerExtendedFluidPatternTerminal extends ContainerExpandedProcessingPatternTerm implements PatternConsumer {
-
-    private final Slot[] craftingSlots;
-    private final Slot[] outputSlots;
-    private final Slot patternSlotIN;
-    private final Slot patternSlotOUT;
     public final ITerminalHost part;
 
-    @GuiSync(95)
+    @GuiSync(105)
     public boolean combine = false;
-    @GuiSync(96)
+    @GuiSync(106)
     public boolean fluidFirst = false;
 
     public ContainerExtendedFluidPatternTerminal(InventoryPlayer ip, ITerminalHost monitorable) {
         super(ip, monitorable);
-        craftingSlots = Ae2Reflect.getExCraftingSlots(this);
-        outputSlots = Ae2Reflect.getExOutputSlots(this);
-        patternSlotIN = Ae2Reflect.getExPatternSlotIn(this);
-        patternSlotOUT = Ae2Reflect.getExPatternSlotOut(this);
         part = monitorable;
+        this.craftingMode = false;
     }
 
     @Override
@@ -323,7 +315,7 @@ public class ContainerExtendedFluidPatternTerminal extends ContainerExpandedProc
         for (Slot slot : this.craftingSlots) {
             if (ItemFluidPacket.isFluidPacket(slot.getStack()) && ItemFluidPacket.getFluidStack(slot.getStack()) != null) {
                 long amt = Objects.requireNonNull(ItemFluidPacket.getFluidStack(slot.getStack())).amount;
-                if (amt + increase * 1000 > Integer.MAX_VALUE) {
+                if (amt + increase * 1000L > Integer.MAX_VALUE) {
                     return;
                 }
             }
@@ -338,7 +330,7 @@ public class ContainerExtendedFluidPatternTerminal extends ContainerExpandedProc
         for (Slot slot : this.outputSlots) {
             if (ItemFluidPacket.isFluidPacket(slot.getStack()) && ItemFluidPacket.getFluidStack(slot.getStack()) != null) {
                 long amt = Objects.requireNonNull(ItemFluidPacket.getFluidStack(slot.getStack())).amount;
-                if (amt + increase * 1000 > Integer.MAX_VALUE) {
+                if (amt + increase * 1000L > Integer.MAX_VALUE) {
                     return;
                 }
             }
@@ -382,7 +374,7 @@ public class ContainerExtendedFluidPatternTerminal extends ContainerExpandedProc
         for (Slot slot : this.craftingSlots) {
             if (ItemFluidPacket.isFluidPacket(slot.getStack()) && ItemFluidPacket.getFluidStack(slot.getStack()) != null) {
                 long amt = Objects.requireNonNull(ItemFluidPacket.getFluidStack(slot.getStack())).amount;
-                if (amt - decrease * 1000 < 1) {
+                if (amt - decrease * 1000L < 1) {
                     return;
                 }
             }
@@ -397,7 +389,7 @@ public class ContainerExtendedFluidPatternTerminal extends ContainerExpandedProc
         for (Slot slot : this.outputSlots) {
             if (ItemFluidPacket.isFluidPacket(slot.getStack()) && ItemFluidPacket.getFluidStack(slot.getStack()) != null) {
                 long amt = Objects.requireNonNull(ItemFluidPacket.getFluidStack(slot.getStack())).amount;
-                if (amt - decrease * 1000 < 1) {
+                if (amt - decrease * 1000L < 1) {
                     return;
                 }
             }
@@ -447,8 +439,8 @@ public class ContainerExtendedFluidPatternTerminal extends ContainerExpandedProc
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
         if (Platform.isServer()) {
-            this.combine = ((PartExtendedFluidPatternTerminal) this.getExpandedPatternTerminal()).getCombineMode();
-            this.fluidFirst = ((PartExtendedFluidPatternTerminal) this.getExpandedPatternTerminal()).getFluidPlaceMode();
+            this.combine = ((PartExtendedFluidPatternTerminal) this.getPart()).getCombineMode();
+            this.fluidFirst = ((PartExtendedFluidPatternTerminal) this.getPart()).getFluidPlaceMode();
         }
     }
 

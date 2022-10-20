@@ -13,6 +13,8 @@ import appeng.api.storage.channels.IItemStorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.crafting.MECraftingInventory;
+import appeng.fluids.parts.PartFluidInterface;
+import appeng.fluids.tile.TileFluidInterface;
 import appeng.helpers.DualityInterface;
 import appeng.me.MachineSet;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
@@ -49,6 +51,7 @@ import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 
+@SuppressWarnings("unused")
 public class CoreModHooks {
 
     public static InventoryCrafting wrapCraftingBuffer(InventoryCrafting inv) {
@@ -118,9 +121,9 @@ public class CoreModHooks {
     }
 
     public static IMachineSet getMachines(IGrid grid, Class<? extends IGridHost> c) {
-        if (c == TileInterface.class) {
+        if (c == TileInterface.class || c == TileFluidInterface.class) {
             return unionMachineSets(grid.getMachines(c), grid.getMachines(TileDualInterface.class));
-        } else if (c == PartInterface.class) {
+        } else if (c == PartInterface.class || c == PartFluidInterface.class) {
             return unionMachineSets(grid.getMachines(c), grid.getMachines(PartDualInterface.class));
         } else {
             return grid.getMachines(c);

@@ -41,6 +41,7 @@ public class FCClassTransformer implements IClassTransformer {
                 break;
             case "appeng.container.implementations.ContainerInterfaceTerminal":
             case "appeng.container.implementations.ContainerInterfaceConfigurationTerminal":
+            case "appeng.container.implementations.ContainerFluidInterfaceConfigurationTerminal":
                 tform = ContainerInterfaceTerminalTransformer.INSTANCE;
                 break;
             case "appeng.client.gui.implementations.GuiCraftingCPU":

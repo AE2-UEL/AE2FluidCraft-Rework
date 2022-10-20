@@ -29,7 +29,7 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'idea'
 
-version = "2.4.2-r"
+version = "2.4.3-r"
 group = "ae2fc"
 archivesBaseName = "Fluid Craft for AE2"
 
@@ -47,11 +47,11 @@ repositories {
 
 dependencies {
     deobfCompile 'mezz.jei:jei_1.12.2:4.15.0.293' //jei
-    deobfCompile 'curse.maven:ae2-extended-life-570458:3785381' // pae2
     deobfCompile 'curse.maven:packagedauto-308380:2977147' // 1.0.3.14
     deobfCompile 'curse.maven:modular-machinery-270790:2761302' // 1.11.1
     deobfCompile 'curse.maven:codechicken-lib-1-8-242818:2779848' //ccl
     deobfCompile 'curse.maven:gregtech-ce-unofficial-557242:3784798' // gt
+    compile files('libs/appliedenergistics2-rv6-stable-7-extended_life-v0.54.2-dev.jar') //pae2
     compileOnly "curse.maven:dynamistics-383632:3056455" // dy
 }
 
