@@ -35,22 +35,24 @@ public class FluidPatternTerminalRecipeTransferHandler implements IRecipeTransfe
     @Override
     public IRecipeTransferError transferRecipe(@Nonnull ContainerFluidPatternTerminal container, @Nonnull IRecipeLayout recipeLayout,
                                                @Nonnull EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
-        try {
-            if (container.isCraftingMode() && !recipeLayout.getRecipeCategory().getUid().equals(VanillaRecipeCategoryUid.CRAFTING)) {
-                NetworkHandler.instance().sendToServer(new PacketValueConfig("PatternTerminal.CraftMode", "0"));
-            }
-            else if (!container.isCraftingMode() && recipeLayout.getRecipeCategory().getUid().equals(VanillaRecipeCategoryUid.CRAFTING)) {
-                NetworkHandler.instance().sendToServer(new PacketValueConfig("PatternTerminal.CraftMode", "1"));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         if (doTransfer && container.getPart() instanceof PartFluidPatternTerminal) {
+            boolean craftMode = container.craftingMode;
+            try {
+                if (container.isCraftingMode() && !recipeLayout.getRecipeCategory().getUid().equals(VanillaRecipeCategoryUid.CRAFTING)) {
+                    NetworkHandler.instance().sendToServer(new PacketValueConfig("PatternTerminal.CraftMode", "0"));
+                    craftMode = false;
+                }
+                else if (!container.isCraftingMode() && recipeLayout.getRecipeCategory().getUid().equals(VanillaRecipeCategoryUid.CRAFTING)) {
+                    NetworkHandler.instance().sendToServer(new PacketValueConfig("PatternTerminal.CraftMode", "1"));
+                    craftMode = true;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             PartFluidPatternTerminal tile = (PartFluidPatternTerminal)container.getPart();
             IAEItemStack[] crafting = new IAEItemStack[tile.getInventoryByName("crafting").getSlots()];
             IAEItemStack[] output = new IAEItemStack[tile.getInventoryByName("output").getSlots()];
-            FluidPatternEncoderRecipeTransferHandler.transferRecipeSlots(recipeLayout, crafting, output, container.craftingMode, container.combine, container.fluidFirst, ext);
+            FluidPatternEncoderRecipeTransferHandler.transferRecipeSlots(recipeLayout, crafting, output, craftMode, container.combine, container.fluidFirst, ext);
             FluidCraft.proxy.netHandler.sendToServer(new CPacketLoadPattern(crafting, output));
         }
         return null;
