@@ -135,7 +135,7 @@ public class GuiFluidPatternTerminal extends GuiPatternTerm {
 
     @Override
     protected void handleMouseClick(Slot slot, int slotIdx, int mouseButton, ClickType clickType) {
-        if (mouseButton == 2 ) {
+        if (mouseButton == 2 && !this.container.isCraftingMode()) {
             if (slot instanceof OptionalSlotFake || slot instanceof SlotFakeCraftingMatrix) {
                 if (slot.getHasStack()) {
                     IAEItemStack stack = AEItemStack.fromItemStack(slot.getStack());

@@ -114,4 +114,8 @@ public class GuiItemAmountChange extends GuiCraftAmount {
         }
     }
 
+    public void setAmount(int amount) {
+        this.amountToCraft.setText(String.valueOf(amount));
+    }
+
 }

@@ -4,6 +4,7 @@ import appeng.api.storage.data.IAEItemStack;
 import appeng.container.AEBaseContainer;
 import appeng.container.ContainerOpenContext;
 import appeng.util.item.AEItemStack;
+import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.container.ContainerItemAmountChange;
 import com.glodblock.github.inventory.GuiType;
 import com.glodblock.github.inventory.InventoryHandler;
@@ -77,6 +78,7 @@ public class CPacketInventoryAction implements IMessage {
                     {
                         final TileEntity te = context.getTile();
                         InventoryHandler.openGui( sender, te.getWorld(), te.getPos(), baseContainer.getOpenContext().getSide().getFacing(), GuiType.ITEM_AMOUNT_SET );
+                        FluidCraft.proxy.netHandler.sendTo(new SPacketSetItemAmount((int) message.stack.getStackSize()), sender);
                         if( sender.openContainer instanceof ContainerItemAmountChange)
                         {
                             final ContainerItemAmountChange iac = (ContainerItemAmountChange) sender.openContainer;
