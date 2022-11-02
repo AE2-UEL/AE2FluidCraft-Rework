@@ -64,28 +64,24 @@ public class CPacketPatternValueSet implements IMessage {
                     final ContainerOpenContext context = cpv.getOpenContext();
                     if (context != null) {
                         final TileEntity te = context.getTile();
-                        try {
-                            InventoryHandler.openGui(player, player.world, te.getPos(), context.getSide().getFacing(), message.originGui);
-                            if (player.openContainer instanceof ContainerFluidPatternTerminal || player.openContainer instanceof ContainerExtendedFluidPatternTerminal) {
-                                Slot slot = player.openContainer.getSlot(message.valueIndex);
-                                if (slot instanceof SlotFake) {
-                                    if (slot.getHasStack()) {
-                                        ItemStack stack = slot.getStack().copy();
-                                        if (stack.getItem() instanceof ItemFluidPacket) {
-                                            FluidStack fluidStack = ItemFluidPacket.getFluidStack(stack);
-                                            if (fluidStack != null) {
-                                                fluidStack.amount = message.amount;
-                                            }
-                                            slot.putStack(ItemFluidPacket.newStack(fluidStack));
-                                        } else {
-                                            stack.setCount(message.amount);
-                                            slot.putStack(stack);
+                        InventoryHandler.openGui(player, player.world, te.getPos(), context.getSide().getFacing(), message.originGui);
+                        if (player.openContainer instanceof ContainerFluidPatternTerminal || player.openContainer instanceof ContainerExtendedFluidPatternTerminal) {
+                            Slot slot = player.openContainer.getSlot(message.valueIndex);
+                            if (slot instanceof SlotFake) {
+                                if (slot.getHasStack()) {
+                                    ItemStack stack = slot.getStack().copy();
+                                    if (stack.getItem() instanceof ItemFluidPacket) {
+                                        FluidStack fluidStack = ItemFluidPacket.getFluidStack(stack);
+                                        if (fluidStack != null) {
+                                            fluidStack.amount = message.amount;
                                         }
+                                        slot.putStack(ItemFluidPacket.newStack(fluidStack));
+                                    } else {
+                                        stack.setCount(message.amount);
+                                        slot.putStack(stack);
                                     }
                                 }
                             }
-                        } catch (ConcurrentModificationException e) {
-                            AELog.warn("catch CME when trying to modify slot #%s in %s.", message.valueIndex, player.openContainer.getClass());
                         }
                     }
                 }

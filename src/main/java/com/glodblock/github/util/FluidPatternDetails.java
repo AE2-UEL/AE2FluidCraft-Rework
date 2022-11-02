@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class FluidPatternDetails implements ICraftingPatternDetails, Comparable<FluidPatternDetails> {
+public class FluidPatternDetails implements ICraftingPatternDetails, Comparable<ICraftingPatternDetails> {
 
     private final ItemStack patternStack;
     private IAEItemStack patternStackAe;
@@ -102,7 +102,7 @@ public class FluidPatternDetails implements ICraftingPatternDetails, Comparable<
         return true;
     }
 
-    private static IAEItemStack[] condenseStacks(IAEItemStack[] stacks) {
+    public static IAEItemStack[] condenseStacks(IAEItemStack[] stacks) {
         // AE item stacks are equivalent iff they are of the same item type (not accounting for stack size)
         // thus, it's not the semantically-correct definition of "equal" but it's useful for matching item types
         Map<IAEItemStack, IAEItemStack> accMap = new HashMap<>();
@@ -150,8 +150,8 @@ public class FluidPatternDetails implements ICraftingPatternDetails, Comparable<
     }
 
     @Override
-    public int compareTo(FluidPatternDetails o) {
-        return Integer.compare(o.priority, this.priority);
+    public int compareTo(ICraftingPatternDetails o) {
+        return Integer.compare(o.getPriority(), this.priority);
     }
 
     public ItemStack writeToStack() {

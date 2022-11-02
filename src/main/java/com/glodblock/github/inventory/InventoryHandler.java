@@ -1,5 +1,6 @@
 package com.glodblock.github.inventory;
 
+import appeng.core.AELog;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.network.CPacketSwitchGuis;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,6 +12,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
+import java.util.ConcurrentModificationException;
 
 public class InventoryHandler implements IGuiHandler {
 
@@ -19,8 +21,12 @@ public class InventoryHandler implements IGuiHandler {
     }
 
     public static void openGui(EntityPlayer player, World world, BlockPos pos, EnumFacing face, GuiType guiType) {
-        player.openGui(FluidCraft.INSTANCE,
-                (guiType.ordinal() << 3) | face.ordinal(), world, pos.getX(), pos.getY(), pos.getZ());
+        try {
+            player.openGui(FluidCraft.INSTANCE,
+                    (guiType.ordinal() << 3) | face.ordinal(), world, pos.getX(), pos.getY(), pos.getZ());
+        } catch (ConcurrentModificationException e) {
+            AELog.warn("catch CME when trying to open %s.", guiType);
+        }
     }
 
     @Nullable

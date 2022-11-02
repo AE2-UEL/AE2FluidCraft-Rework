@@ -8,6 +8,7 @@ import appeng.fluids.util.IAEFluidTank;
 import appeng.tile.AEBaseInvTile;
 import appeng.tile.inventory.AppEngInternalInventory;
 import appeng.util.inv.InvOperation;
+import com.glodblock.github.util.Util;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -77,19 +78,7 @@ public class TileLargeIngredientBuffer extends AEBaseInvTile implements IAEFluid
         for (int i = 0; i < invItems.getSlots(); i++) {
             ByteBufUtils.writeItemStack(data, invItems.getStackInSlot(i));
         }
-        int fluidMask = 0;
-        for (int i = 0; i < invFluids.getSlots(); i++) {
-            if (invFluids.getFluidInSlot(i) != null) {
-                fluidMask |= 1 << i;
-            }
-        }
-        data.writeByte(fluidMask);
-        for (int i = 0; i < invFluids.getSlots(); i++) {
-            IAEFluidStack fluid = invFluids.getFluidInSlot(i);
-            if (fluid != null) {
-                fluid.writeToPacket(data);
-            }
-        }
+        Util.writeFluidInventoryToBuffer(invFluids, data);
     }
 
     @Override
@@ -102,22 +91,7 @@ public class TileLargeIngredientBuffer extends AEBaseInvTile implements IAEFluid
                 changed = true;
             }
         }
-        int fluidMask = data.readByte();
-        for (int i = 0; i < invFluids.getSlots(); i++) {
-            if ((fluidMask & (1 << i)) != 0) {
-                IAEFluidStack fluid = AEFluidStack.fromPacket(data);
-                if (fluid != null) { // this shouldn't happen, but better safe than sorry
-                    IAEFluidStack origFluid = invFluids.getFluidInSlot(i);
-                    if (!fluid.equals(origFluid) || fluid.getStackSize() != origFluid.getStackSize()) {
-                        invFluids.setFluidInSlot(i, fluid);
-                        changed = true;
-                    }
-                }
-            } else if (invFluids.getFluidInSlot(i) != null) {
-                invFluids.setFluidInSlot(i, null);
-                changed = true;
-            }
-        }
+        changed |= Util.readFluidInventoryToBuffer(invFluids, data);
         return changed;
     }
 

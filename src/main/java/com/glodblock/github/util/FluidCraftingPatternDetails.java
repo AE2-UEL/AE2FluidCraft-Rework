@@ -2,15 +2,79 @@ package com.glodblock.github.util;
 
 import appeng.api.networking.crafting.ICraftingPatternDetails;
 import appeng.api.storage.data.IAEItemStack;
+import appeng.container.ContainerNull;
+import appeng.util.item.AEItemStack;
+import com.glodblock.github.common.item.ItemFluidDrop;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 
-public class FluidCraftingPatternDetails implements ICraftingPatternDetails, Comparable<FluidPatternDetails> {
+import java.util.Arrays;
+import java.util.List;
+
+public class FluidCraftingPatternDetails implements ICraftingPatternDetails, Comparable<ICraftingPatternDetails> {
+
+    private final IAEItemStack[] containerInputs = new IAEItemStack[9];
+    private final IAEItemStack[] remainingInputs = new IAEItemStack[9];
+    private final IAEItemStack[] containerOutputs = new IAEItemStack[1];
+    private final IAEItemStack[] fluidInputs = new IAEItemStack[9];
+    private final InventoryCrafting crafting = new InventoryCrafting(new ContainerNull(), 3, 3);
+    private final IRecipe standardRecipe;
+    private final ItemStack pattern;
+    private final boolean canSubstitute;
+    private final boolean isNecessary;
+    private int priority = 0;
+
+    public FluidCraftingPatternDetails(ItemStack pattern, World w) {
+        NBTTagCompound encodedValue = pattern.getTagCompound();
+        this.pattern = pattern;
+        if (encodedValue == null) {
+            throw new IllegalArgumentException("No pattern here!");
+        } else {
+            NBTTagList inTag = encodedValue.getTagList("in", 10);
+            this.canSubstitute = encodedValue.getBoolean("substitute");
+            for(int x = 0; x < inTag.tagCount(); x++) {
+                NBTTagCompound resultItemTag = inTag.getCompoundTagAt(x);
+                ItemStack gs = new ItemStack(resultItemTag);
+                if (resultItemTag.hasKey("stackSize")) {
+                    gs.setCount(resultItemTag.getInteger("stackSize"));
+                }
+                this.crafting.setInventorySlotContents(x, gs);
+                this.containerInputs[x] = AEItemStack.fromItemStack(gs);
+            }
+            this.standardRecipe = CraftingManager.findMatchingRecipe(this.crafting, w);
+            if (this.standardRecipe == null) {
+                throw new IllegalStateException("No pattern here!");
+            }
+            ItemStack outputItem = this.standardRecipe.getCraftingResult(this.crafting);
+            List<ItemStack> remain = this.standardRecipe.getRemainingItems(this.crafting);
+            for (int x = 0; x < remain.size(); x++) {
+                this.remainingInputs[x] = AEItemStack.fromItemStack(remain.get(x));
+            }
+            this.containerOutputs[0] = AEItemStack.fromItemStack(outputItem);
+        }
+        for (int x = 0; x < 9; x++) {
+            IAEItemStack filledContainer = this.containerInputs[x];
+            IAEItemStack emptyContainer = this.remainingInputs[x];
+            if (filledContainer != null && emptyContainer != null && Util.getFluidFromItem(filledContainer.getDefinition()) != null) {
+                ItemStack drained = Util.getEmptiedContainer(filledContainer.getDefinition());
+                if (emptyContainer.equals(drained)) {
+                    this.fluidInputs[x] = ItemFluidDrop.newAeStack(Util.getFluidFromItem(filledContainer.getDefinition()));
+                    continue;
+                }
+            }
+            this.fluidInputs[x] = filledContainer;
+        }
+        this.isNecessary = Arrays.stream(this.fluidInputs).anyMatch(t -> t != null && t.getItem() instanceof ItemFluidDrop);
+    }
 
     @Override
     public ItemStack getPattern() {
-        return null;
+        return this.pattern;
     }
 
     @Override
@@ -25,27 +89,31 @@ public class FluidCraftingPatternDetails implements ICraftingPatternDetails, Com
 
     @Override
     public IAEItemStack[] getInputs() {
-        return new IAEItemStack[0];
+        return this.fluidInputs;
+    }
+
+    public IAEItemStack[] getContainerInputs() {
+        return this.containerInputs;
     }
 
     @Override
     public IAEItemStack[] getCondensedInputs() {
-        return new IAEItemStack[0];
+        return FluidPatternDetails.condenseStacks(this.fluidInputs);
     }
 
     @Override
     public IAEItemStack[] getCondensedOutputs() {
-        return new IAEItemStack[0];
+        return this.containerOutputs;
     }
 
     @Override
     public IAEItemStack[] getOutputs() {
-        return new IAEItemStack[0];
+        return this.containerOutputs;
     }
 
     @Override
     public boolean canSubstitute() {
-        return false;
+        return canSubstitute;
     }
 
     @Override
@@ -55,16 +123,20 @@ public class FluidCraftingPatternDetails implements ICraftingPatternDetails, Com
 
     @Override
     public int getPriority() {
-        return 0;
+        return priority;
     }
 
     @Override
     public void setPriority(int i) {
-
+        this.priority = i;
     }
 
     @Override
-    public int compareTo(FluidPatternDetails o) {
-        return 0;
+    public int compareTo(ICraftingPatternDetails o) {
+        return Integer.compare(o.getPriority(), this.priority);
+    }
+
+    public boolean isNecessary() {
+        return this.isNecessary;
     }
 }

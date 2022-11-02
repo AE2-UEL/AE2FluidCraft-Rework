@@ -1,17 +1,23 @@
 package com.glodblock.github.common.tile;
 
-import appeng.api.storage.data.IAEFluidStack;
+import appeng.api.networking.crafting.ICraftingPatternDetails;
+import appeng.api.networking.crafting.ICraftingProvider;
+import appeng.api.networking.crafting.ICraftingProviderHelper;
+import appeng.api.util.AECableType;
+import appeng.api.util.AEPartLocation;
+import appeng.api.util.DimensionalCoord;
 import appeng.fluids.util.AEFluidInventory;
-import appeng.fluids.util.AEFluidStack;
 import appeng.fluids.util.IAEFluidInventory;
 import appeng.fluids.util.IAEFluidTank;
-import appeng.tile.AEBaseInvTile;
+import appeng.helpers.Reflected;
+import appeng.parts.automation.UpgradeInventory;
+import appeng.tile.grid.AENetworkInvTile;
 import appeng.tile.inventory.AppEngInternalInventory;
 import appeng.util.inv.InvOperation;
 import com.glodblock.github.util.Util;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -23,19 +29,25 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 
-public class TileIngredientBuffer extends AEBaseInvTile implements IAEFluidInventory {
+public class TileFluidAssembler extends AENetworkInvTile implements IAEFluidInventory, ICraftingProvider {
 
     private final AppEngInternalInventory invItems = new AppEngInternalInventory(this, 9);
-    private final AEFluidInventory invFluids = new AEFluidInventory(this, 4, 16000);
+    private final AEFluidInventory invFluids = new AEFluidInventory(this, 9, 2000);
+    // private final UpgradeInventory upgrades;
+    private boolean isPowered = false;
+    private double process;
+    private static final double TIME = 100;
+
+    @Reflected
+    public TileFluidAssembler() {
+        getProxy().setIdlePowerUsage(0.0D);
+        // this.upgrades = new UpgradeInventory(assembler, this, this.getUpgradeSlots());
+    }
 
     @Nonnull
     @Override
     public IItemHandler getInternalInventory() {
         return invItems;
-    }
-
-    public IAEFluidTank getFluidInventory() {
-        return invFluids;
     }
 
     @Override
@@ -62,13 +74,7 @@ public class TileIngredientBuffer extends AEBaseInvTile implements IAEFluidInven
     }
 
     @Override
-    public void onChangeInventory(IItemHandler inv, int slot, InvOperation mc, ItemStack removed, ItemStack added) {
-        markForUpdate();
-    }
-
-    @Override
-    public void onFluidInventoryChanged(IAEFluidTank inv, int slot) {
-        saveChanges();
+    public void onChangeInventory(IItemHandler iItemHandler, int i, InvOperation invOperation, ItemStack itemStack, ItemStack itemStack1) {
         markForUpdate();
     }
 
@@ -95,19 +101,41 @@ public class TileIngredientBuffer extends AEBaseInvTile implements IAEFluidInven
         return changed;
     }
 
+    private int getUpgradeSlots() {
+        return 5;
+    }
+
+
+
     @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
-        invItems.readFromNBT(data, "ItemInv");
-        invFluids.readFromNBT(data, "FluidInv");
+    public DimensionalCoord getLocation() {
+        return null;
+    }
+
+    @Nonnull
+    @Override
+    public AECableType getCableConnectionType(@Nonnull AEPartLocation aePartLocation) {
+        return null;
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
-        invItems.writeToNBT(data, "ItemInv");
-        invFluids.writeToNBT(data, "FluidInv");
-        return data;
+    public void onFluidInventoryChanged(IAEFluidTank iaeFluidTank, int i) {
+        saveChanges();
+        markForUpdate();
     }
 
+    @Override
+    public void provideCrafting(ICraftingProviderHelper iCraftingProviderHelper) {
+
+    }
+
+    @Override
+    public boolean pushPattern(ICraftingPatternDetails iCraftingPatternDetails, InventoryCrafting inventoryCrafting) {
+        return false;
+    }
+
+    @Override
+    public boolean isBusy() {
+        return false;
+    }
 }
