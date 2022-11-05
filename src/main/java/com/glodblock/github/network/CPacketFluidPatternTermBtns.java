@@ -60,44 +60,46 @@ public class CPacketFluidPatternTermBtns implements IMessage {
         @Override
         public IMessage onMessage(CPacketFluidPatternTermBtns message, MessageContext ctx) {
             EntityPlayerMP player = ctx.getServerHandler().player;
-            String Name = message.Name;
-            String Value = message.Value;
-            final Container c = player.openContainer;
-            if (c instanceof ContainerFluidPatternTerminal) {
-                final ContainerFluidPatternTerminal cpt = (ContainerFluidPatternTerminal) c;
-                switch (Name) {
-                    case "PatternTerminal.Combine":
-                        ((PartFluidPatternTerminal) cpt.getPart()).setCombineMode(Value.equals("1"));
-                        break;
-                    case "PatternTerminal.Fluid":
-                        ((PartFluidPatternTerminal) cpt.getPart()).setFluidPlaceMode(Value.equals("1"));
-                        break;
+            player.getServerWorld().addScheduledTask(() -> {
+                String Name = message.Name;
+                String Value = message.Value;
+                final Container c = player.openContainer;
+                if (c instanceof ContainerFluidPatternTerminal) {
+                    final ContainerFluidPatternTerminal cpt = (ContainerFluidPatternTerminal) c;
+                    switch (Name) {
+                        case "PatternTerminal.Combine":
+                            ((PartFluidPatternTerminal) cpt.getPart()).setCombineMode(Value.equals("1"));
+                            break;
+                        case "PatternTerminal.Fluid":
+                            ((PartFluidPatternTerminal) cpt.getPart()).setFluidPlaceMode(Value.equals("1"));
+                            break;
+                    }
+                } else if (c instanceof ContainerExtendedFluidPatternTerminal) {
+                    final ContainerExtendedFluidPatternTerminal cpt = (ContainerExtendedFluidPatternTerminal) c;
+                    switch (Name) {
+                        case "PatternTerminal.Combine":
+                            ((PartExtendedFluidPatternTerminal) cpt.getPart()).setCombineMode(Value.equals("1"));
+                            break;
+                        case "PatternTerminal.Fluid":
+                            ((PartExtendedFluidPatternTerminal) cpt.getPart()).setFluidPlaceMode(Value.equals("1"));
+                            break;
+                    }
+                } else if (c instanceof ContainerItemDualInterface) {
+                    final ContainerItemDualInterface cdi = (ContainerItemDualInterface) c;
+                    switch (Name) {
+                        case "DualInterface.FluidPacket":
+                            cdi.setFluidPacketInTile(Value.equals("1"));
+                            break;
+                    }
+                } else if (c instanceof ContainerWrapInterface) {
+                    final ContainerWrapInterface cdi = (ContainerWrapInterface) c;
+                    switch (Name) {
+                        case "WrapDualInterface.FluidPacket":
+                            cdi.setFluidPacketInTile(Value.equals("1"));
+                            break;
+                    }
                 }
-            } else if (c instanceof ContainerExtendedFluidPatternTerminal) {
-                final ContainerExtendedFluidPatternTerminal cpt = (ContainerExtendedFluidPatternTerminal) c;
-                switch (Name) {
-                    case "PatternTerminal.Combine":
-                        ((PartExtendedFluidPatternTerminal) cpt.getPart()).setCombineMode(Value.equals("1"));
-                        break;
-                    case "PatternTerminal.Fluid":
-                        ((PartExtendedFluidPatternTerminal) cpt.getPart()).setFluidPlaceMode(Value.equals("1"));
-                        break;
-                }
-            } else if (c instanceof ContainerItemDualInterface) {
-                final ContainerItemDualInterface cdi = (ContainerItemDualInterface) c;
-                switch (Name) {
-                    case "DualInterface.FluidPacket":
-                        cdi.setFluidPacketInTile(Value.equals("1"));
-                        break;
-                }
-            } else if (c instanceof ContainerWrapInterface) {
-                final ContainerWrapInterface cdi = (ContainerWrapInterface) c;
-                switch (Name) {
-                    case "WrapDualInterface.FluidPacket":
-                        cdi.setFluidPacketInTile(Value.equals("1"));
-                        break;
-                }
-            }
+            });
             return null;
         }
     }

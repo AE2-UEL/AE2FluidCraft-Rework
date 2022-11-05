@@ -6,11 +6,13 @@ import appeng.container.ContainerOpenContext;
 import appeng.util.item.AEItemStack;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.container.ContainerItemAmountChange;
+import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.inventory.GuiType;
 import com.glodblock.github.inventory.InventoryHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -69,30 +71,37 @@ public class CPacketInventoryAction implements IMessage {
         @Override
         public IMessage onMessage(CPacketInventoryAction message, MessageContext ctx) {
             final EntityPlayerMP sender = ctx.getServerHandler().player;
-            if( sender.openContainer instanceof AEBaseContainer) {
-                final AEBaseContainer baseContainer = (AEBaseContainer) sender.openContainer;
-                if (message.action == 1)
-                {
-                    final ContainerOpenContext context = baseContainer.getOpenContext();
-                    if( context != null )
+            sender.getServerWorld().addScheduledTask(() -> {
+                if( sender.openContainer instanceof AEBaseContainer) {
+                    final AEBaseContainer baseContainer = (AEBaseContainer) sender.openContainer;
+                    if (message.action == 1)
                     {
-                        final TileEntity te = context.getTile();
-                        InventoryHandler.openGui( sender, te.getWorld(), te.getPos(), baseContainer.getOpenContext().getSide().getFacing(), GuiType.ITEM_AMOUNT_SET );
-                        FluidCraft.proxy.netHandler.sendTo(new SPacketSetItemAmount((int) message.stack.getStackSize()), sender);
-                        if( sender.openContainer instanceof ContainerItemAmountChange)
+                        final ContainerOpenContext context = baseContainer.getOpenContext();
+                        if( context != null )
                         {
-                            final ContainerItemAmountChange iac = (ContainerItemAmountChange) sender.openContainer;
-                            if( message.stack != null )
-                            {
-                                iac.getPatternValue().putStack( message.stack.getDefinition() );
-                                iac.setValueIndex( message.slot );
-                                iac.setInitValue( message.stack.getStackSize() );
+                            final TileEntity te = context.getTile();
+                            InventoryHandler.openGui( sender, te.getWorld(), te.getPos(), baseContainer.getOpenContext().getSide().getFacing(), GuiType.ITEM_AMOUNT_SET );
+                            int amt = (int) message.stack.getStackSize();
+                            if (message.stack.getItem() instanceof ItemFluidPacket) {
+                                FluidStack fluid = ItemFluidPacket.getFluidStack(message.stack);
+                                amt = fluid == null ? 1 : fluid.amount;
                             }
-                            iac.detectAndSendChanges();
+                            FluidCraft.proxy.netHandler.sendTo(new SPacketSetItemAmount(amt), sender);
+                            if( sender.openContainer instanceof ContainerItemAmountChange)
+                            {
+                                final ContainerItemAmountChange iac = (ContainerItemAmountChange) sender.openContainer;
+                                if( message.stack != null )
+                                {
+                                    iac.getPatternValue().putStack( message.stack.getDefinition() );
+                                    iac.setValueIndex( message.slot );
+                                    iac.setInitValue( message.stack.getStackSize() );
+                                }
+                                iac.detectAndSendChanges();
+                            }
                         }
                     }
                 }
-            }
+            });
             return null;
         }
     }

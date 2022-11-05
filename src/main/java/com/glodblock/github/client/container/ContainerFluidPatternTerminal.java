@@ -17,7 +17,6 @@ import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.common.part.PartFluidPatternTerminal;
 import com.glodblock.github.interfaces.PatternConsumer;
 import com.glodblock.github.loader.FCItems;
-import com.glodblock.github.util.Ae2Reflect;
 import com.glodblock.github.util.FluidPatternDetails;
 import com.glodblock.github.util.Util;
 import net.minecraft.entity.player.EntityPlayerMP;

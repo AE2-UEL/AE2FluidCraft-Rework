@@ -56,7 +56,9 @@ public class CPacketSwitchGuis implements IMessage {
             if (te == null) {
                 return null;
             }
-            InventoryHandler.openGui(player, player.world, te.getPos(), context.getSide().getFacing(), message.guiType);
+            player.getServerWorld().addScheduledTask(
+                    () -> InventoryHandler.openGui(player, player.world, te.getPos(), context.getSide().getFacing(), message.guiType)
+            );
             return null;
         }
 

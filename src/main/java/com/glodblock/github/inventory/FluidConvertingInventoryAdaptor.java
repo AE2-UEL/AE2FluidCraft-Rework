@@ -4,6 +4,7 @@ import appeng.api.config.FuzzyMode;
 import appeng.api.parts.IPart;
 import appeng.helpers.DualityInterface;
 import appeng.helpers.IInterfaceHost;
+import appeng.tile.misc.TileInterface;
 import appeng.tile.networking.TileCableBus;
 import appeng.util.InventoryAdaptor;
 import appeng.util.inv.AdaptorItemHandler;
@@ -11,6 +12,7 @@ import appeng.util.inv.IInventoryDestination;
 import appeng.util.inv.ItemSlot;
 import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.common.tile.TileDualInterface;
 import com.glodblock.github.util.Ae2Reflect;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -32,10 +34,16 @@ import java.util.Objects;
 public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
 
     public static InventoryAdaptor wrap(ICapabilityProvider capProvider, EnumFacing face) {
-        // sometimes i wish i had the monadic version from 1.15
         TileEntity cap = (TileEntity) capProvider;
         TileEntity inter = cap.getWorld().getTileEntity(cap.getPos().add(face.getDirectionVec()));
         DualityInterface dualInterface = null;
+        boolean onmi = false;
+        if (inter instanceof TileInterface) {
+            onmi = ((TileInterface) inter).getTargets().size() > 1;
+        } else if (inter instanceof TileDualInterface) {
+            onmi = ((TileDualInterface) inter).getTargets().size() > 1;
+        }
+
         if (inter instanceof IInterfaceHost) {
             dualInterface = ((IInterfaceHost) inter).getInterfaceDuality();
         } else if (inter instanceof TileCableBus) {
@@ -52,7 +60,9 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
                             : null,
                     capProvider.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, face)
                             ? Objects.requireNonNull(capProvider.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, face))
-                            : null);
+                            : null,
+                    inter,
+                    onmi);
         }
         return InventoryAdaptor.getAdaptor(cap, face);
     }
@@ -61,15 +71,45 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
     private final InventoryAdaptor invItems;
     @Nullable
     private final IFluidHandler invFluids;
+    private final boolean onmi;
+    @Nullable
+    private final TileEntity posInterface;
 
-    public FluidConvertingInventoryAdaptor(@Nullable IItemHandler invItems, @Nullable IFluidHandler invFluids) {
+    public FluidConvertingInventoryAdaptor(@Nullable IItemHandler invItems, @Nullable IFluidHandler invFluids, @Nullable TileEntity pos, boolean isOnmi) {
         this.invItems = invItems != null ? new AdaptorItemHandler(invItems) : null;
         this.invFluids = invFluids;
+        this.posInterface = pos;
+        this.onmi = isOnmi;
     }
 
     @Override
     public ItemStack addItems(ItemStack toBeAdded) {
         if (toBeAdded.getItem() instanceof ItemFluidPacket || toBeAdded.getItem() instanceof ItemFluidDrop) {
+            if (onmi) {
+                FluidStack fluid;
+                if (toBeAdded.getItem() instanceof ItemFluidPacket) {
+                    fluid = ItemFluidPacket.getFluidStack(toBeAdded);
+                } else {
+                    fluid = ItemFluidDrop.getFluidStack(toBeAdded);
+                }
+
+                if (fluid != null && posInterface != null) {
+                    for (EnumFacing dir : EnumFacing.values()) {
+                        TileEntity te = posInterface.getWorld().getTileEntity(posInterface.getPos().add(dir.getDirectionVec()));
+                        if (te != null) {
+                            IFluidHandler fh = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, dir.getOpposite());
+                            if (fh != null) {
+                                int filled = fh.fill(fluid, false);
+                                if (filled == fluid.amount) {
+                                    fh.fill(fluid, true);
+                                    return ItemStack.EMPTY;
+                                }
+                            }
+                        }
+                    }
+                }
+                return ItemFluidPacket.newStack(fluid);
+            }
             if (invFluids != null) {
                 FluidStack fluid;
                 if(toBeAdded.getItem() instanceof ItemFluidPacket)
@@ -92,6 +132,34 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
     @Override
     public ItemStack simulateAdd(ItemStack toBeSimulated) {
         if (toBeSimulated.getItem() instanceof ItemFluidPacket || toBeSimulated.getItem() instanceof ItemFluidDrop) {
+            if (onmi) {
+                boolean sus = false;
+                FluidStack fluid;
+                if (toBeSimulated.getItem() instanceof ItemFluidPacket) {
+                    fluid = ItemFluidPacket.getFluidStack(toBeSimulated);
+                } else {
+                    fluid = ItemFluidDrop.getFluidStack(toBeSimulated);
+                }
+
+                if (fluid != null && posInterface != null) {
+                    for (EnumFacing dir : EnumFacing.values()) {
+                        TileEntity te = posInterface.getWorld().getTileEntity(posInterface.getPos().add(dir.getDirectionVec()));
+                        if (te != null) {
+                            IFluidHandler fh = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, dir.getOpposite());
+                            if (fh != null) {
+                                int filled = fh.fill(fluid, false);
+                                if (filled == fluid.amount) {
+                                    sus = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    sus = true;
+                }
+                return sus ? ItemStack.EMPTY : toBeSimulated;
+            }
             if (invFluids != null) {
                 FluidStack fluid;
                 if(toBeSimulated.getItem() instanceof ItemFluidPacket)
