@@ -133,6 +133,8 @@ public class CoreModHooks {
     public static Object wrapFluidPacket(ItemStack stack) {
         if (stack.getItem() instanceof ItemFluidPacket) {
             return ItemFluidPacket.getFluidStack(stack);
+        } else if (stack.getItem() instanceof ItemFluidDrop) {
+            return ItemFluidDrop.getFluidStack(stack);
         }
         return stack;
     }
