@@ -2,8 +2,12 @@ package com.glodblock.github.inventory;
 
 import appeng.api.config.FuzzyMode;
 import appeng.api.parts.IPart;
+import appeng.fluids.helper.DualityFluidInterface;
+import appeng.fluids.helper.IFluidInterfaceHost;
 import appeng.helpers.DualityInterface;
 import appeng.helpers.IInterfaceHost;
+import appeng.me.GridAccessException;
+import appeng.me.helpers.AENetworkProxy;
 import appeng.tile.misc.TileInterface;
 import appeng.tile.networking.TileCableBus;
 import appeng.util.InventoryAdaptor;
@@ -36,21 +40,13 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
     public static InventoryAdaptor wrap(ICapabilityProvider capProvider, EnumFacing face) {
         TileEntity cap = (TileEntity) capProvider;
         TileEntity inter = cap.getWorld().getTileEntity(cap.getPos().add(face.getDirectionVec()));
-        DualityInterface dualInterface = null;
+        DualityInterface dualInterface = getInterfaceTE(inter, face) == null ?
+                null : Objects.requireNonNull(getInterfaceTE(inter, face)).getInterfaceDuality();
         boolean onmi = false;
         if (inter instanceof TileInterface) {
             onmi = ((TileInterface) inter).getTargets().size() > 1;
         } else if (inter instanceof TileDualInterface) {
             onmi = ((TileDualInterface) inter).getTargets().size() > 1;
-        }
-
-        if (inter instanceof IInterfaceHost) {
-            dualInterface = ((IInterfaceHost) inter).getInterfaceDuality();
-        } else if (inter instanceof TileCableBus) {
-            IPart part = ((TileCableBus) inter).getPart(face.getOpposite());
-            if (part instanceof IInterfaceHost) {
-                dualInterface = ((IInterfaceHost) part).getInterfaceDuality();
-            }
         }
 
         if (dualInterface == null || !Ae2Reflect.getFluidPacketMode(dualInterface)) {
@@ -62,7 +58,8 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
                             ? Objects.requireNonNull(capProvider.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, face))
                             : null,
                     inter,
-                    onmi);
+                    onmi,
+                    dualInterface);
         }
         return InventoryAdaptor.getAdaptor(cap, face);
     }
@@ -74,12 +71,16 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
     private final boolean onmi;
     @Nullable
     private final TileEntity posInterface;
+    @Nullable
+    private final DualityInterface self;
 
-    public FluidConvertingInventoryAdaptor(@Nullable IItemHandler invItems, @Nullable IFluidHandler invFluids, @Nullable TileEntity pos, boolean isOnmi) {
+    public FluidConvertingInventoryAdaptor(@Nullable IItemHandler invItems, @Nullable IFluidHandler invFluids,
+                                           @Nullable TileEntity pos, boolean isOnmi, @Nullable DualityInterface interSelf) {
         this.invItems = invItems != null ? new AdaptorItemHandler(invItems) : null;
         this.invFluids = invFluids;
         this.posInterface = pos;
         this.onmi = isOnmi;
+        this.self = interSelf;
     }
 
     @Override
@@ -97,6 +98,14 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
                     for (EnumFacing dir : EnumFacing.values()) {
                         TileEntity te = posInterface.getWorld().getTileEntity(posInterface.getPos().add(dir.getDirectionVec()));
                         if (te != null) {
+                            IInterfaceHost interTE = getInterfaceTE(te, dir);
+                            if (interTE != null && isSameGrid(interTE)) {
+                                continue;
+                            }
+                            IFluidInterfaceHost interFTE = getFluidInterfaceTE(te, dir);
+                            if (interFTE != null && isSameGrid(interFTE)) {
+                                continue;
+                            }
                             IFluidHandler fh = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, dir.getOpposite());
                             if (fh != null) {
                                 int filled = fh.fill(fluid, false);
@@ -145,6 +154,14 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
                     for (EnumFacing dir : EnumFacing.values()) {
                         TileEntity te = posInterface.getWorld().getTileEntity(posInterface.getPos().add(dir.getDirectionVec()));
                         if (te != null) {
+                            IInterfaceHost interTE = getInterfaceTE(te, dir);
+                            if (interTE != null && isSameGrid(interTE)) {
+                                continue;
+                            }
+                            IFluidInterfaceHost interFTE = getFluidInterfaceTE(te, dir);
+                            if (interFTE != null && isSameGrid(interFTE)) {
+                                continue;
+                            }
                             IFluidHandler fh = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, dir.getOpposite());
                             if (fh != null) {
                                 int filled = fh.fill(fluid, false);
@@ -216,6 +233,64 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
     public boolean hasSlots() {
         return (invFluids != null && invFluids.getTankProperties().length > 0)
                 || (invItems != null && invItems.hasSlots());
+    }
+
+    @Nullable
+    private static IInterfaceHost getInterfaceTE(TileEntity te, EnumFacing face) {
+        if (te instanceof IInterfaceHost) {
+            return (IInterfaceHost) te;
+        } else if (te instanceof TileCableBus) {
+            IPart part = ((TileCableBus) te).getPart(face.getOpposite());
+            if (part instanceof IInterfaceHost) {
+                return (IInterfaceHost) part;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    private static IFluidInterfaceHost getFluidInterfaceTE(TileEntity te, EnumFacing face) {
+        if (te instanceof IFluidInterfaceHost) {
+            return (IFluidInterfaceHost) te;
+        } else if (te instanceof TileCableBus) {
+            IPart part = ((TileCableBus) te).getPart(face.getOpposite());
+            if (part instanceof IFluidInterfaceHost) {
+                return (IFluidInterfaceHost) part;
+            }
+        }
+        return null;
+    }
+
+    private boolean isSameGrid(IInterfaceHost target) {
+        if (this.self != null && target != null) {
+            DualityInterface other = target.getInterfaceDuality();
+            try {
+                AENetworkProxy proxy1 = Ae2Reflect.getInterfaceProxy(other);
+                AENetworkProxy proxy2 = Ae2Reflect.getInterfaceProxy(this.self);
+                if (proxy1.getGrid() == proxy2.getGrid()) {
+                    return true;
+                }
+            } catch (GridAccessException e) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    private boolean isSameGrid(IFluidInterfaceHost target) {
+        if (this.self != null && target != null) {
+            DualityFluidInterface other = target.getDualityFluidInterface();
+            try {
+                AENetworkProxy proxy1 = Ae2Reflect.getInterfaceProxy(other);
+                AENetworkProxy proxy2 = Ae2Reflect.getInterfaceProxy(this.self);
+                if (proxy1.getGrid() == proxy2.getGrid()) {
+                    return true;
+                }
+            } catch (GridAccessException e) {
+                return false;
+            }
+        }
+        return false;
     }
 
     @Override

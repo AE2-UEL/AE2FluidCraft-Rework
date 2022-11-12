@@ -11,8 +11,10 @@ import appeng.container.slot.OptionalSlotFake;
 import appeng.container.slot.SlotFakeCraftingMatrix;
 import appeng.container.slot.SlotRestrictedInput;
 import appeng.crafting.MECraftingInventory;
+import appeng.fluids.helper.DualityFluidInterface;
 import appeng.helpers.DualityInterface;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
+import appeng.me.helpers.AENetworkProxy;
 import appeng.parts.reporting.AbstractPartEncoder;
 import appeng.parts.reporting.PartExpandedProcessingPatternTerminal;
 import appeng.parts.reporting.PartPatternTerminal;
@@ -40,6 +42,8 @@ public class Ae2Reflect {
     private static final Field fCPU_inventory;
     private static final Field fCPU_machineSrc;
     private static final Field fDualInterface_fluidPacket;
+    private static final Field fDualInterface_gridProxy;
+    private static final Field fDualityFluidInterface_gridProxy;
     private static final Field fAppEngInternalInventory_filter;
 
     static {
@@ -53,6 +57,8 @@ public class Ae2Reflect {
             fCPU_inventory = Ae2Reflect.reflectField(CraftingCPUCluster.class, "inventory");
             fCPU_machineSrc = Ae2Reflect.reflectField(CraftingCPUCluster.class, "machineSrc");
             fDualInterface_fluidPacket = Ae2Reflect.reflectField(DualityInterface.class, "fluidPacket");
+            fDualInterface_gridProxy = reflectField(DualityInterface.class, "gridProxy");
+            fDualityFluidInterface_gridProxy = reflectField(DualityFluidInterface.class, "gridProxy");
             fAppEngInternalInventory_filter = Ae2Reflect.reflectField(AppEngInternalInventory.class, "filter");
         } catch (Exception e) {
             throw new IllegalStateException("Failed to initialize AE2 reflection hacks!", e);
@@ -155,6 +161,14 @@ public class Ae2Reflect {
 
     public static void setFluidPacketMode(DualityInterface owner, boolean value) {
         writeField(owner, fDualInterface_fluidPacket, value);
+    }
+
+    public static AENetworkProxy getInterfaceProxy(DualityInterface owner) {
+        return readField(owner, fDualInterface_gridProxy);
+    }
+
+    public static AENetworkProxy getInterfaceProxy(DualityFluidInterface owner) {
+        return readField(owner, fDualityFluidInterface_gridProxy);
     }
 
     public static IAEItemFilter getInventoryFilter(AppEngInternalInventory owner) {
