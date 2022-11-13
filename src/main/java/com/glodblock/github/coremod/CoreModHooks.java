@@ -34,6 +34,7 @@ import com.glodblock.github.inventory.FluidConvertingInventoryCrafting;
 import com.glodblock.github.loader.FCItems;
 import com.glodblock.github.util.Ae2Reflect;
 import com.glodblock.github.util.SetBackedMachineSet;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
@@ -178,6 +179,7 @@ public class CoreModHooks {
     }
 
     public static void storeFluidItem(CraftingCPUCluster instance) {
+        Preconditions.checkState(Ae2Reflect.getCPUComplete(instance), "CPU should be complete to prevent re-insertion when dumping items");
         final IGrid g = Ae2Reflect.getGrid(instance);
 
         if( g == null )
@@ -192,27 +194,23 @@ public class CoreModHooks {
 
         for( IAEItemStack is : inventory.getItemList() )
         {
-            is = inventory.extractItems( is.copy(), Actionable.MODULATE, Ae2Reflect.getCPUSource(instance) );
+            Ae2Reflect.postCPUChange(instance, is, Ae2Reflect.getCPUSource(instance));
 
-            if( is != null )
-            {
-                Ae2Reflect.postCPUChange(instance, is, Ae2Reflect.getCPUSource(instance));
-                if (is.getItem() instanceof ItemFluidDrop) {
-                    IAEFluidStack fluidDrop = ItemFluidDrop.getAeFluidStack(is);
-                    fluidDrop = jj.injectItems(fluidDrop, Actionable.MODULATE, Ae2Reflect.getCPUSource(instance));
-                    if (fluidDrop == null) {
-                        is = null;
-                    } else {
-                        is.setStackSize(fluidDrop.getStackSize());
-                    }
+            if (is.getItem() instanceof ItemFluidDrop ) {
+                IAEFluidStack drop = ItemFluidDrop.getAeFluidStack(is);
+                IAEFluidStack fluidRemainder = jj.injectItems(drop, Actionable.MODULATE, Ae2Reflect.getCPUSource(instance));
+                if (fluidRemainder != null) {
+                    is.setStackSize(fluidRemainder.getStackSize());
                 } else {
-                    is = ii.injectItems(is, Actionable.MODULATE, Ae2Reflect.getCPUSource(instance));
+                    is.reset();
                 }
-            }
-
-            if( is != null )
-            {
-                inventory.injectItems( is, Actionable.MODULATE, Ae2Reflect.getCPUSource(instance) );
+            } else {
+                IAEItemStack remainder = ii.injectItems(is.copy(), Actionable.MODULATE, Ae2Reflect.getCPUSource(instance));
+                if (remainder != null) {
+                    is.setStackSize(remainder.getStackSize());
+                } else {
+                    is.reset();
+                }
             }
         }
 

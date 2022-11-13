@@ -29,7 +29,7 @@ public class CraftingCpuTransformer extends FCClassTransformer.ClassMapper {
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             if (name.equals("executeCrafting")) {
                 return new TransformExecuteCrafting(api, super.visitMethod(access, name, desc, signature, exceptions));
-            } else if (name.equals("cancel")) {
+            } else if (name.equals("cancel") || name.equals("updateCraftingLogic")) {
                 return new TransformStoreItems(api, super.visitMethod(access, name, desc, signature, exceptions));
             }
             return super.visitMethod(access, name, desc, signature, exceptions);
