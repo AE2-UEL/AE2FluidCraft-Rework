@@ -21,6 +21,7 @@ import com.glodblock.github.inventory.slot.SlotSingleItem;
 import com.glodblock.github.network.CPacketFluidPatternTermBtns;
 import com.glodblock.github.network.CPacketInventoryAction;
 import com.glodblock.github.util.Ae2ReflectClient;
+import com.glodblock.github.util.ModAndClassUtil;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;
@@ -51,13 +52,15 @@ public class GuiFluidPatternTerminal extends GuiPatternTerm {
     public void initGui() {
         super.initGui();
         craftingStatusBtn = Ae2ReflectClient.getCraftingStatusButton(this);
-        this.combineEnableBtn = new GuiFCImgButton( this.guiLeft + 84, this.guiTop + this.ySize - 163, "FORCE_COMBINE", "DO_COMBINE" );
-        this.combineEnableBtn.setHalfSize( true );
-        this.buttonList.add( this.combineEnableBtn );
+        if (!ModAndClassUtil.NEE) {
+            this.combineEnableBtn = new GuiFCImgButton( this.guiLeft + 84, this.guiTop + this.ySize - 163, "FORCE_COMBINE", "DO_COMBINE" );
+            this.combineEnableBtn.setHalfSize( true );
+            this.buttonList.add( this.combineEnableBtn );
 
-        this.combineDisableBtn = new GuiFCImgButton( this.guiLeft + 84, this.guiTop + this.ySize - 163, "NOT_COMBINE", "DONT_COMBINE" );
-        this.combineDisableBtn.setHalfSize( true );
-        this.buttonList.add( this.combineDisableBtn );
+            this.combineDisableBtn = new GuiFCImgButton( this.guiLeft + 84, this.guiTop + this.ySize - 163, "NOT_COMBINE", "DONT_COMBINE" );
+            this.combineDisableBtn.setHalfSize( true );
+            this.buttonList.add( this.combineDisableBtn );
+        }
 
         this.fluidEnableBtn = new GuiFCImgButton( this.guiLeft + 74, this.guiTop + this.ySize - 153, "FLUID_FIRST", "FLUID" );
         this.fluidEnableBtn.setHalfSize( true );
@@ -70,7 +73,7 @@ public class GuiFluidPatternTerminal extends GuiPatternTerm {
 
     @Override
     public void drawFG(int offsetX, int offsetY, int mouseX, int mouseY) {
-        if (!this.container.isCraftingMode())
+        if (!this.container.isCraftingMode() && !ModAndClassUtil.NEE)
         {
             if ( this.container.combine )
             {

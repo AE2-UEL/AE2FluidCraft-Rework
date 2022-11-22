@@ -7,6 +7,7 @@ import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.container.ContainerFluidPatternTerminal;
 import com.glodblock.github.common.part.PartFluidPatternTerminal;
 import com.glodblock.github.network.CPacketLoadPattern;
+import com.glodblock.github.util.Ae2Reflect;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
@@ -35,7 +36,7 @@ public class FluidPatternTerminalRecipeTransferHandler implements IRecipeTransfe
     @Override
     public IRecipeTransferError transferRecipe(@Nonnull ContainerFluidPatternTerminal container, @Nonnull IRecipeLayout recipeLayout,
                                                @Nonnull EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
-        if (doTransfer && container.getPart() instanceof PartFluidPatternTerminal) {
+        if (doTransfer && Ae2Reflect.getPart(container) instanceof PartFluidPatternTerminal) {
             boolean craftMode = container.craftingMode;
             try {
                 if (container.isCraftingMode() && !recipeLayout.getRecipeCategory().getUid().equals(VanillaRecipeCategoryUid.CRAFTING)) {
@@ -49,7 +50,7 @@ public class FluidPatternTerminalRecipeTransferHandler implements IRecipeTransfe
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            PartFluidPatternTerminal tile = (PartFluidPatternTerminal)container.getPart();
+            PartFluidPatternTerminal tile = (PartFluidPatternTerminal) Ae2Reflect.getPart(container);
             IAEItemStack[] crafting = new IAEItemStack[tile.getInventoryByName("crafting").getSlots()];
             IAEItemStack[] output = new IAEItemStack[tile.getInventoryByName("output").getSlots()];
             FluidPatternEncoderRecipeTransferHandler.transferRecipeSlots(recipeLayout, crafting, output, craftMode, container.combine, container.fluidFirst, ext);

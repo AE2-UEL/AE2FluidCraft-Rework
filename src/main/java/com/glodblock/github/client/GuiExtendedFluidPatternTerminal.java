@@ -21,6 +21,7 @@ import com.glodblock.github.inventory.slot.SlotSingleItem;
 import com.glodblock.github.network.CPacketFluidPatternTermBtns;
 import com.glodblock.github.network.CPacketInventoryAction;
 import com.glodblock.github.util.Ae2ReflectClient;
+import com.glodblock.github.util.ModAndClassUtil;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;
@@ -51,13 +52,15 @@ public class GuiExtendedFluidPatternTerminal extends GuiExpandedProcessingPatter
     public void initGui() {
         super.initGui();
         craftingStatusBtn = Ae2ReflectClient.getCraftingStatusButton(this);
-        this.combineEnableBtn = new GuiFCImgButton( this.guiLeft + 74, this.guiTop + this.ySize - 153, "FORCE_COMBINE", "DO_COMBINE" );
-        this.combineEnableBtn.setHalfSize( true );
-        this.buttonList.add( this.combineEnableBtn );
+        if (!ModAndClassUtil.NEE) {
+            this.combineEnableBtn = new GuiFCImgButton( this.guiLeft + 74, this.guiTop + this.ySize - 153, "FORCE_COMBINE", "DO_COMBINE" );
+            this.combineEnableBtn.setHalfSize( true );
+            this.buttonList.add( this.combineEnableBtn );
 
-        this.combineDisableBtn = new GuiFCImgButton( this.guiLeft + 74, this.guiTop + this.ySize - 153, "NOT_COMBINE", "DONT_COMBINE" );
-        this.combineDisableBtn.setHalfSize( true );
-        this.buttonList.add( this.combineDisableBtn );
+            this.combineDisableBtn = new GuiFCImgButton( this.guiLeft + 74, this.guiTop + this.ySize - 153, "NOT_COMBINE", "DONT_COMBINE" );
+            this.combineDisableBtn.setHalfSize( true );
+            this.buttonList.add( this.combineDisableBtn );
+        }
 
         this.fluidEnableBtn = new GuiFCImgButton( this.guiLeft + 74, this.guiTop + this.ySize - 143, "FLUID_FIRST", "FLUID" );
         this.fluidEnableBtn.setHalfSize( true );
@@ -89,16 +92,23 @@ public class GuiExtendedFluidPatternTerminal extends GuiExpandedProcessingPatter
 
     @Override
     public void drawFG(int offsetX, int offsetY, int mouseX, int mouseY) {
-        if ( this.container.combine )
-        {
-            this.combineEnableBtn.visible = true;
+        if (!ModAndClassUtil.NEE) {
+            if ( this.container.combine )
+            {
+                this.combineEnableBtn.visible = true;
+                this.combineDisableBtn.visible = false;
+            }
+            else
+            {
+                this.combineEnableBtn.visible = false;
+                this.combineDisableBtn.visible = true;
+            }
+        }
+        else {
+            this.combineEnableBtn.visible = false;
             this.combineDisableBtn.visible = false;
         }
-        else
-        {
-            this.combineEnableBtn.visible = false;
-            this.combineDisableBtn.visible = true;
-        }
+
         if (this.container.fluidFirst)
         {
             this.fluidEnableBtn.visible = true;

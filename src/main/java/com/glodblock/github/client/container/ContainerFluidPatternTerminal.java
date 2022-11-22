@@ -17,6 +17,7 @@ import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.common.part.PartFluidPatternTerminal;
 import com.glodblock.github.interfaces.PatternConsumer;
 import com.glodblock.github.loader.FCItems;
+import com.glodblock.github.util.Ae2Reflect;
 import com.glodblock.github.util.FluidPatternDetails;
 import com.glodblock.github.util.Util;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -145,8 +146,8 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
 
     @Override
     public void acceptPattern(IAEItemStack[] inputs, IAEItemStack[] outputs) {
-        if (getPart() instanceof PartFluidPatternTerminal) {
-            ((PartFluidPatternTerminal) getPart()).onChangeCrafting(inputs, outputs);
+        if (Ae2Reflect.getPart(this) instanceof PartFluidPatternTerminal) {
+            ((PartFluidPatternTerminal) Ae2Reflect.getPart(this)).onChangeCrafting(inputs, outputs);
         }
     }
 
@@ -438,8 +439,8 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
         if (Platform.isServer()) {
-            this.combine = ((PartFluidPatternTerminal) this.getPart()).getCombineMode();
-            this.fluidFirst = ((PartFluidPatternTerminal) this.getPart()).getFluidPlaceMode();
+            this.combine = ((PartFluidPatternTerminal) Ae2Reflect.getPart(this)).getCombineMode();
+            this.fluidFirst = ((PartFluidPatternTerminal) Ae2Reflect.getPart(this)).getFluidPlaceMode();
         }
     }
 

@@ -6,6 +6,7 @@ import com.glodblock.github.client.container.ContainerItemDualInterface;
 import com.glodblock.github.client.container.ContainerWrapInterface;
 import com.glodblock.github.common.part.PartExtendedFluidPatternTerminal;
 import com.glodblock.github.common.part.PartFluidPatternTerminal;
+import com.glodblock.github.util.Ae2Reflect;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
@@ -68,20 +69,20 @@ public class CPacketFluidPatternTermBtns implements IMessage {
                     final ContainerFluidPatternTerminal cpt = (ContainerFluidPatternTerminal) c;
                     switch (Name) {
                         case "PatternTerminal.Combine":
-                            ((PartFluidPatternTerminal) cpt.getPart()).setCombineMode(Value.equals("1"));
+                            ((PartFluidPatternTerminal) Ae2Reflect.getPart(cpt)).setCombineMode(Value.equals("1"));
                             break;
                         case "PatternTerminal.Fluid":
-                            ((PartFluidPatternTerminal) cpt.getPart()).setFluidPlaceMode(Value.equals("1"));
+                            ((PartFluidPatternTerminal) Ae2Reflect.getPart(cpt)).setFluidPlaceMode(Value.equals("1"));
                             break;
                     }
                 } else if (c instanceof ContainerExtendedFluidPatternTerminal) {
                     final ContainerExtendedFluidPatternTerminal cpt = (ContainerExtendedFluidPatternTerminal) c;
                     switch (Name) {
                         case "PatternTerminal.Combine":
-                            ((PartExtendedFluidPatternTerminal) cpt.getPart()).setCombineMode(Value.equals("1"));
+                            ((PartExtendedFluidPatternTerminal) Ae2Reflect.getPart(cpt)).setCombineMode(Value.equals("1"));
                             break;
                         case "PatternTerminal.Fluid":
-                            ((PartExtendedFluidPatternTerminal) cpt.getPart()).setFluidPlaceMode(Value.equals("1"));
+                            ((PartExtendedFluidPatternTerminal) Ae2Reflect.getPart(cpt)).setFluidPlaceMode(Value.equals("1"));
                             break;
                     }
                 } else if (c instanceof ContainerItemDualInterface) {

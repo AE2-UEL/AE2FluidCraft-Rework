@@ -4,25 +4,17 @@ import appeng.api.definitions.IItemDefinition;
 import appeng.api.networking.IGrid;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.storage.data.IAEItemStack;
-import appeng.container.implementations.ContainerExpandedProcessingPatternTerm;
 import appeng.container.implementations.ContainerPatternEncoder;
-import appeng.container.implementations.ContainerPatternTerm;
-import appeng.container.slot.OptionalSlotFake;
-import appeng.container.slot.SlotFakeCraftingMatrix;
-import appeng.container.slot.SlotRestrictedInput;
 import appeng.crafting.MECraftingInventory;
 import appeng.fluids.helper.DualityFluidInterface;
 import appeng.helpers.DualityInterface;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.me.helpers.AENetworkProxy;
 import appeng.parts.reporting.AbstractPartEncoder;
-import appeng.parts.reporting.PartExpandedProcessingPatternTerminal;
-import appeng.parts.reporting.PartPatternTerminal;
 import appeng.recipes.game.DisassembleRecipe;
 import appeng.tile.inventory.AppEngInternalInventory;
 import appeng.util.inv.ItemSlot;
 import appeng.util.inv.filter.IAEItemFilter;
-import com.glodblock.github.inventory.ExAppEngInternalInventory;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
 
@@ -37,6 +29,7 @@ public class Ae2Reflect {
     private static final Method mCPU_getGrid;
     private static final Method mCPU_postChange;
     private static final Method mCPU_markDirty;
+    private static final Method mContain_getPart;
     private static final Field fDisassembleRecipe_nonCellMappings;
     private static final Field fInventory_container;
     private static final Field fCPU_inventory;
@@ -53,6 +46,7 @@ public class Ae2Reflect {
             mCPU_getGrid = reflectMethod(CraftingCPUCluster.class, "getGrid");
             mCPU_postChange = reflectMethod(CraftingCPUCluster.class, "postChange", IAEItemStack.class, IActionSource.class);
             mCPU_markDirty = reflectMethod(CraftingCPUCluster.class, "markDirty");
+            mContain_getPart = reflectMethod(ContainerPatternEncoder.class, new String[]{"getPatternTerminal", "getPart"});
             fInventory_container = reflectField(InventoryCrafting.class, "eventHandler", "field_70465_c", "c");
             fDisassembleRecipe_nonCellMappings = reflectField(DisassembleRecipe.class, "nonCellMappings");
             fCPU_inventory = Ae2Reflect.reflectField(CraftingCPUCluster.class, "inventory");
@@ -68,11 +62,26 @@ public class Ae2Reflect {
     }
 
     public static Method reflectMethod(Class<?> owner, String name, Class<?>... paramTypes) throws NoSuchMethodException {
-        Method m = owner.getDeclaredMethod(name, paramTypes);
+        return reflectMethod(owner, new String[]{name}, paramTypes);
+    }
+
+    @SuppressWarnings("all")
+    public static Method reflectMethod(Class<?> owner, String[] names, Class<?>... paramTypes) throws NoSuchMethodException {
+        Method m = null;
+        for (String name : names) {
+            try {
+                m = owner.getDeclaredMethod(name, paramTypes);
+                if (m != null) break;
+            }
+            catch (NoSuchMethodException ignore) {
+            }
+        }
+        if (m == null) throw new NoSuchMethodException("Can't find field from " + Arrays.toString(names));
         m.setAccessible(true);
         return m;
     }
 
+    @SuppressWarnings("all")
     public static Field reflectField(Class<?> owner, String ...names) throws NoSuchFieldException {
         Field f = null;
         for (String name : names) {
@@ -143,6 +152,14 @@ public class Ae2Reflect {
 
     public static boolean getCPUComplete(CraftingCPUCluster cpu) {
         return Ae2Reflect.readField(cpu, fCPU_isComplete);
+    }
+
+    public static AbstractPartEncoder getPart(ContainerPatternEncoder owner) {
+        try {
+            return (AbstractPartEncoder) mContain_getPart.invoke(owner);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to invoke method: " + mContain_getPart, e);
+        }
     }
 
     public static void postCPUChange(CraftingCPUCluster cpu, IAEItemStack stack, IActionSource src) {

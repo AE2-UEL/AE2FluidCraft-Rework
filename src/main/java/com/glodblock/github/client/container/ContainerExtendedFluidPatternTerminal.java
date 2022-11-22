@@ -439,8 +439,8 @@ public class ContainerExtendedFluidPatternTerminal extends ContainerExpandedProc
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
         if (Platform.isServer()) {
-            this.combine = ((PartExtendedFluidPatternTerminal) this.getPart()).getCombineMode();
-            this.fluidFirst = ((PartExtendedFluidPatternTerminal) this.getPart()).getFluidPlaceMode();
+            this.combine = ((PartExtendedFluidPatternTerminal) Ae2Reflect.getPart(this)).getCombineMode();
+            this.fluidFirst = ((PartExtendedFluidPatternTerminal) Ae2Reflect.getPart(this)).getFluidPlaceMode();
         }
     }
 
