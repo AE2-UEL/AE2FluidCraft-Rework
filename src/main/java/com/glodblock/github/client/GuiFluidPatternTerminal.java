@@ -86,7 +86,7 @@ public class GuiFluidPatternTerminal extends GuiPatternTerm {
                 this.combineDisableBtn.visible = true;
             }
         }
-        else
+        else if (!ModAndClassUtil.NEE)
         {
             this.combineEnableBtn.visible = false;
             this.combineDisableBtn.visible = false;

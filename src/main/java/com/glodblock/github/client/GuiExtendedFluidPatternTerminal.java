@@ -104,10 +104,6 @@ public class GuiExtendedFluidPatternTerminal extends GuiExpandedProcessingPatter
                 this.combineDisableBtn.visible = true;
             }
         }
-        else {
-            this.combineEnableBtn.visible = false;
-            this.combineDisableBtn.visible = false;
-        }
 
         if (this.container.fluidFirst)
         {
