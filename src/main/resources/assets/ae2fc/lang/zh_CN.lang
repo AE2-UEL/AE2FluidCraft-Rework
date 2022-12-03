@@ -31,10 +31,15 @@ tile.oc_pattern_editor.name=OC样板编辑器
 
 ae2fc.tooltip.invalid_fluid=流体无效！
 ae2fc.tooltip.encode_pattern=编写样板
+ae2fc.tooltip.filter=过滤器
 ae2fc.tooltip.fluid_packet=使用ME流体封包解码器\n来将其转换回流体形式。
 ae2fc.tooltip.empty=空
 ae2fc.tooltip.dump_tank=排空该流体槽
 ae2fc.tooltip.switch_fluid_interface=切换ME二合一接口GUI
+ae2fc.tooltip.not_combine=合并相同物品
+ae2fc.tooltip.not_combine.hint=禁用
+ae2fc.tooltip.combine=合并相同物品
+ae2fc.tooltip.combine.hint=启用
 
 ae2fc.gui.part_fluid_pattern_terminal=ME流体样板终端
 ae2fc.gui.part_fluid_pattern_terminal_ex=ME增广流体样板终端
@@ -50,3 +55,8 @@ ae2fc.gui.fluid_interface.3=南
 ae2fc.gui.fluid_interface.4=西
 ae2fc.gui.fluid_interface.5=东
 ae2fc.gui.oc_pattern_editor=OC样板编辑器
+ae2fc.gui.set=设置
+ae2fc.gui.part_fluid_import=ME流体输入总线
+ae2fc.gui.part_fluid_export=ME流体输出总线
+
+itemGroup.ae2fc=AE2流体合成套件
