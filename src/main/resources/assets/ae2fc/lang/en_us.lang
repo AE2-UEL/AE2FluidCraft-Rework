@@ -9,6 +9,7 @@ tile.ae2fc:burette.name=Precision Burette
 tile.ae2fc:dual_interface.name=ME Dual Interface
 tile.ae2fc:part_dual_interface.name=ME Dual Interface
 tile.ae2fc:fluid_level_maintainer.name=ME Fluid Level Maintainer
+tile.ae2fc:fluid_assembler.name=ME Fluid Assembler
 
 item.ae2fc:fluid_drop.name=Drop of %s
 item.ae2fc:fluid_packet.name=Fluid Packet

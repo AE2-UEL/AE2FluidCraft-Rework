@@ -51,6 +51,7 @@ public class CommonProxy {
         GameRegistry.registerTileEntity(TileBurette.class, FluidCraft.resource(NameConst.BLOCK_BURETTE));
         GameRegistry.registerTileEntity(TileDualInterface.class, FluidCraft.resource(NameConst.BLOCK_DUAL_INTERFACE));
         GameRegistry.registerTileEntity(TileFluidLevelMaintainer.class, FluidCraft.resource(NameConst.BLOCK_FLUID_LEVEL_MAINTAINER));
+        GameRegistry.registerTileEntity(TileFluidAssembler.class, FluidCraft.resource(NameConst.BLOCK_FLUID_ASSEMBLER));
         (new ChannelLoader()).run();
         if (ModAndClassUtil.AUTO_P) {
             initPackagedAutoIntegration();

@@ -3,6 +3,7 @@ package com.glodblock.github.util;
 import appeng.api.networking.crafting.ICraftingPatternDetails;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.container.ContainerNull;
+import appeng.helpers.PatternHelper;
 import appeng.util.item.AEItemStack;
 import com.glodblock.github.common.item.ItemFluidDrop;
 import net.minecraft.inventory.InventoryCrafting;
@@ -22,12 +23,23 @@ public class FluidCraftingPatternDetails implements ICraftingPatternDetails, Com
     private final IAEItemStack[] remainingInputs = new IAEItemStack[9];
     private final IAEItemStack[] containerOutputs = new IAEItemStack[1];
     private final IAEItemStack[] fluidInputs = new IAEItemStack[9];
-    private final InventoryCrafting crafting = new InventoryCrafting(new ContainerNull(), 3, 3);
-    private final IRecipe standardRecipe;
     private final ItemStack pattern;
     private final boolean canSubstitute;
     private final boolean isNecessary;
     private int priority = 0;
+
+    public static FluidCraftingPatternDetails GetFluidPattern(ItemStack pattern, World w) {
+        try {
+            new PatternHelper(pattern, w);
+        } catch (Throwable t) {
+            return null;
+        }
+        try {
+            return new FluidCraftingPatternDetails(pattern, w);
+        } catch (Throwable t) {
+            return null;
+        }
+    }
 
     public FluidCraftingPatternDetails(ItemStack pattern, World w) {
         NBTTagCompound encodedValue = pattern.getTagCompound();
@@ -35,23 +47,27 @@ public class FluidCraftingPatternDetails implements ICraftingPatternDetails, Com
         if (encodedValue == null) {
             throw new IllegalArgumentException("No pattern here!");
         } else {
+            if (!encodedValue.getBoolean("crafting")) {
+                throw new IllegalArgumentException("Not Crafting pattern!");
+            }
             NBTTagList inTag = encodedValue.getTagList("in", 10);
             this.canSubstitute = encodedValue.getBoolean("substitute");
+            InventoryCrafting crafting = new InventoryCrafting(new ContainerNull(), 3, 3);
             for(int x = 0; x < inTag.tagCount(); x++) {
                 NBTTagCompound resultItemTag = inTag.getCompoundTagAt(x);
                 ItemStack gs = new ItemStack(resultItemTag);
                 if (resultItemTag.hasKey("stackSize")) {
                     gs.setCount(resultItemTag.getInteger("stackSize"));
                 }
-                this.crafting.setInventorySlotContents(x, gs);
+                crafting.setInventorySlotContents(x, gs);
                 this.containerInputs[x] = AEItemStack.fromItemStack(gs);
             }
-            this.standardRecipe = CraftingManager.findMatchingRecipe(this.crafting, w);
-            if (this.standardRecipe == null) {
+            IRecipe standardRecipe = CraftingManager.findMatchingRecipe(crafting, w);
+            if (standardRecipe == null) {
                 throw new IllegalStateException("No pattern here!");
             }
-            ItemStack outputItem = this.standardRecipe.getCraftingResult(this.crafting);
-            List<ItemStack> remain = this.standardRecipe.getRemainingItems(this.crafting);
+            ItemStack outputItem = standardRecipe.getCraftingResult(crafting);
+            List<ItemStack> remain = standardRecipe.getRemainingItems(crafting);
             for (int x = 0; x < remain.size(); x++) {
                 this.remainingInputs[x] = AEItemStack.fromItemStack(remain.get(x));
             }
@@ -92,10 +108,6 @@ public class FluidCraftingPatternDetails implements ICraftingPatternDetails, Com
         return this.fluidInputs;
     }
 
-    public IAEItemStack[] getContainerInputs() {
-        return this.containerInputs;
-    }
-
     @Override
     public IAEItemStack[] getCondensedInputs() {
         return FluidPatternDetails.condenseStacks(this.fluidInputs);
@@ -109,6 +121,10 @@ public class FluidCraftingPatternDetails implements ICraftingPatternDetails, Com
     @Override
     public IAEItemStack[] getOutputs() {
         return this.containerOutputs;
+    }
+
+    public IAEItemStack[] getOriginInputs() {
+        return this.containerInputs;
     }
 
     @Override

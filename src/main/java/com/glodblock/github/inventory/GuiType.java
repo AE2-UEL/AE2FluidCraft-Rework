@@ -26,10 +26,23 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
 public enum GuiType {
+
+    FLUID_ASSEMBLER(new TileGuiFactory<TileFluidAssembler>(TileFluidAssembler.class) {
+        @Override
+        protected Object createServerGui(EntityPlayer player, TileFluidAssembler inv) {
+            return new ContainerFluidAssembler(player.inventory, inv);
+        }
+
+        @Override
+        protected Object createClientGui(EntityPlayer player, TileFluidAssembler inv) {
+            return new GuiFluidAssembler(player.inventory, inv);
+        }
+    }),
 
     ITEM_AMOUNT_SET(new PartOrTileGuiFactory<ITerminalHost>(ITerminalHost.class) {
         @Override

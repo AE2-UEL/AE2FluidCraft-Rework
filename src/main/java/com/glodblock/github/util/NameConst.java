@@ -13,6 +13,7 @@ public final class NameConst {
     public static final String BLOCK_BURETTE = "burette";
     public static final String BLOCK_DUAL_INTERFACE = "dual_interface";
     public static final String BLOCK_FLUID_LEVEL_MAINTAINER = "fluid_level_maintainer";
+    public static final String BLOCK_FLUID_ASSEMBLER = "fluid_assembler";
 
     public static final String ITEM_FLUID_DROP = "fluid_drop";
     public static final String ITEM_FLUID_PACKET = "fluid_packet";
