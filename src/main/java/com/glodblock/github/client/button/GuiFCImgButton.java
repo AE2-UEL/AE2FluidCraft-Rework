@@ -42,6 +42,7 @@ public class GuiFCImgButton extends GuiButton implements ITooltip {
             this.registerApp( 3, "SEND_PACKET", "FLUID_PACKET", "fake_packet" );
             this.registerApp( 4, "FLUID_FIRST", "FLUID", "fluid_first" );
             this.registerApp( 5, "ORIGIN_ORDER", "ITEM", "origin_order" );
+            this.registerApp( 6, "CRAFT_FLUID", "ENCODE", "craft_fluid" );
         }
     }
 

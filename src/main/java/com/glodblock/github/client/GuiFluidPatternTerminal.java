@@ -3,6 +3,7 @@ package com.glodblock.github.client;
 import appeng.api.storage.ITerminalHost;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.client.gui.implementations.GuiPatternTerm;
+import appeng.client.gui.widgets.GuiImgButton;
 import appeng.client.gui.widgets.GuiTabButton;
 import appeng.client.render.StackSizeRenderer;
 import appeng.container.AEBaseContainer;
@@ -35,6 +36,7 @@ public class GuiFluidPatternTerminal extends GuiPatternTerm {
     private final StackSizeRenderer stackSizeRenderer = Ae2ReflectClient.getStackSizeRenderer(this);
     private final ContainerFluidPatternTerminal container;
     private GuiTabButton craftingStatusBtn;
+    private GuiFCImgButton craftingFluidBtn;
     private GuiFCImgButton combineEnableBtn;
     private GuiFCImgButton combineDisableBtn;
     private GuiFCImgButton fluidEnableBtn;
@@ -69,6 +71,9 @@ public class GuiFluidPatternTerminal extends GuiPatternTerm {
         this.fluidDisableBtn = new GuiFCImgButton( this.guiLeft + 74, this.guiTop + this.ySize - 153, "ORIGIN_ORDER", "ITEM" );
         this.fluidDisableBtn.setHalfSize( true );
         this.buttonList.add( this.fluidDisableBtn );
+
+        this.craftingFluidBtn = new GuiFCImgButton(this.guiLeft + 110, this.guiTop + 134, "CRAFT_FLUID", "ENCODE");
+        this.buttonList.add( this.craftingFluidBtn );
     }
 
     @Override
@@ -101,6 +106,7 @@ public class GuiFluidPatternTerminal extends GuiPatternTerm {
             this.fluidEnableBtn.visible = false;
             this.fluidDisableBtn.visible = true;
         }
+        this.craftingFluidBtn.visible = this.container.craftingMode;
         super.drawFG(offsetX, offsetY, mouseX, mouseY);
     }
 
@@ -131,6 +137,8 @@ public class GuiFluidPatternTerminal extends GuiPatternTerm {
             FluidCraft.proxy.netHandler.sendToServer(new CPacketFluidPatternTermBtns( "PatternTerminal.Combine", this.combineDisableBtn == btn ? "1" : "0" ));
         } else if (this.fluidDisableBtn == btn || this.fluidEnableBtn == btn) {
             FluidCraft.proxy.netHandler.sendToServer(new CPacketFluidPatternTermBtns( "PatternTerminal.Fluid", this.fluidDisableBtn == btn ? "1" : "0" ));
+        } else if (this.craftingFluidBtn == btn) {
+            FluidCraft.proxy.netHandler.sendToServer(new CPacketFluidPatternTermBtns( "PatternTerminal.Craft", "0" ));
         } else {
             super.actionPerformed(btn);
         }

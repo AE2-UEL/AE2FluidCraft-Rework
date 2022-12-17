@@ -6,8 +6,12 @@ import appeng.container.guisync.GuiSync;
 import appeng.container.interfaces.IProgressProvider;
 import appeng.container.slot.*;
 import appeng.util.Platform;
+import com.glodblock.github.common.item.ItemFluidCraftEncodedPattern;
 import com.glodblock.github.common.tile.TileFluidAssembler;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.IItemHandler;
 
 public class ContainerFluidAssembler extends AEBaseContainer implements IOptionalSlotHost, IProgressProvider {
 
@@ -22,9 +26,8 @@ public class ContainerFluidAssembler extends AEBaseContainer implements IOptiona
         this.tile = tile;
         for (int row = 0; row < 4; ++row) {
             for (int x = 0; x < 9; x++) {
-                this.addSlotToContainer(new OptionalSlotRestrictedInput(SlotRestrictedInput.PlacableItemType.ENCODED_PATTERN,
-                        tile.invPatterns, this, x + row * 9, 8 + 18 * x, 83 + 18 * row, row,
-                        this.getInventoryPlayer()).setStackLimit(1));
+                this.addSlotToContainer(new CraftPattern(tile.invPatterns, this, x + row * 9,
+                        8 + 18 * x, 83 + 18 * row, row, this.getInventoryPlayer()).setStackLimit(1));
             }
         }
         for (int i = 0; i < 3; i ++) {
@@ -71,6 +74,27 @@ public class ContainerFluidAssembler extends AEBaseContainer implements IOptiona
     @Override
     public int getMaxProgress() {
         return TileFluidAssembler.TIME;
+    }
+
+    static class CraftPattern extends OptionalSlotRestrictedInput {
+
+        public CraftPattern(IItemHandler i, IOptionalSlotHost host, int slotIndex, int x, int y, int grpNum, InventoryPlayer invPlayer) {
+            super(SlotRestrictedInput.PlacableItemType.ENCODED_PATTERN, i, host, slotIndex, x, y, grpNum, invPlayer);
+        }
+
+        @Override
+        public boolean isItemValid(ItemStack i) {
+            if (!this.getContainer().isValidForSlot(this, i)) {
+                return false;
+            } else if (i.isEmpty()) {
+                return false;
+            } else if (i.getItem() == Items.AIR) {
+                return false;
+            } else if (!super.isItemValid(i)) {
+                return false;
+            }
+            return i.getItem() instanceof ItemFluidCraftEncodedPattern;
+        }
     }
 }
 

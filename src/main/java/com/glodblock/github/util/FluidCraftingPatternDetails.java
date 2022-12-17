@@ -3,7 +3,6 @@ package com.glodblock.github.util;
 import appeng.api.networking.crafting.ICraftingPatternDetails;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.container.ContainerNull;
-import appeng.helpers.PatternHelper;
 import appeng.util.item.AEItemStack;
 import com.glodblock.github.common.item.ItemFluidDrop;
 import net.minecraft.inventory.InventoryCrafting;
@@ -23,17 +22,13 @@ public class FluidCraftingPatternDetails implements ICraftingPatternDetails, Com
     private final IAEItemStack[] remainingInputs = new IAEItemStack[9];
     private final IAEItemStack[] containerOutputs = new IAEItemStack[1];
     private final IAEItemStack[] fluidInputs = new IAEItemStack[9];
-    private final ItemStack pattern;
+    private final IAEItemStack pattern;
+    private final ItemStack patternItem;
     private final boolean canSubstitute;
     private final boolean isNecessary;
     private int priority = 0;
 
     public static FluidCraftingPatternDetails GetFluidPattern(ItemStack pattern, World w) {
-        try {
-            new PatternHelper(pattern, w);
-        } catch (Throwable t) {
-            return null;
-        }
         try {
             return new FluidCraftingPatternDetails(pattern, w);
         } catch (Throwable t) {
@@ -43,7 +38,8 @@ public class FluidCraftingPatternDetails implements ICraftingPatternDetails, Com
 
     public FluidCraftingPatternDetails(ItemStack pattern, World w) {
         NBTTagCompound encodedValue = pattern.getTagCompound();
-        this.pattern = pattern;
+        this.pattern = AEItemStack.fromItemStack(pattern);
+        this.patternItem = pattern;
         if (encodedValue == null) {
             throw new IllegalArgumentException("No pattern here!");
         } else {
@@ -90,7 +86,7 @@ public class FluidCraftingPatternDetails implements ICraftingPatternDetails, Com
 
     @Override
     public ItemStack getPattern() {
-        return this.pattern;
+        return this.patternItem;
     }
 
     @Override
@@ -154,5 +150,15 @@ public class FluidCraftingPatternDetails implements ICraftingPatternDetails, Com
 
     public boolean isNecessary() {
         return this.isNecessary;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof FluidCraftingPatternDetails && this.pattern.equals(((FluidCraftingPatternDetails)obj).pattern);
+    }
+
+    @Override
+    public int hashCode() {
+        return pattern.hashCode();
     }
 }
