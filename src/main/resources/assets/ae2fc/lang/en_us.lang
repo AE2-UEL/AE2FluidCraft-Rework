@@ -52,6 +52,8 @@ ae2fc.tooltip.fluid_first=Place Fluid First In Pattern
 ae2fc.tooltip.fluid_first.hint=Enable
 ae2fc.tooltip.origin_order=Place Fluid First In Pattern
 ae2fc.tooltip.origin_order.hint=Disabled
+ae2fc.tooltip.craft_fluid=Encode
+ae2fc.tooltip.craft_fluid.hint=Fluid assembler pattern
 
 ae2fc.pauto.fluid_processing.name=Fluid Processing
 ae2fc.pauto.fluid_processing.name_short=Fluid

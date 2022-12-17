@@ -31,6 +31,7 @@ import appeng.tile.inventory.AppEngInternalInventory;
 import appeng.util.Platform;
 import appeng.util.inv.InvOperation;
 import appeng.util.item.AEItemStack;
+import com.glodblock.github.common.item.ItemFluidCraftEncodedPattern;
 import com.glodblock.github.util.FluidCraftingPatternDetails;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.inventory.InventoryCrafting;
@@ -84,8 +85,8 @@ public class TileFluidAssembler extends AENetworkInvTile implements ICraftingPro
             return;
         }
 
-        if (is.getItem() instanceof ICraftingPatternItem) {
-            final FluidCraftingPatternDetails details = FluidCraftingPatternDetails.GetFluidPattern(is, this.getWorld());
+        if (is.getItem() instanceof ItemFluidCraftEncodedPattern) {
+            final ICraftingPatternDetails details = ((ItemFluidCraftEncodedPattern) is.getItem()).getPatternForItem(is, this.getWorld());
 
             if (details != null) {
                 if (this.craftingList == null) {
@@ -242,19 +243,11 @@ public class TileFluidAssembler extends AENetworkInvTile implements ICraftingPro
 
     @Override
     public boolean pushPattern(ICraftingPatternDetails patternDetails, InventoryCrafting inventoryCrafting) {
-        if (!this.getProxy().isActive() || this.myPlan != null) {
+        if (!this.getProxy().isActive() || this.myPlan != null
+                || !this.craftingList.contains(patternDetails) || !(patternDetails instanceof FluidCraftingPatternDetails)) {
             return false;
         }
-        FluidCraftingPatternDetails fluidPattern;
-        if (!(patternDetails instanceof FluidCraftingPatternDetails)) {
-            ItemStack pattern = patternDetails.getPattern();
-            fluidPattern = FluidCraftingPatternDetails.GetFluidPattern(pattern, getWorld());
-        } else {
-            fluidPattern = (FluidCraftingPatternDetails) patternDetails;
-        }
-        if (fluidPattern == null || !this.craftingList.contains(fluidPattern)) {
-            return false;
-        }
+        FluidCraftingPatternDetails fluidPattern = (FluidCraftingPatternDetails) patternDetails;
         this.myPlan = patternDetails;
         for (int x = 0; x < 9; x ++) {
             IAEItemStack item = fluidPattern.getOriginInputs()[x];

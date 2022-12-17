@@ -18,6 +18,7 @@ public final class NameConst {
     public static final String ITEM_FLUID_DROP = "fluid_drop";
     public static final String ITEM_FLUID_PACKET = "fluid_packet";
     public static final String ITEM_DENSE_ENCODED_PATTERN = "dense_encoded_pattern";
+    public static final String ITEM_DENSE_CRAFT_ENCODED_PATTERN = "dense_craft_encoded_pattern";
     public static final String ITEM_PART_DUAL_INTERFACE = "part_dual_interface";
     public static final String ITEM_PART_FLUID_PATTERN_TERMINAL = "part_fluid_pattern_terminal";
     public static final String ITEM_PART_EXTENDED_FLUID_PATTERN_TERMINAL = "part_fluid_pattern_ex_terminal";
@@ -48,6 +49,7 @@ public final class NameConst {
     public static final String MISC_REQ = MISC + "request";
 
     public static final ResourceLocation MODEL_DENSE_ENCODED_PATTERN = FluidCraft.resource("builtin/dense_encoded_pattern");
+    public static final ResourceLocation MODEL_DENSE_CRAFT_ENCODED_PATTERN = FluidCraft.resource("builtin/dense_craft_encoded_pattern");
     public static final ResourceLocation MODEL_FLUID_PACKET = FluidCraft.resource("builtin/fluid_packet");
 
 }

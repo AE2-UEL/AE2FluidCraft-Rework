@@ -11,6 +11,7 @@ import appeng.container.slot.SlotPatternOutputs;
 import appeng.helpers.InventoryAction;
 import appeng.util.Platform;
 import appeng.util.item.AEItemStack;
+import com.glodblock.github.common.item.ItemFluidCraftEncodedPattern;
 import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidEncodedPattern;
 import com.glodblock.github.common.item.ItemFluidPacket;
@@ -24,6 +25,9 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -31,6 +35,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class ContainerFluidPatternTerminal extends ContainerPatternTerm implements PatternConsumer {
     @GuiSync(105)
@@ -65,11 +70,60 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
         }
     }
 
+    public void encodeFluidCraftPattern() {
+        ItemStack output = this.patternSlotOUT.getStack();
+
+        final ItemStack[] in = this.getInputs();
+        final ItemStack[] out = this.getOutputs();
+        if (in == null || out == null) {
+            return;
+        }
+
+        if (!output.isEmpty() && !isPattern(output)) {
+            return;
+        }
+        else if (output.isEmpty()) {
+            output = this.patternSlotIN.getStack();
+            if (output.isEmpty() || !isPattern(output)) {
+                return;
+            }
+            output.setCount(output.getCount() - 1);
+            if (output.getCount() == 0) {
+                this.patternSlotIN.putStack(ItemStack.EMPTY);
+            }
+            Optional<ItemStack> maybePattern = AEApi.instance().definitions().items().encodedPattern().maybeStack(1);
+            if (maybePattern.isPresent()) {
+                output = maybePattern.get();
+                this.patternSlotOUT.putStack(output);
+            }
+        }
+        final NBTTagCompound encodedValue = new NBTTagCompound();
+
+        final NBTTagList tagIn = new NBTTagList();
+        final NBTTagList tagOut = new NBTTagList();
+
+        for (final ItemStack i : in) {
+            tagIn.appendTag(this.createItemTag(i));
+        }
+
+        for (final ItemStack i : out) {
+            tagOut.appendTag(this.createItemTag(i));
+        }
+
+        encodedValue.setTag("in", tagIn);
+        encodedValue.setTag("out", tagOut);
+        encodedValue.setBoolean("crafting", this.isCraftingMode());
+        encodedValue.setBoolean("substitute", this.substitute);
+        ItemStack patternStack = new ItemStack(FCItems.DENSE_CRAFT_ENCODED_PATTERN);
+        patternStack.setTagCompound(encodedValue);
+        patternSlotOUT.putStack(patternStack);
+    }
+
     private static boolean isPattern(final ItemStack output) {
         if (output.isEmpty()) {
             return false;
         }
-        if (output.getItem() instanceof ItemFluidEncodedPattern) {
+        if (output.getItem() instanceof ItemFluidEncodedPattern || output.getItem() instanceof ItemFluidCraftEncodedPattern) {
             return true;
         }
         final IDefinitions defs = AEApi.instance().definitions();
@@ -442,6 +496,17 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
             this.combine = ((PartFluidPatternTerminal) Ae2Reflect.getPart(this)).getCombineMode();
             this.fluidFirst = ((PartFluidPatternTerminal) Ae2Reflect.getPart(this)).getFluidPlaceMode();
         }
+    }
+
+    NBTBase createItemTag(ItemStack i) {
+        NBTTagCompound c = new NBTTagCompound();
+        if (!i.isEmpty()) {
+            i.writeToNBT(c);
+            if (i.getCount() > i.getMaxStackSize()) {
+                c.setInteger("stackSize", i.getCount());
+            }
+        }
+        return c;
     }
 
 }

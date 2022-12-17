@@ -74,6 +74,9 @@ public class CPacketFluidPatternTermBtns implements IMessage {
                         case "PatternTerminal.Fluid":
                             ((PartFluidPatternTerminal) Ae2Reflect.getPart(cpt)).setFluidPlaceMode(Value.equals("1"));
                             break;
+                        case "PatternTerminal.Craft":
+                            cpt.encodeFluidCraftPattern();
+                            break;
                     }
                 } else if (c instanceof ContainerExtendedFluidPatternTerminal) {
                     final ContainerExtendedFluidPatternTerminal cpt = (ContainerExtendedFluidPatternTerminal) c;
