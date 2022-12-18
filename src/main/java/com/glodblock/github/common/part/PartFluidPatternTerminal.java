@@ -4,6 +4,7 @@ import appeng.api.networking.crafting.ICraftingPatternDetails;
 import appeng.api.parts.IPartModel;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.core.sync.GuiBridge;
+import appeng.items.misc.ItemEncodedPattern;
 import appeng.items.parts.PartModels;
 import appeng.parts.PartModel;
 import appeng.parts.reporting.PartPatternTerminal;
@@ -11,6 +12,7 @@ import appeng.tile.inventory.AppEngInternalInventory;
 import appeng.util.Platform;
 import appeng.util.inv.InvOperation;
 import com.glodblock.github.FluidCraft;
+import com.glodblock.github.common.item.ItemFluidCraftEncodedPattern;
 import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidEncodedPattern;
 import com.glodblock.github.common.item.ItemFluidPacket;
@@ -18,6 +20,7 @@ import com.glodblock.github.inventory.ExAppEngInternalInventory;
 import com.glodblock.github.inventory.GuiType;
 import com.glodblock.github.inventory.InventoryHandler;
 import com.glodblock.github.util.Ae2Reflect;
+import com.glodblock.github.util.FluidCraftingPatternDetails;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -111,8 +114,8 @@ public class PartFluidPatternTerminal extends PartPatternTerminal {
                                   ItemStack newStack) {
         if (slot == 1) {
             final ItemStack is = inv.getStackInSlot(1);
-            if (!is.isEmpty() && is.getItem() instanceof ItemFluidEncodedPattern) {
-                final ItemFluidEncodedPattern pattern = (ItemFluidEncodedPattern) is.getItem();
+            if (!is.isEmpty() && (is.getItem() instanceof ItemFluidEncodedPattern || is.getItem() instanceof ItemFluidCraftEncodedPattern)) {
+                final ItemEncodedPattern pattern = (ItemEncodedPattern) is.getItem();
                 final ICraftingPatternDetails details = pattern.getPatternForItem( is, this.getHost().getTile().getWorld() );
                 if( details != null )
                 {
@@ -126,25 +129,11 @@ public class PartFluidPatternTerminal extends PartPatternTerminal {
                     for( int x = 0; x < this.getInventoryByName("output").getSlots(); x ++ ) {
                         ((AppEngInternalInventory) this.getInventoryByName("output")).setStackInSlot(x, ItemStack.EMPTY);
                     }
-
-                    for( int x = 0; x < this.getInventoryByName("crafting").getSlots() && x < details.getInputs().length; x++ )
-                    {
-                        final IAEItemStack item = details.getInputs()[x];
-                        if (item != null && item.getItem() instanceof ItemFluidDrop) {
-                            ItemStack packet = ItemFluidPacket.newStack(ItemFluidDrop.getFluidStack(item.createItemStack()));
-                            ((AppEngInternalInventory) this.getInventoryByName("crafting")).setStackInSlot(x, packet);
-                        }
-                        else ((AppEngInternalInventory) this.getInventoryByName("crafting")).setStackInSlot( x, item == null ? ItemStack.EMPTY : item.createItemStack() );
-                    }
-
-                    for( int x = 0; x < this.getInventoryByName("output").getSlots() && x < details.getOutputs().length; x++ )
-                    {
-                        final IAEItemStack item = details.getOutputs()[x];
-                        if (item != null && item.getItem() instanceof ItemFluidDrop) {
-                            ItemStack packet = ItemFluidPacket.newStack(ItemFluidDrop.getFluidStack(item.createItemStack()));
-                            ((AppEngInternalInventory) this.getInventoryByName("output")).setStackInSlot(x, packet);
-                        }
-                        else ((AppEngInternalInventory) this.getInventoryByName("output")).setStackInSlot( x, item == null ? ItemStack.EMPTY : item.createItemStack() );
+                    if (details instanceof FluidCraftingPatternDetails) {
+                        putPattern(((FluidCraftingPatternDetails) details).getOriginInputs(), details.getOutputs());
+                        this.setCraftingRecipe( true );
+                    } else {
+                        putPattern(details.getInputs(), details.getOutputs());
                     }
                 }
                 this.getHost().markForSave();
@@ -152,6 +141,28 @@ public class PartFluidPatternTerminal extends PartPatternTerminal {
             }
         }
         super.onChangeInventory(inv, slot, mc, removedStack, newStack);
+    }
+
+    public void putPattern(IAEItemStack[] inputs, IAEItemStack[] outputs) {
+        for( int x = 0; x < this.getInventoryByName("crafting").getSlots() && x < inputs.length; x++ )
+        {
+            final IAEItemStack item = inputs[x];
+            if (item != null && item.getItem() instanceof ItemFluidDrop) {
+                ItemStack packet = ItemFluidPacket.newStack(ItemFluidDrop.getFluidStack(item.createItemStack()));
+                ((AppEngInternalInventory) this.getInventoryByName("crafting")).setStackInSlot(x, packet);
+            }
+            else ((AppEngInternalInventory) this.getInventoryByName("crafting")).setStackInSlot( x, item == null ? ItemStack.EMPTY : item.createItemStack() );
+        }
+
+        for( int x = 0; x < this.getInventoryByName("output").getSlots() && x < outputs.length; x++ )
+        {
+            final IAEItemStack item = outputs[x];
+            if (item != null && item.getItem() instanceof ItemFluidDrop) {
+                ItemStack packet = ItemFluidPacket.newStack(ItemFluidDrop.getFluidStack(item.createItemStack()));
+                ((AppEngInternalInventory) this.getInventoryByName("output")).setStackInSlot(x, packet);
+            }
+            else ((AppEngInternalInventory) this.getInventoryByName("output")).setStackInSlot( x, item == null ? ItemStack.EMPTY : item.createItemStack() );
+        }
     }
 
     public void onChangeCrafting(IAEItemStack[] newCrafting, IAEItemStack[] newOutput) {

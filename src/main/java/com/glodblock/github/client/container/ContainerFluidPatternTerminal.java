@@ -19,6 +19,7 @@ import com.glodblock.github.common.part.PartFluidPatternTerminal;
 import com.glodblock.github.interfaces.PatternConsumer;
 import com.glodblock.github.loader.FCItems;
 import com.glodblock.github.util.Ae2Reflect;
+import com.glodblock.github.util.FluidCraftingPatternDetails;
 import com.glodblock.github.util.FluidPatternDetails;
 import com.glodblock.github.util.Util;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -116,6 +117,11 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
         encodedValue.setBoolean("substitute", this.substitute);
         ItemStack patternStack = new ItemStack(FCItems.DENSE_CRAFT_ENCODED_PATTERN);
         patternStack.setTagCompound(encodedValue);
+        FluidCraftingPatternDetails details = FluidCraftingPatternDetails.GetFluidPattern(patternStack, getNetworkNode().getWorld());
+        if (details == null || !details.isNecessary()) {
+            encode();
+            return;
+        }
         patternSlotOUT.putStack(patternStack);
     }
 

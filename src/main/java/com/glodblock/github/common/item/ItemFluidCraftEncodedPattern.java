@@ -1,11 +1,9 @@
 package com.glodblock.github.common.item;
 
 import appeng.api.networking.crafting.ICraftingPatternDetails;
-import appeng.helpers.PatternHelper;
 import appeng.items.misc.ItemEncodedPattern;
 import com.glodblock.github.interfaces.HasCustomModel;
 import com.glodblock.github.util.FluidCraftingPatternDetails;
-import com.glodblock.github.util.FluidPatternDetails;
 import com.glodblock.github.util.NameConst;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;

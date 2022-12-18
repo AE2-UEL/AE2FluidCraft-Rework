@@ -5,6 +5,8 @@ import appeng.client.gui.widgets.GuiProgressBar;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.container.ContainerFluidAssembler;
 import com.glodblock.github.common.tile.TileFluidAssembler;
+import com.glodblock.github.util.NameConst;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 
@@ -34,6 +36,7 @@ public class GuiFluidAssembler extends AEBaseGui {
 
     @Override
     public void drawFG(int offsetX, int offsetY, int mouseX, int mouseY) {
+        fontRenderer.drawString(getGuiDisplayName(I18n.format(NameConst.GUI_FLUID_ASSEMBLER)), 8, 6, 0x404040);
         this.pb.setFullMsg((this.container.getCurrentProgress() * 100 / TileFluidAssembler.TIME) + "%");
     }
 

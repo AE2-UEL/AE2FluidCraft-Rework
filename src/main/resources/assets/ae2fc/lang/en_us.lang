@@ -25,6 +25,7 @@ ae2fc.gui.ingredient_buffer=Ingredient Buffer
 ae2fc.gui.large_ingredient_buffer=Large Ingredient Buffer
 ae2fc.gui.burette=Precision Burette
 ae2fc.gui.fluid_level_maintainer=ME Fluid Level Maintainer
+ae2fc.gui.fluid_assembler=ME Fluid Assembler
 ae2fc.gui.item_amount_set=Set Amount
 ae2fc.gui.set=Set
 
@@ -52,8 +53,8 @@ ae2fc.tooltip.fluid_first=Place Fluid First In Pattern
 ae2fc.tooltip.fluid_first.hint=Enable
 ae2fc.tooltip.origin_order=Place Fluid First In Pattern
 ae2fc.tooltip.origin_order.hint=Disabled
-ae2fc.tooltip.craft_fluid=Encode
-ae2fc.tooltip.craft_fluid.hint=Fluid assembler pattern
+ae2fc.tooltip.craft_fluid=Encode Pattern
+ae2fc.tooltip.craft_fluid.hint=Special pattern for ME fluid assembler. You can use fluid directly in crafting recipes instead of buckets.
 
 ae2fc.pauto.fluid_processing.name=Fluid Processing
 ae2fc.pauto.fluid_processing.name_short=Fluid
