@@ -1,0 +1,29 @@
+{
+  "type": "forge:ore_shaped",
+  "result": {
+    "item": "ae2fc:fluid_assembler",
+    "count": 1
+  },
+  "pattern": [
+    "bgb",
+    "pap",
+    "bgb"
+  ],
+  "key": {
+    "b": {
+      "type": "forge:ore_dict",
+      "ore": "ingotIron"
+    },
+    "g": {
+      "type": "forge:ore_dict",
+      "ore": "dyeGreen"
+    },
+    "p": {
+      "type": "appliedenergistics2:part",
+      "part": "material.logic_processor"
+    },
+    "a": {
+      "item": "appliedenergistics2:molecular_assembler"
+    }
+  }
+}
