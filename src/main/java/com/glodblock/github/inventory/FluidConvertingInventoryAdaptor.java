@@ -94,6 +94,17 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
                     fluid = ItemFluidDrop.getFluidStack(toBeAdded);
                 }
 
+                // First try to output to the same side
+                if (invFluids != null) {
+                    if (fluid != null) {
+                        int filled = invFluids.fill(fluid, true);
+                        if (filled > 0) {
+                            fluid.amount -= filled;
+                            return ItemFluidPacket.newStack(fluid);
+                        }
+                    }
+                }
+
                 if (fluid != null && posInterface != null) {
                     for (EnumFacing dir : EnumFacing.values()) {
                         TileEntity te = posInterface.getWorld().getTileEntity(posInterface.getPos().add(dir.getDirectionVec()));
@@ -148,6 +159,17 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
                     fluid = ItemFluidPacket.getFluidStack(toBeSimulated);
                 } else {
                     fluid = ItemFluidDrop.getFluidStack(toBeSimulated);
+                }
+
+                // First try to output to the same side
+                if (invFluids != null) {
+                    if (fluid != null) {
+                        int filled = invFluids.fill(fluid, false);
+                        if (filled > 0) {
+                            fluid.amount -= filled;
+                            return ItemFluidPacket.newStack(fluid);
+                        }
+                    }
                 }
 
                 if (fluid != null && posInterface != null) {
