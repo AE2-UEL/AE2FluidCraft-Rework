@@ -72,7 +72,7 @@ public class GuiFluidPatternTerminal extends GuiPatternTerm {
         this.fluidDisableBtn.setHalfSize( true );
         this.buttonList.add( this.fluidDisableBtn );
 
-        this.craftingFluidBtn = new GuiFCImgButton(this.guiLeft + 110, this.guiTop + 134, "CRAFT_FLUID", "ENCODE");
+        this.craftingFluidBtn = new GuiFCImgButton(this.guiLeft + 110, this.guiTop + this.ySize - 32, "CRAFT_FLUID", "ENCODE");
         this.buttonList.add( this.craftingFluidBtn );
     }
 
