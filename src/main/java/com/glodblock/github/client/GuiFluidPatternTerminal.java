@@ -3,7 +3,6 @@ package com.glodblock.github.client;
 import appeng.api.storage.ITerminalHost;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.client.gui.implementations.GuiPatternTerm;
-import appeng.client.gui.widgets.GuiImgButton;
 import appeng.client.gui.widgets.GuiTabButton;
 import appeng.client.render.StackSizeRenderer;
 import appeng.container.AEBaseContainer;
@@ -16,6 +15,7 @@ import com.glodblock.github.client.button.GuiFCImgButton;
 import com.glodblock.github.client.container.ContainerFluidPatternTerminal;
 import com.glodblock.github.client.render.FluidRenderUtils;
 import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.integration.jei.FluidPacketTarget;
 import com.glodblock.github.inventory.GuiType;
 import com.glodblock.github.inventory.InventoryHandler;
 import com.glodblock.github.inventory.slot.SlotSingleItem;
@@ -23,6 +23,7 @@ import com.glodblock.github.network.CPacketFluidPatternTermBtns;
 import com.glodblock.github.network.CPacketInventoryAction;
 import com.glodblock.github.util.Ae2ReflectClient;
 import com.glodblock.github.util.ModAndClassUtil;
+import mezz.jei.api.gui.IGhostIngredientHandler.Target;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;
@@ -30,6 +31,8 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GuiFluidPatternTerminal extends GuiPatternTerm {
 
@@ -72,7 +75,7 @@ public class GuiFluidPatternTerminal extends GuiPatternTerm {
         this.fluidDisableBtn.setHalfSize( true );
         this.buttonList.add( this.fluidDisableBtn );
 
-        this.craftingFluidBtn = new GuiFCImgButton(this.guiLeft + 110, this.guiTop + this.ySize - 32, "CRAFT_FLUID", "ENCODE");
+        this.craftingFluidBtn = new GuiFCImgButton(this.guiLeft + 110, this.guiTop + this.ySize - 115, "CRAFT_FLUID", "ENCODE");
         this.buttonList.add( this.craftingFluidBtn );
     }
 
@@ -162,6 +165,23 @@ public class GuiFluidPatternTerminal extends GuiPatternTerm {
             }
         }
         super.handleMouseClick(slot, slotIdx, mouseButton, clickType);
+    }
+
+    @Override
+    public List<Target<?>> getPhantomTargets(Object ingredient) {
+        if (!this.container.isCraftingMode() && FluidPacketTarget.covertFluid(ingredient) != null) {
+            List<Target<?>> targets = new ArrayList<>();
+            for (Slot slot : this.inventorySlots.inventorySlots) {
+                if (slot instanceof SlotFake) {
+                    Target<?> target = new FluidPacketTarget(getGuiLeft(), getGuiTop(), slot);
+                    targets.add(target);
+                    mapTargetSlot.putIfAbsent(target, slot);
+                }
+            }
+            return targets;
+        } else {
+            return super.getPhantomTargets(ingredient);
+        }
     }
 
 }
