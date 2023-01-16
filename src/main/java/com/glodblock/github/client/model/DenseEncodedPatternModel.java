@@ -1,18 +1,23 @@
 package com.glodblock.github.client.model;
 
+import appeng.items.misc.ItemEncodedPattern;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.util.Ae2ReflectClient;
 import com.glodblock.github.util.NameConst;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ICustomModelLoader;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.PerspectiveMapWrapper;
 import net.minecraftforge.common.model.IModelState;
+import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -27,6 +32,19 @@ public class DenseEncodedPatternModel implements IModel {
     @Nonnull
     public Collection<ResourceLocation> getDependencies() {
         return Collections.singletonList(BASE_MODEL);
+    }
+
+    public static final IItemColor PATTERN_ITEM_COLOR_HANDLER = (stack, tintIndex) -> {
+        ItemEncodedPattern iep = (ItemEncodedPattern) stack.getItem();
+        ItemStack output = iep.getOutput(stack);
+        if (!output.isEmpty() && isShiftKeyDown()) {
+            return Minecraft.getMinecraft().getItemColors().colorMultiplier(output, tintIndex);
+        }
+        return 0xFFFFFF;
+    };
+
+    private static boolean isShiftKeyDown() {
+        return Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
     }
 
     // adapted from ae2's ItemEncodedPatternModel#bake
