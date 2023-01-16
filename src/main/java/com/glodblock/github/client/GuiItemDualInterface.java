@@ -20,7 +20,6 @@ import java.io.IOException;
 public class GuiItemDualInterface extends GuiInterface {
 
     private final ContainerItemDualInterface container;
-
     private GuiTabButton switchInterface;
     private GuiTabButton priorityBtn;
     private GuiFCImgButton fluidPacketOffBtn;

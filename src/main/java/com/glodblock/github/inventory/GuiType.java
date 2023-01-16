@@ -8,7 +8,6 @@ import appeng.container.AEBaseContainer;
 import appeng.container.ContainerOpenContext;
 import appeng.container.implementations.ContainerCraftingStatus;
 import appeng.container.implementations.ContainerPriority;
-import appeng.fluids.container.ContainerFluidInterface;
 import appeng.fluids.helper.IFluidInterfaceHost;
 import appeng.helpers.IInterfaceHost;
 import appeng.parts.reporting.AbstractPartTerminal;
@@ -26,7 +25,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -155,7 +153,7 @@ public enum GuiType {
     DUAL_FLUID_INTERFACE(new PartOrTileGuiFactory<IFluidInterfaceHost>(IFluidInterfaceHost.class) {
         @Override
         protected Object createServerGui(EntityPlayer player, IFluidInterfaceHost inv) {
-            return new ContainerFluidInterface(player.inventory, inv);
+            return new ContainerFluidDualInterface(player.inventory, inv);
         }
 
         @Override

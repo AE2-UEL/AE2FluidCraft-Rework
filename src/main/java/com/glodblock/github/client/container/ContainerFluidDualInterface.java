@@ -1,42 +1,24 @@
 package com.glodblock.github.client.container;
 
-import appeng.container.guisync.GuiSync;
-import appeng.container.implementations.ContainerInterface;
+import appeng.api.config.Upgrades;
 import appeng.container.slot.SlotRestrictedInput;
-import appeng.helpers.DualityInterface;
-import appeng.helpers.IInterfaceHost;
+import appeng.fluids.container.ContainerFluidInterface;
+import appeng.fluids.helper.DualityFluidInterface;
+import appeng.fluids.helper.IFluidInterfaceHost;
 import appeng.util.Platform;
-import com.glodblock.github.util.Ae2Reflect;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraftforge.items.IItemHandler;
 
-public class ContainerItemDualInterface extends ContainerInterface {
-
-    @GuiSync(95)
-    public boolean fluidPacket = false;
-    private final DualityInterface dualityInterfaceCopy;
-
-    public ContainerItemDualInterface(InventoryPlayer ip, IInterfaceHost te) {
+public class ContainerFluidDualInterface extends ContainerFluidInterface {
+    private final DualityFluidInterface dualityInterfaceCopy;
+    public ContainerFluidDualInterface(InventoryPlayer ip, IFluidInterfaceHost te) {
         super(ip, te);
-        this.dualityInterfaceCopy = te.getInterfaceDuality();
-    }
-
-    @Override
-    public void detectAndSendChanges() {
-        super.detectAndSendChanges();
-        if (Platform.isServer()) {
-            fluidPacket = Ae2Reflect.getFluidPacketMode(dualityInterfaceCopy);
-        }
-    }
-
-    public void setFluidPacketInTile(boolean value) {
-        this.fluidPacket = value;
-        Ae2Reflect.setFluidPacketMode(dualityInterfaceCopy, value);
+        this.dualityInterfaceCopy = te.getDualityFluidInterface();
     }
 
     @Override
     protected void setupUpgrades() {
-        IItemHandler upgrades = this.getUpgradeable().getInventoryByName("item_upgrades");
+        IItemHandler upgrades = this.getUpgradeable().getInventoryByName("fluid_upgrades");
         if (this.availableUpgrades() > 0) {
             this.addSlotToContainer((new SlotRestrictedInput(SlotRestrictedInput.PlacableItemType.UPGRADES, upgrades, 0, 187, 8, this.getInventoryPlayer())).setNotDraggable());
         }
@@ -52,6 +34,17 @@ public class ContainerItemDualInterface extends ContainerInterface {
         if (this.availableUpgrades() > 3) {
             this.addSlotToContainer((new SlotRestrictedInput(SlotRestrictedInput.PlacableItemType.UPGRADES, upgrades, 3, 187, 62, this.getInventoryPlayer())).setNotDraggable());
         }
+    }
+
+    @Override
+    public void detectAndSendChanges() {
+        super.detectAndSendChanges();
+        if (Platform.isServer()) {
+            if (this.capacityUpgrades != this.dualityInterfaceCopy.getInstalledUpgrades(Upgrades.CAPACITY)) {
+                this.capacityUpgrades = this.dualityInterfaceCopy.getInstalledUpgrades(Upgrades.CAPACITY);
+            }
+        }
+        standardDetectAndSendChanges();
     }
 
 }

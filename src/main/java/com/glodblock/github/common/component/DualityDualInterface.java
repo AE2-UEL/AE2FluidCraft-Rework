@@ -54,11 +54,11 @@ public class DualityDualInterface <H extends IInterfaceHost & IFluidInterfaceHos
     }
 
     public int getInstalledUpgrades(final Upgrades u) {
-        return itemDuality.getInstalledUpgrades(u); // fluid interface supports no upgrades, so this is fine
+        return itemDuality.getInstalledUpgrades(u) + fluidDuality.getInstalledUpgrades(u);
     }
 
     public int getPriority() {
-        return itemDuality.getPriority(); // both ifaces should always have the same prio
+        return itemDuality.getPriority(); // both interfaces should always have the same priority
     }
 
     public void setPriority(final int newValue) {
@@ -118,10 +118,9 @@ public class DualityDualInterface <H extends IInterfaceHost & IFluidInterfaceHos
         fluidDuality.gridChanged();
     }
 
-    // item interface behaviour
-
     public void addDrops(List<ItemStack> drops) {
         itemDuality.addDrops(drops);
+        fluidDuality.addDrops(drops);
     }
 
     public boolean canInsertItem(ItemStack stack) {
@@ -129,6 +128,12 @@ public class DualityDualInterface <H extends IInterfaceHost & IFluidInterfaceHos
     }
 
     public IItemHandler getItemInventoryByName(String name) {
+        if (name.startsWith("item_")) {
+            return itemDuality.getInventoryByName(name.replace("item_", ""));
+        }
+        if (name.startsWith("fluid_")) {
+            return fluidDuality.getInventoryByName(name.replace("fluid_", ""));
+        }
         return itemDuality.getInventoryByName(name);
     }
 
