@@ -267,7 +267,7 @@ public class TileFluidAssembler extends AENetworkInvTile implements ICraftingPro
 
     @Override
     public boolean isBusy() {
-        return this.myPlan != null || !this.waitingToSend.isEmpty();
+        return this.myPlan != null || !this.waitingToSend.isEmpty() || this.progress > 0;
     }
 
     public int getSpeed() {
@@ -302,7 +302,7 @@ public class TileFluidAssembler extends AENetworkInvTile implements ICraftingPro
                         this.progress = 0;
                         IAEItemStack[] outputs = this.myPlan.getOutputs();
                         for (IAEItemStack item : outputs) {
-                            this.waitingToSend.add(item.getDefinition());
+                            this.waitingToSend.add(item.createItemStack());
                         }
                         for (int x = 0; x < this.gridInv.getSlots(); x ++) {
                             this.gridInv.setStackInSlot(x, ItemStack.EMPTY);
@@ -323,7 +323,7 @@ public class TileFluidAssembler extends AENetworkInvTile implements ICraftingPro
                         if (item != null && !item.isEmpty()) {
                             IAEItemStack remaining = Platform.poweredInsert(src, des, Objects.requireNonNull(AEItemStack.fromItemStack(item)), this.mySrc);
                             if (remaining != null) {
-                                rst.add(remaining.getDefinition());
+                                rst.add(remaining.createItemStack());
                             }
                         }
                     }
