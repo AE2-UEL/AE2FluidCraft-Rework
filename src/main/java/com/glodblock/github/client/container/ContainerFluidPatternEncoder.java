@@ -27,6 +27,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -155,15 +156,18 @@ public class ContainerFluidPatternEncoder extends AEBaseContainer implements Pat
     }
 
     @Override
-    public void acceptPattern(IAEItemStack[] inputs, IAEItemStack[] outputs) {
-        copyStacks(inputs, tile.getCraftingSlots());
-        copyStacks(outputs, tile.getOutputSlots());
-    }
-
-    private static void copyStacks(IAEItemStack[] src, AeStackInventory<IAEItemStack> dest) {
-        int bound = Math.min(src.length, dest.getSlotCount());
-        for (int i = 0; i < bound; i++) {
-            dest.setStack(i, src[i]);
+    public void acceptPattern(HashMap<Integer, ItemStack[]> inputs, ItemStack[] outputs, boolean combine) {
+        AeStackInventory<IAEItemStack> craftingSlot = tile.getCraftingSlots();
+        AeStackInventory<IAEItemStack> outputSlot = tile.getOutputSlots();
+        for (int index : inputs.keySet()) {
+            ItemStack[] items = inputs.get(index);
+            if (index < craftingSlot.getSlotCount() && items.length > 0) {
+                craftingSlot.setStack(index, AEItemStack.fromItemStack(items[0]));
+            }
+        }
+        int bound = Math.min(outputSlot.getSlotCount(), outputs.length);
+        for (int index = 0; index < bound; index ++) {
+            outputSlot.setStack(index, AEItemStack.fromItemStack(outputs[index]));
         }
     }
 

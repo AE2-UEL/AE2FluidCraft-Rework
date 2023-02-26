@@ -1,10 +1,8 @@
 package com.glodblock.github.common.tile;
 
-import appeng.api.AEApi;
 import appeng.api.config.Actionable;
 import appeng.api.config.PowerMultiplier;
 import appeng.api.config.Upgrades;
-import appeng.api.implementations.ICraftingPatternItem;
 import appeng.api.implementations.items.IUpgradeModule;
 import appeng.api.networking.IGrid;
 import appeng.api.networking.crafting.ICraftingPatternDetails;
@@ -18,7 +16,6 @@ import appeng.api.networking.events.MENetworkEventSubscribe;
 import appeng.api.networking.events.MENetworkPowerStatusChange;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.storage.IMEInventory;
-import appeng.api.storage.channels.IItemStorageChannel;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.util.AECableType;
 import appeng.api.util.AEPartLocation;
@@ -33,6 +30,7 @@ import appeng.util.inv.InvOperation;
 import appeng.util.item.AEItemStack;
 import com.glodblock.github.common.item.ItemFluidCraftEncodedPattern;
 import com.glodblock.github.util.FluidCraftingPatternDetails;
+import com.glodblock.github.util.Util;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
@@ -317,7 +315,7 @@ public class TileFluidAssembler extends AENetworkInvTile implements ICraftingPro
             if (!this.waitingToSend.isEmpty() && this.getProxy().isActive()) {
                 List<ItemStack> rst = new ArrayList<>();
                 try {
-                    IMEInventory<IAEItemStack> des = this.getProxy().getStorage().getInventory(AEApi.instance().storage().getStorageChannel(IItemStorageChannel.class));
+                    IMEInventory<IAEItemStack> des = this.getProxy().getStorage().getInventory(Util.ITEM);
                     final IEnergySource src = this.getProxy().getEnergy();
                     for (ItemStack item : this.waitingToSend) {
                         if (item != null && !item.isEmpty()) {

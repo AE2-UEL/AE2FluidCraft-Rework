@@ -1,6 +1,5 @@
 package com.glodblock.github.integration.jei;
 
-import appeng.api.storage.data.IAEItemStack;
 import appeng.core.sync.network.NetworkHandler;
 import appeng.core.sync.packets.PacketValueConfig;
 import com.glodblock.github.FluidCraft;
@@ -19,12 +18,6 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 
 public class FluidPatternTerminalRecipeTransferHandler implements IRecipeTransferHandler<ContainerFluidPatternTerminal> {
-
-    private final ExtraExtractors ext;
-
-    FluidPatternTerminalRecipeTransferHandler(ExtraExtractors ext) {
-        this.ext = ext;
-    }
 
     @Override
     @Nonnull
@@ -47,14 +40,17 @@ public class FluidPatternTerminalRecipeTransferHandler implements IRecipeTransfe
                     NetworkHandler.instance().sendToServer(new PacketValueConfig("PatternTerminal.CraftMode", "1"));
                     craftMode = true;
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ignore) {
             }
             PartFluidPatternTerminal tile = (PartFluidPatternTerminal) Ae2Reflect.getPart(container);
-            IAEItemStack[] crafting = new IAEItemStack[tile.getInventoryByName("crafting").getSlots()];
-            IAEItemStack[] output = new IAEItemStack[tile.getInventoryByName("output").getSlots()];
-            FluidPatternEncoderRecipeTransferHandler.transferRecipeSlots(recipeLayout, crafting, output, craftMode, container.combine, container.fluidFirst, ext);
-            FluidCraft.proxy.netHandler.sendToServer(new CPacketLoadPattern(crafting, output));
+            RecipeTransferBuilder transfer = new RecipeTransferBuilder(
+                    tile.getInventoryByName("crafting").getSlots(),
+                    tile.getInventoryByName("output").getSlots(),
+                    recipeLayout)
+                    .clearEmptySlot(!craftMode)
+                    .putFluidFirst(container.fluidFirst)
+                    .build();
+            FluidCraft.proxy.netHandler.sendToServer(new CPacketLoadPattern(transfer.getInput(), transfer.getOutput(), container.combine));
         }
         return null;
     }

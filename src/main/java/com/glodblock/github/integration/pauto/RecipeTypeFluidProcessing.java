@@ -2,7 +2,7 @@ package com.glodblock.github.integration.pauto;
 
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.common.item.ItemFluidPacket;
-import com.glodblock.github.integration.jei.FCJeiPlugin;
+import com.glodblock.github.integration.jei.RecipeTransferBuilder;
 import com.glodblock.github.integration.jei.WrappedIngredient;
 import com.glodblock.github.loader.FCBlocks;
 import it.unimi.dsi.fastutil.ints.*;
@@ -131,7 +131,7 @@ public class RecipeTypeFluidProcessing implements IRecipeType {
                 }
             }
         }
-        Iterator<WrappedIngredient<FluidStack>> iter = FCJeiPlugin.getExtraExtractors().extractFluids(recipeLayout).iterator();
+        Iterator<WrappedIngredient<FluidStack>> iter = RecipeTransferBuilder.getExtractor().extractFluids(recipeLayout).iterator();
         while (iter.hasNext()) {
             WrappedIngredient<FluidStack> ing = iter.next();
             if (ing.isInput()) {

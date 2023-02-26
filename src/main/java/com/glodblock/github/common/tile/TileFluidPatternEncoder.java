@@ -1,7 +1,5 @@
 package com.glodblock.github.common.tile;
 
-import appeng.api.AEApi;
-import appeng.api.storage.channels.IItemStorageChannel;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.tile.AEBaseTile;
 import appeng.tile.inventory.AppEngInternalInventory;
@@ -9,6 +7,7 @@ import appeng.util.inv.IAEAppEngInventory;
 import appeng.util.inv.InvOperation;
 import com.glodblock.github.interfaces.AeStackInventory;
 import com.glodblock.github.inventory.AeStackInventoryImpl;
+import com.glodblock.github.util.Util;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -26,10 +25,8 @@ import java.util.List;
 public class TileFluidPatternEncoder extends AEBaseTile implements IAEAppEngInventory {
 
     private final AppEngInternalInventory patternInv = new AppEngInternalInventory(this, 2);
-    private final AeStackInventoryImpl<IAEItemStack> crafting = new AeStackInventoryImpl<>(
-            AEApi.instance().storage().getStorageChannel(IItemStorageChannel.class), 9, this);
-    private final AeStackInventoryImpl<IAEItemStack> output = new AeStackInventoryImpl<>(
-            AEApi.instance().storage().getStorageChannel(IItemStorageChannel.class), 3, this);
+    private final AeStackInventoryImpl<IAEItemStack> crafting = new AeStackInventoryImpl<>(Util.ITEM, 9, this);
+    private final AeStackInventoryImpl<IAEItemStack> output = new AeStackInventoryImpl<>(Util.ITEM, 3, this);
 
     public IItemHandlerModifiable getInventory() {
         return patternInv;

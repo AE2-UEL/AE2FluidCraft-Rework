@@ -1,6 +1,5 @@
 package com.glodblock.github.common.tile;
 
-import appeng.api.AEApi;
 import appeng.api.config.Actionable;
 import appeng.api.networking.GridFlags;
 import appeng.api.networking.crafting.ICraftingGrid;
@@ -10,8 +9,6 @@ import appeng.api.networking.security.IActionSource;
 import appeng.api.networking.storage.IBaseMonitor;
 import appeng.api.networking.storage.IStorageGrid;
 import appeng.api.storage.*;
-import appeng.api.storage.channels.IFluidStorageChannel;
-import appeng.api.storage.channels.IItemStorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IItemList;
@@ -21,8 +18,8 @@ import appeng.me.cache.CraftingGridCache;
 import appeng.me.helpers.MachineSource;
 import appeng.me.storage.MEInventoryHandler;
 import appeng.tile.grid.AENetworkTile;
-import appeng.util.Platform;
 import com.glodblock.github.common.item.ItemFluidDrop;
+import com.glodblock.github.util.Util;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -56,9 +53,9 @@ public class TileFluidDiscretizer extends AENetworkTile implements ICellContaine
     @Override
     public List<IMEInventoryHandler> getCellArray(IStorageChannel<?> channel) {
         if (getProxy().isActive()) {
-            if (channel == AEApi.instance().storage().getStorageChannel(IItemStorageChannel.class)) {
+            if (channel == Util.ITEM) {
                 return Collections.singletonList(fluidDropInv.invHandler);
-            } else if (channel == AEApi.instance().storage().getStorageChannel(IFluidStorageChannel.class)) {
+            } else if (channel == Util.FLUID) {
                 return Collections.singletonList(fluidCraftInv.invHandler);
             }
         }
@@ -123,7 +120,7 @@ public class TileFluidDiscretizer extends AENetworkTile implements ICellContaine
     private IMEMonitor<IAEFluidStack> getFluidGrid() {
         try {
             return getProxy().getGrid().<IStorageGrid>getCache(IStorageGrid.class)
-                    .getInventory(AEApi.instance().storage().getStorageChannel(IFluidStorageChannel.class));
+                    .getInventory(Util.FLUID);
         } catch (GridAccessException e) {
             return null;
         }
@@ -234,7 +231,7 @@ public class TileFluidDiscretizer extends AENetworkTile implements ICellContaine
 
         @Override
         public IStorageChannel<IAEItemStack> getChannel() {
-            return AEApi.instance().storage().getStorageChannel(IItemStorageChannel.class);
+            return Util.ITEM;
         }
 
     }
@@ -279,7 +276,7 @@ public class TileFluidDiscretizer extends AENetworkTile implements ICellContaine
 
         @Override
         public IStorageChannel<IAEFluidStack> getChannel() {
-            return AEApi.instance().storage().getStorageChannel(IFluidStorageChannel.class);
+            return Util.FLUID;
         }
 
     }

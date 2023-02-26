@@ -1,6 +1,5 @@
 package com.glodblock.github.common.tile;
 
-import appeng.api.AEApi;
 import appeng.api.config.Actionable;
 import appeng.api.config.PowerMultiplier;
 import appeng.api.networking.GridFlags;
@@ -14,7 +13,6 @@ import appeng.api.networking.events.MENetworkStorageEvent;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.networking.storage.IStorageGrid;
 import appeng.api.storage.IMEMonitor;
-import appeng.api.storage.channels.IFluidStorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.core.AELog;
@@ -30,6 +28,7 @@ import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.util.DummyInvAdaptor;
 import com.glodblock.github.util.MultiCraftingTracker;
+import com.glodblock.github.util.Util;
 import com.google.common.collect.ImmutableSet;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
@@ -100,7 +99,7 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements ICrafting
 
     @MENetworkEventSubscribe
     public void onStorageUpdate(MENetworkStorageEvent event) {
-        if (event.channel.equals(AEApi.instance().storage().getStorageChannel(IFluidStorageChannel.class))) {
+        if (event.channel.equals(Util.FLUID)) {
             doWork();
         }
     }
@@ -188,7 +187,7 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements ICrafting
 
     private IMEMonitor<IAEFluidStack> getFluidMonitor() {
         return getProxy().getNode().getGrid().<IStorageGrid>getCache(IStorageGrid.class)
-                .getInventory(AEApi.instance().storage().getStorageChannel(IFluidStorageChannel.class));
+                .getInventory(Util.FLUID);
     }
 
     @Override

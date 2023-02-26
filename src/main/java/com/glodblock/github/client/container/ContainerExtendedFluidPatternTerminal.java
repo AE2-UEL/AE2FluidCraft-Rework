@@ -9,14 +9,12 @@ import appeng.container.implementations.ContainerExpandedProcessingPatternTerm;
 import appeng.container.slot.SlotFakeCraftingMatrix;
 import appeng.container.slot.SlotPatternOutputs;
 import appeng.helpers.InventoryAction;
-import appeng.items.misc.ItemEncodedPattern;
 import appeng.util.Platform;
 import appeng.util.item.AEItemStack;
 import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidEncodedPattern;
 import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.common.part.PartExtendedFluidPatternTerminal;
-import com.glodblock.github.common.part.PartFluidPatternTerminal;
 import com.glodblock.github.interfaces.PatternConsumer;
 import com.glodblock.github.loader.FCItems;
 import com.glodblock.github.util.Ae2Reflect;
@@ -31,9 +29,9 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 public class ContainerExtendedFluidPatternTerminal extends ContainerExpandedProcessingPatternTerm implements PatternConsumer {
     public final ITerminalHost part;
@@ -429,9 +427,9 @@ public class ContainerExtendedFluidPatternTerminal extends ContainerExpandedProc
     }
 
     @Override
-    public void acceptPattern(IAEItemStack[] inputs, IAEItemStack[] outputs) {
+    public void acceptPattern(HashMap<Integer, ItemStack[]> inputs, ItemStack[] outputs, boolean combine) {
         if (part instanceof PartExtendedFluidPatternTerminal) {
-            ((PartExtendedFluidPatternTerminal) part).onChangeCrafting(inputs, outputs);
+            ((PartExtendedFluidPatternTerminal) part).onChangeCrafting(inputs, outputs, combine);
         }
     }
 

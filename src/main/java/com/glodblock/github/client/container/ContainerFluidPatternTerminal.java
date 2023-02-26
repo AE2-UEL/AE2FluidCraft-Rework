@@ -33,10 +33,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public class ContainerFluidPatternTerminal extends ContainerPatternTerm implements PatternConsumer {
     @GuiSync(105)
@@ -205,9 +202,9 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
     }
 
     @Override
-    public void acceptPattern(IAEItemStack[] inputs, IAEItemStack[] outputs) {
+    public void acceptPattern(HashMap<Integer, ItemStack[]> inputs, ItemStack[] outputs, boolean combine) {
         if (Ae2Reflect.getPart(this) instanceof PartFluidPatternTerminal) {
-            ((PartFluidPatternTerminal) Ae2Reflect.getPart(this)).onChangeCrafting(inputs, outputs);
+            ((PartFluidPatternTerminal) Ae2Reflect.getPart(this)).onChangeCrafting(inputs, outputs, combine);
         }
     }
 

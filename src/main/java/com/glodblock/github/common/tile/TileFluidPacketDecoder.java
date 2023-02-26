@@ -1,6 +1,5 @@
 package com.glodblock.github.common.tile;
 
-import appeng.api.AEApi;
 import appeng.api.networking.GridFlags;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.energy.IEnergyGrid;
@@ -10,7 +9,6 @@ import appeng.api.networking.ticking.IGridTickable;
 import appeng.api.networking.ticking.TickRateModulation;
 import appeng.api.networking.ticking.TickingRequest;
 import appeng.api.storage.IMEMonitor;
-import appeng.api.storage.channels.IFluidStorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.fluids.util.AEFluidStack;
 import appeng.helpers.Reflected;
@@ -22,6 +20,7 @@ import appeng.util.Platform;
 import appeng.util.inv.IAEAppEngInventory;
 import appeng.util.inv.InvOperation;
 import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.util.Util;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -91,7 +90,7 @@ public class TileFluidPacketDecoder extends AENetworkTile implements IGridTickab
         IAEFluidStack aeFluid = AEFluidStack.fromFluidStack(fluid);
         IEnergyGrid energyGrid = node.getGrid().getCache(IEnergyGrid.class);
         IMEMonitor<IAEFluidStack> fluidGrid = node.getGrid().<IStorageGrid>getCache(IStorageGrid.class)
-                .getInventory(AEApi.instance().storage().getStorageChannel(IFluidStorageChannel.class));
+                .getInventory(Util.FLUID);
         IAEFluidStack remaining = Platform.poweredInsert(energyGrid, fluidGrid, aeFluid, ownActionSource);
         if (remaining != null) {
             if (remaining.getStackSize() == aeFluid.getStackSize()) {

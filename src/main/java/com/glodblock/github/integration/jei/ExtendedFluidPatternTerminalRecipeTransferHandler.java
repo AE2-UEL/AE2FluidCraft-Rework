@@ -1,6 +1,5 @@
 package com.glodblock.github.integration.jei;
 
-import appeng.api.storage.data.IAEItemStack;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.container.ContainerExtendedFluidPatternTerminal;
 import com.glodblock.github.common.part.PartExtendedFluidPatternTerminal;
@@ -18,13 +17,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class ExtendedFluidPatternTerminalRecipeTransferHandler implements IRecipeTransferHandler<ContainerExtendedFluidPatternTerminal> {
-
-    private final ExtraExtractors ext;
-
-    ExtendedFluidPatternTerminalRecipeTransferHandler(ExtraExtractors ext) {
-        this.ext = ext;
-    }
-
     @Override
     @Nonnull
     public Class<ContainerExtendedFluidPatternTerminal> getContainerClass() {
@@ -42,10 +34,14 @@ public class ExtendedFluidPatternTerminalRecipeTransferHandler implements IRecip
 
        if (doTransfer && container.part instanceof PartExtendedFluidPatternTerminal) {
            PartExtendedFluidPatternTerminal tile = (PartExtendedFluidPatternTerminal)container.part;
-           IAEItemStack[] crafting = new IAEItemStack[tile.getInventoryByName("crafting").getSlots()];
-           IAEItemStack[] output = new IAEItemStack[tile.getInventoryByName("output").getSlots()];
-           FluidPatternEncoderRecipeTransferHandler.transferRecipeSlots(recipeLayout, crafting, output, false, container.combine, container.fluidFirst, ext);
-           FluidCraft.proxy.netHandler.sendToServer(new CPacketLoadPattern(crafting, output));
+           RecipeTransferBuilder transfer = new RecipeTransferBuilder(
+                   tile.getInventoryByName("crafting").getSlots(),
+                   tile.getInventoryByName("output").getSlots(),
+                   recipeLayout)
+                   .clearEmptySlot(true)
+                   .putFluidFirst(container.fluidFirst)
+                   .build();
+           FluidCraft.proxy.netHandler.sendToServer(new CPacketLoadPattern(transfer.getInput(), transfer.getOutput(), container.combine));
        }
        return null;
     }

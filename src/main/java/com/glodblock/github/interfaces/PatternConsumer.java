@@ -1,9 +1,11 @@
 package com.glodblock.github.interfaces;
 
-import appeng.api.storage.data.IAEItemStack;
+import net.minecraft.item.ItemStack;
+
+import java.util.HashMap;
 
 public interface PatternConsumer {
 
-    void acceptPattern(IAEItemStack[] inputs, IAEItemStack[] outputs);
+    void acceptPattern(HashMap<Integer, ItemStack[]> inputs, ItemStack[] outputs, boolean compress);
 
 }
