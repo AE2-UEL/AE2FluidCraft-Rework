@@ -36,6 +36,7 @@ public class Ae2Reflect {
     private static final Field fCPU_machineSrc;
     private static final Field fCPU_isComplete;
     private static final Field fDualInterface_fluidPacket;
+    private static final Field fDualInterface_allowSplitting;
     private static final Field fDualInterface_gridProxy;
     private static final Field fDualityFluidInterface_gridProxy;
     private static final Field fAppEngInternalInventory_filter;
@@ -53,6 +54,7 @@ public class Ae2Reflect {
             fCPU_machineSrc = Ae2Reflect.reflectField(CraftingCPUCluster.class, "machineSrc");
             fCPU_isComplete = Ae2Reflect.reflectField(CraftingCPUCluster.class, "isComplete");
             fDualInterface_fluidPacket = Ae2Reflect.reflectField(DualityInterface.class, "fluidPacket");
+            fDualInterface_allowSplitting = Ae2Reflect.reflectField(DualityInterface.class, "allowSplitting");
             fDualInterface_gridProxy = reflectField(DualityInterface.class, "gridProxy");
             fDualityFluidInterface_gridProxy = reflectField(DualityFluidInterface.class, "gridProxy");
             fAppEngInternalInventory_filter = Ae2Reflect.reflectField(AppEngInternalInventory.class, "filter");
@@ -184,6 +186,14 @@ public class Ae2Reflect {
 
     public static void setFluidPacketMode(DualityInterface owner, boolean value) {
         writeField(owner, fDualInterface_fluidPacket, value);
+    }
+
+    public static boolean getSplittingMode(DualityInterface owner) {
+        return readField(owner, fDualInterface_allowSplitting);
+    }
+
+    public static void setSplittingMode(DualityInterface owner, boolean value) {
+        writeField(owner, fDualInterface_allowSplitting, value);
     }
 
     public static AENetworkProxy getInterfaceProxy(DualityInterface owner) {

@@ -81,10 +81,12 @@ public class CoreModHooks {
 
     public static void writeExtraNBTInterface(DualityInterface dual, NBTTagCompound nbt) {
         nbt.setBoolean("fluidPacket", Ae2Reflect.getFluidPacketMode(dual));
+        nbt.setBoolean("allowSplitting", Ae2Reflect.getSplittingMode(dual));
     }
 
     public static void readExtraNBTInterface(DualityInterface dual, NBTTagCompound nbt) {
         Ae2Reflect.setFluidPacketMode(dual, nbt.getBoolean("fluidPacket"));
+        Ae2Reflect.setSplittingMode(dual, !nbt.hasKey("allowSplitting") || nbt.getBoolean("allowSplitting"));
     }
 
     public static ItemStack removeFluidPackets(InventoryCrafting inv, int index) {

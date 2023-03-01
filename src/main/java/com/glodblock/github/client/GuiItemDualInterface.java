@@ -24,6 +24,7 @@ public class GuiItemDualInterface extends GuiInterface {
     private GuiTabButton priorityBtn;
     private GuiFCImgButton fluidPacketOffBtn;
     private GuiFCImgButton fluidPacketOnBtn;
+    private GuiFCImgButton splittingBtn;
 
     public GuiItemDualInterface(final InventoryPlayer inventoryPlayer, final IInterfaceHost te) {
         super(inventoryPlayer, te);
@@ -42,6 +43,8 @@ public class GuiItemDualInterface extends GuiInterface {
         buttonList.add(fluidPacketOffBtn);
         fluidPacketOnBtn = new GuiFCImgButton(this.guiLeft - 18, this.guiTop + 44, "SEND_PACKET", "FLUID_PACKET");
         buttonList.add(fluidPacketOnBtn);
+        splittingBtn = new GuiFCImgButton(this.guiLeft - 18, this.guiTop + 62, "SPLITTING", "ALLOW");
+        buttonList.add(splittingBtn);
         priorityBtn = Ae2ReflectClient.getPriorityButton(this);
     }
 
@@ -58,6 +61,8 @@ public class GuiItemDualInterface extends GuiInterface {
             InventoryHandler.switchGui(GuiType.PRIORITY);
         } else if (btn == fluidPacketOffBtn || btn == fluidPacketOnBtn) {
             FluidCraft.proxy.netHandler.sendToServer(new CPacketFluidPatternTermBtns("DualInterface.FluidPacket", btn == fluidPacketOnBtn ? "0" : "1"));
+        } else if (btn == splittingBtn) {
+            FluidCraft.proxy.netHandler.sendToServer(new CPacketFluidPatternTermBtns("DualInterface.AllowSplitting", this.splittingBtn.getCurrentValue().equals("ALLOW") ? "0" : "1"));
         } else {
             super.actionPerformed(btn);
         }
@@ -73,6 +78,9 @@ public class GuiItemDualInterface extends GuiInterface {
             this.fluidPacketOnBtn.visible = false;
             this.fluidPacketOffBtn.visible = true;
         }
+
+        this.splittingBtn.set(container.allowSplitting ? "ALLOW" : "PREVENT");
+
         super.drawFG(offsetX, offsetY, mouseX, mouseY);
     }
 

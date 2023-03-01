@@ -105,7 +105,7 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
                     }
                 }
 
-                if (fluid != null && posInterface != null) {
+                if (fluid != null && posInterface != null && Ae2Reflect.getSplittingMode(self)) {
                     for (EnumFacing dir : EnumFacing.values()) {
                         TileEntity te = posInterface.getWorld().getTileEntity(posInterface.getPos().add(dir.getDirectionVec()));
                         if (te != null) {
@@ -173,23 +173,25 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
                 }
 
                 if (fluid != null && posInterface != null) {
-                    for (EnumFacing dir : EnumFacing.values()) {
-                        TileEntity te = posInterface.getWorld().getTileEntity(posInterface.getPos().add(dir.getDirectionVec()));
-                        if (te != null) {
-                            IInterfaceHost interTE = getInterfaceTE(te, dir);
-                            if (interTE != null && isSameGrid(interTE)) {
-                                continue;
-                            }
-                            IFluidInterfaceHost interFTE = getFluidInterfaceTE(te, dir);
-                            if (interFTE != null && isSameGrid(interFTE)) {
-                                continue;
-                            }
-                            IFluidHandler fh = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, dir.getOpposite());
-                            if (fh != null) {
-                                int filled = fh.fill(fluid, false);
-                                if (filled == fluid.amount) {
-                                    sus = true;
-                                    break;
+                    if (Ae2Reflect.getSplittingMode(self)) {
+                        for (EnumFacing dir : EnumFacing.values()) {
+                            TileEntity te = posInterface.getWorld().getTileEntity(posInterface.getPos().add(dir.getDirectionVec()));
+                            if (te != null) {
+                                IInterfaceHost interTE = getInterfaceTE(te, dir);
+                                if (interTE != null && isSameGrid(interTE)) {
+                                    continue;
+                                }
+                                IFluidInterfaceHost interFTE = getFluidInterfaceTE(te, dir);
+                                if (interFTE != null && isSameGrid(interFTE)) {
+                                    continue;
+                                }
+                                IFluidHandler fh = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, dir.getOpposite());
+                                if (fh != null) {
+                                    int filled = fh.fill(fluid, false);
+                                    if (filled == fluid.amount) {
+                                        sus = true;
+                                        break;
+                                    }
                                 }
                             }
                         }
