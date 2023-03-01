@@ -51,7 +51,7 @@ dependencies {
     deobfCompile 'curse.maven:modular-machinery-270790:2761302' // 1.11.1
     deobfCompile 'curse.maven:codechicken-lib-1-8-242818:2779848' //ccl
     deobfCompile 'curse.maven:gregtech-ce-unofficial-557242:3784798' // gt
-    compile files('libs/appliedenergistics2-rv6-stable-7-extended_life-v0.54.13-dev.jar') //pae2
+    deobfCompile 'curse.maven:ae2-extended-life-570458:4406629' //pae2
     compileOnly 'curse.maven:dynamistics-383632:3056455' // dy
 }
 
