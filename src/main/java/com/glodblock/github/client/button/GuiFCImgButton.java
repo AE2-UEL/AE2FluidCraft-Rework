@@ -4,6 +4,7 @@ import appeng.client.gui.widgets.ITooltip;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.util.NameConst;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.resources.I18n;
 import org.lwjgl.opengl.GL11;
@@ -23,6 +24,8 @@ public class GuiFCImgButton extends GuiButton implements ITooltip {
     private String fillVar;
     private String currentValue;
     private static final String prefix = NameConst.TT_KEY;
+    private static final int SPRITE_SHEET_GRID_SIZE = 4;
+    private static final int MAX_INDEX = SPRITE_SHEET_GRID_SIZE * SPRITE_SHEET_GRID_SIZE - 1;
 
     public GuiFCImgButton( final int x, final int y, final String idx, final String val ) {
         super(0, 0, 16, "");
@@ -68,11 +71,11 @@ public class GuiFCImgButton extends GuiButton implements ITooltip {
             final ButtonAppearance app = appearances.get(new EnumPair( this.buttonSetting, this.currentValue ));
             if( app == null )
             {
-                return 8;
+                return MAX_INDEX;
             }
             return app.index;
         }
-        return 8;
+        return MAX_INDEX;
     }
 
     public String getSetting()
@@ -203,65 +206,52 @@ public class GuiFCImgButton extends GuiButton implements ITooltip {
         if( this.visible )
         {
             final int iconIndex = this.getIconIndex();
+            int relativeX = this.x;
+            int relativeY = this.y;
 
-            if( this.halfSize )
+            if ( this.halfSize )
             {
                 this.width = 8;
                 this.height = 8;
 
                 GL11.glPushMatrix();
                 GL11.glTranslatef( this.x, this.y, 0.0F );
-                GL11.glScalef( 0.5f / 16 * 3, 0.5f / 16 * 3, 0.5f / 16 * 3 );
+                GL11.glScalef( 0.5f, 0.5f, 0.5f );
 
-                if( this.enabled )
-                {
-                    GL11.glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
-                }
-                else
-                {
-                    GL11.glColor4f( 0.5f, 0.5f, 0.5f, 1.0f );
-                }
+                relativeX = 0;
+                relativeY = 0;
+            }
 
-                par1Minecraft.renderEngine.bindTexture( FluidCraft.resource("textures/gui/states.png") );
-                this.hovered = par2 >= this.x && par3 >= this.y && par2 < this.x + this.width && par3 < this.y + this.height;
-
-                final int uv_y = (int) Math.floor( iconIndex / 3.0 );
-                final int uv_x = iconIndex - uv_y * 3;
-
-                this.drawTexturedModalRect( 0, 0, Math.round(32F * 16F / 3F), Math.round(32F * 16F / 3F), Math.round(16F * 16F / 3F), Math.round(16F * 16F / 3F) );
-                this.drawTexturedModalRect( 0, 0, Math.round(uv_x * 16F * 16F / 3F), Math.round(uv_y * 16F * 16F / 3F), Math.round(16F * 16F / 3F), Math.round(16F * 16F / 3F) );
-                this.mouseDragged( par1Minecraft, par2, par3 );
-
-                GL11.glPopMatrix();
+            if( this.enabled )
+            {
+                GL11.glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
             }
             else
             {
-                GL11.glPushMatrix();
-                GL11.glTranslatef( this.x, this.y, 0.0F );
-                GL11.glScalef( 1f / 16 * 3, 1f / 16 * 3, 1f / 16 * 3 );
+                GL11.glColor4f( 0.5f, 0.5f, 0.5f, 1.0f );
+            }
 
-                if( this.enabled )
-                {
-                    GL11.glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
-                }
-                else
-                {
-                    GL11.glColor4f( 0.5f, 0.5f, 0.5f, 1.0f );
-                }
+            par1Minecraft.renderEngine.bindTexture( FluidCraft.resource("textures/gui/states.png") );
+            this.hovered = par2 >= this.x && par3 >= this.y && par2 < this.x + this.width && par3 < this.y + this.height;
 
-                par1Minecraft.renderEngine.bindTexture( FluidCraft.resource("textures/gui/states.png") );
-                this.hovered = par2 >= this.x && par3 >= this.y && par2 < this.x + this.width && par3 < this.y + this.height;
+            // Base button icon will always be bottom right
+            final int baseButtonUV = 16 * ( SPRITE_SHEET_GRID_SIZE - 1 );
+            final int textureSize = 16 * SPRITE_SHEET_GRID_SIZE;
 
-                final int uv_y = (int) Math.floor( iconIndex / 3.0 );
-                final int uv_x = iconIndex - uv_y * 3;
+            final int overlayU = 16 * ( iconIndex % SPRITE_SHEET_GRID_SIZE );
+            final int overlayV = 16 * ( iconIndex / SPRITE_SHEET_GRID_SIZE );
 
-                this.drawTexturedModalRect( 0, 0, Math.round(32F * 16F / 3F), Math.round(32F * 16F / 3F), Math.round(16F * 16F / 3F), Math.round(16F * 16F / 3F) );
-                this.drawTexturedModalRect( 0, 0, Math.round(uv_x * 16F * 16F / 3F), Math.round(uv_y * 16F * 16F / 3F), Math.round(16F * 16F / 3F), Math.round(16F * 16F / 3F) );
-                this.mouseDragged( par1Minecraft, par2, par3 );
+            Gui.drawModalRectWithCustomSizedTexture( relativeX, relativeY, baseButtonUV, baseButtonUV, 16, 16, textureSize, textureSize );
+            Gui.drawModalRectWithCustomSizedTexture( relativeX, relativeY, overlayU, overlayV, 16, 16, textureSize, textureSize );
 
+            this.mouseDragged( par1Minecraft, par2, par3 );
+
+            if ( this.halfSize )
+            {
                 GL11.glPopMatrix();
             }
         }
+
         GL11.glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
     }
 
