@@ -1,6 +1,7 @@
 package com.glodblock.github.proxy;
 
 import appeng.api.AEApi;
+import appeng.api.config.Upgrades;
 import appeng.api.definitions.IItemDefinition;
 import appeng.core.AppEng;
 import appeng.core.features.ItemDefinition;
@@ -17,6 +18,7 @@ import com.glodblock.github.util.Ae2Reflect;
 import com.glodblock.github.util.ModAndClassUtil;
 import com.glodblock.github.util.NameConst;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
@@ -73,6 +75,13 @@ public class CommonProxy {
     }
 
     public void postInit(FMLPostInitializationEvent event) {
+        Upgrades.PATTERN_EXPANSION.registerItem(new ItemStack(FCBlocks.DUAL_INTERFACE), 3);
+        Upgrades.CRAFTING.registerItem(new ItemStack(FCBlocks.DUAL_INTERFACE), 1);
+        Upgrades.CAPACITY.registerItem(new ItemStack(FCBlocks.DUAL_INTERFACE), 2);
+        Upgrades.PATTERN_EXPANSION.registerItem(new ItemStack(FCItems.PART_DUAL_INTERFACE), 3);
+        Upgrades.CRAFTING.registerItem(new ItemStack(FCItems.PART_DUAL_INTERFACE), 1);
+        Upgrades.CRAFTING.registerItem(new ItemStack(FCItems.PART_DUAL_INTERFACE), 2);
+        Upgrades.CRAFTING.registerItem(AEApi.instance().definitions().parts().fluidExportBus(), 1);
         NetworkRegistry.INSTANCE.registerGuiHandler(FluidCraft.INSTANCE, new InventoryHandler());
     }
 
