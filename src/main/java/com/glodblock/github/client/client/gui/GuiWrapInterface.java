@@ -18,6 +18,7 @@ public class GuiWrapInterface extends GuiInterface {
 
     private GuiFCImgButton fluidPacketOffBtn;
     private GuiFCImgButton fluidPacketOnBtn;
+    private GuiFCImgButton splittingBtn;
 
     public GuiWrapInterface(final InventoryPlayer inventoryPlayer, final IInterfaceHost te) {
         super(inventoryPlayer, te);
@@ -33,12 +34,16 @@ public class GuiWrapInterface extends GuiInterface {
         buttonList.add(fluidPacketOffBtn);
         fluidPacketOnBtn = new GuiFCImgButton(this.guiLeft - 18, this.guiTop + 44, "SEND_PACKET", "FLUID_PACKET");
         buttonList.add(fluidPacketOnBtn);
+        splittingBtn = new GuiFCImgButton(this.guiLeft - 18, this.guiTop + 62, "SPLITTING", "ALLOW");
+        buttonList.add(splittingBtn);
     }
 
     @Override
     protected void actionPerformed(final GuiButton btn) throws IOException {
         if (btn == fluidPacketOffBtn || btn == fluidPacketOnBtn) {
             FluidCraft.proxy.netHandler.sendToServer(new CPacketFluidPatternTermBtns("WrapDualInterface.FluidPacket", btn == fluidPacketOnBtn ? "0" : "1"));
+        } else if (btn == splittingBtn) {
+            FluidCraft.proxy.netHandler.sendToServer(new CPacketFluidPatternTermBtns("WrapDualInterface.AllowSplitting", this.splittingBtn.getCurrentValue().equals("ALLOW") ? "0" : "1"));
         } else {
             super.actionPerformed(btn);
         }
@@ -54,6 +59,9 @@ public class GuiWrapInterface extends GuiInterface {
             this.fluidPacketOnBtn.visible = false;
             this.fluidPacketOffBtn.visible = true;
         }
+
+        this.splittingBtn.set(container.allowSplitting ? "ALLOW" : "PREVENT");
+
         super.drawFG(offsetX, offsetY, mouseX, mouseY);
     }
 

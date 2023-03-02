@@ -14,6 +14,8 @@ public class ContainerItemDualInterface extends ContainerInterface {
 
     @GuiSync(95)
     public boolean fluidPacket = false;
+    @GuiSync(96)
+    public boolean allowSplitting = true;
     private final DualityInterface dualityInterfaceCopy;
 
     public ContainerItemDualInterface(InventoryPlayer ip, IInterfaceHost te) {
@@ -26,12 +28,18 @@ public class ContainerItemDualInterface extends ContainerInterface {
         super.detectAndSendChanges();
         if (Platform.isServer()) {
             fluidPacket = Ae2Reflect.getFluidPacketMode(dualityInterfaceCopy);
+            allowSplitting = Ae2Reflect.getSplittingMode(dualityInterfaceCopy);
         }
     }
 
     public void setFluidPacketInTile(boolean value) {
         this.fluidPacket = value;
         Ae2Reflect.setFluidPacketMode(dualityInterfaceCopy, value);
+    }
+
+    public void setAllowSplittingInTile(boolean value) {
+        this.allowSplitting = value;
+        Ae2Reflect.setSplittingMode(dualityInterfaceCopy, value);
     }
 
     @Override

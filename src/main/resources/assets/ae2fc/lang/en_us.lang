@@ -55,6 +55,10 @@ ae2fc.tooltip.origin_order=Place Fluid First In Pattern
 ae2fc.tooltip.origin_order.hint=Disabled
 ae2fc.tooltip.craft_fluid=Encode Pattern
 ae2fc.tooltip.craft_fluid.hint=Special pattern for ME fluid assembler. You can use fluid directly in crafting recipes instead of buckets.
+ae2fc.tooltip.allow_splitting=Allow Splitting Items and Fluids
+ae2fc.tooltip.allow_splitting.hint=Items and fluids may be separated to different sides if the interface does not point into any direction.
+ae2fc.tooltip.prevent_splitting=Prevent Splitting Items and Fluids
+ae2fc.tooltip.prevent_splitting.hint=Items and fluids can only be pushed out together through the same side of the interface.
 
 ae2fc.pauto.fluid_processing.name=Fluid Processing
 ae2fc.pauto.fluid_processing.name_short=Fluid

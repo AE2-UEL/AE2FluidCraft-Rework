@@ -94,12 +94,18 @@ public class CPacketFluidPatternTermBtns implements IMessage {
                         case "DualInterface.FluidPacket":
                             cdi.setFluidPacketInTile(Value.equals("1"));
                             break;
+                        case "DualInterface.AllowSplitting":
+                            cdi.setAllowSplittingInTile(Value.equals("1"));
+                            break;
                     }
                 } else if (c instanceof ContainerWrapInterface) {
                     final ContainerWrapInterface cdi = (ContainerWrapInterface) c;
                     switch (Name) {
                         case "WrapDualInterface.FluidPacket":
                             cdi.setFluidPacketInTile(Value.equals("1"));
+                            break;
+                        case "WrapDualInterface.AllowSplitting":
+                            cdi.setAllowSplittingInTile(Value.equals("1"));
                             break;
                     }
                 }

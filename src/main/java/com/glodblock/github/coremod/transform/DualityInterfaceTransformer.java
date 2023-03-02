@@ -16,6 +16,9 @@ public class DualityInterfaceTransformer extends FCClassTransformer.ClassMapper 
         FieldVisitor fv = downstream.visitField(Opcodes.ACC_PUBLIC, "fluidPacket", "Z", null, false);
         fv.visitEnd();
 
+        // Cannot set instance fields directly, injecting initialization code into the constructor is necessary
+        downstream.visitField(Opcodes.ACC_PUBLIC, "allowSplitting", "Z", null, false).visitEnd();
+
         return new TransformDualityInterface(Opcodes.ASM5, downstream);
     }
 
@@ -28,6 +31,8 @@ public class DualityInterfaceTransformer extends FCClassTransformer.ClassMapper 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             switch (name) {
+                case "<init>":
+                    return new TransformConstructor(api, super.visitMethod(access, name, desc, signature, exceptions));
                 case "pushItemsOut":
                 case "pushPattern":
                 case "isBusy":
@@ -43,6 +48,23 @@ public class DualityInterfaceTransformer extends FCClassTransformer.ClassMapper 
             }
         }
 
+    }
+
+    private static class TransformConstructor extends MethodVisitor {
+
+        TransformConstructor(int api, MethodVisitor mv) {
+            super(api, mv);
+        }
+
+        @Override
+        public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
+            super.visitMethodInsn(opcode, owner, name, desc, itf);
+            if (owner.equals("java/lang/Object") && name.equals("<init>") && desc.equals("()V")) {
+                super.visitVarInsn(Opcodes.ALOAD, 0);
+                super.visitInsn(Opcodes.ICONST_1);
+                super.visitFieldInsn(Opcodes.PUTFIELD, "appeng/helpers/DualityInterface", "allowSplitting", "Z");
+            }
+        }
     }
 
     private static class TransformNBTIO extends MethodVisitor {
