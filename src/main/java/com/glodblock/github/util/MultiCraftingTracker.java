@@ -7,6 +7,7 @@ import appeng.api.networking.security.IActionSource;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.helpers.NonNullArrayIterator;
 import appeng.util.InventoryAdaptor;
+import com.glodblock.github.common.tile.TileFluidLevelMaintainer;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -63,33 +64,38 @@ public class MultiCraftingTracker {
 
             if (remaining.isEmpty()) {
                 ais.setCachedItemStack(inputStack);
-                Future<ICraftingJob> craftingJob = this.getJob(x);
+                Future<ICraftingJob> jobCalculation = this.getJob(x);
 
                 if (this.getLink(x) != null) {
                     return false;
                 }
 
-                if (craftingJob == null && this.getLink(x) == null) {
+                if (jobCalculation == null && this.getLink(x) == null) {
                     IAEItemStack aisC = ais.copy();
                     aisC.setStackSize(itemToCraft);
                     this.setJob(x, cg.beginCraftingJob(w, g, mySrc, aisC, null));
-                    craftingJob = this.getJob(x);
+                    jobCalculation = this.getJob(x);
                 }
 
-                if (craftingJob == null) {
+                if (jobCalculation == null) {
                     return false;
                 }
 
                 try {
-                    ICraftingJob job = craftingJob.get();
+                    if (jobCalculation.isDone()) {
+                        ICraftingJob job = jobCalculation.get();
 
-                    if (job != null) {
-                        ICraftingLink link = cg.submitJob(job, this.owner, null, false, mySrc);
-                        this.setJob(x, null);
-                        if (link != null) {
-                            this.setLink(x, link);
-                            return true;
+                        if (job != null) {
+                            ICraftingLink link = cg.submitJob(job, this.owner, null, false, mySrc);
+                            this.setJob(x, null);
+                            if (link != null) {
+                                this.setLink(x, link);
+                                return true;
+                            }
                         }
+                    }
+                    else {
+                        ((TileFluidLevelMaintainer)this.owner).forceNextTick = true;
                     }
                 } catch (InterruptedException | ExecutionException ignored) {
                 }
