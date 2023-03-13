@@ -46,6 +46,8 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements ICrafting
     public static final int MAX_FLUID = 5;
     private int tick = 0;
 
+    public boolean forceNextTick = false;
+
     private final AppEngInternalAEInventory config = new AppEngInternalAEInventory(this, MAX_FLUID) {
         @Override
         public int getSlotLimit(int slot) {
@@ -128,7 +130,7 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements ICrafting
                     if (remain == null || remain.getStackSize() < fluid.amount) {
                         FluidStack copy = fluid.copy();
                         copy.amount = (int) request[i];
-                        System.out.print(this.craftingTracker.handleCrafting(i, request[i], ItemFluidDrop.newAeStack(copy), DummyInvAdaptor.INSTANCE, getWorld(), getProxy().getGrid(), getProxy().getCrafting(), this.source) + "\n");
+                        this.craftingTracker.handleCrafting(i, request[i], ItemFluidDrop.newAeStack(copy), DummyInvAdaptor.INSTANCE, getWorld(), getProxy().getGrid(), getProxy().getCrafting(), this.source);
                     }
                 }
             }
@@ -257,7 +259,11 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements ICrafting
     public void update() {
         if (!getWorld().isRemote) {
             tick ++;
-            if (tick > 1200) {
+            if (forceNextTick) {
+                forceNextTick = false;
+                doWork();
+            }
+            else if (tick > 1200) {
                 tick = 0;
                 doWork();
             }
