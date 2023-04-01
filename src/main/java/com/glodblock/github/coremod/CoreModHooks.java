@@ -161,16 +161,22 @@ public class CoreModHooks {
         if (!drop.isEmpty() && drop.getItem() instanceof ItemFluidDrop) {
             FluidStack fluid = ItemFluidDrop.getFluidStack(drop);
             return ItemFluidPacket.newDisplayStack(fluid);
-        }
-        else return drop;
+        } else return drop;
     }
 
     public static IAEItemStack displayAEFluid(IAEItemStack drop) {
         if (!drop.getDefinition().isEmpty() && drop.getItem() instanceof ItemFluidDrop) {
             FluidStack fluid = ItemFluidDrop.getFluidStack(drop.getDefinition());
             return AEItemStack.fromItemStack(ItemFluidPacket.newDisplayStack(fluid));
-        }
-        else return drop;
+        } else return drop;
+    }
+
+    public static IAEItemStack displayAEFluidAmount(IAEItemStack drop) {
+        if (drop != null && !drop.getDefinition().isEmpty() && drop.getItem() instanceof ItemFluidDrop) {
+            FluidStack fluid = ItemFluidDrop.getFluidStack(drop.getDefinition());
+            AEItemStack stack = AEItemStack.fromItemStack(ItemFluidPacket.newDisplayStack(fluid));
+            return stack == null ? null : stack.setStackSize(drop.getStackSize());
+        } else return drop;
     }
 
     public static long getFluidSize(IAEItemStack aeStack) {
@@ -184,8 +190,7 @@ public class CoreModHooks {
         Preconditions.checkState(Ae2Reflect.getCPUComplete(instance), "CPU should be complete to prevent re-insertion when dumping items");
         final IGrid g = Ae2Reflect.getGrid(instance);
 
-        if( g == null )
-        {
+        if (g == null) {
             return;
         }
 
@@ -194,8 +199,7 @@ public class CoreModHooks {
         final IMEInventory<IAEFluidStack> jj = sg.getInventory(AEApi.instance().storage().getStorageChannel(IFluidStorageChannel.class));
         final MECraftingInventory inventory = Ae2Reflect.getCPUInventory(instance);
 
-        for( IAEItemStack is : inventory.getItemList() )
-        {
+        for (IAEItemStack is : inventory.getItemList()) {
             Ae2Reflect.postCPUChange(instance, is, Ae2Reflect.getCPUSource(instance));
 
             if (is.getItem() instanceof ItemFluidDrop ) {
@@ -216,8 +220,7 @@ public class CoreModHooks {
             }
         }
 
-        if( inventory.getItemList().isEmpty() )
-        {
+        if (inventory.getItemList().isEmpty()) {
             Ae2Reflect.setCPUInventory(instance, new MECraftingInventory());
         }
 
