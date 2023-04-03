@@ -1,10 +1,11 @@
 package com.glodblock.github.integration.jei;
 
+import com.glodblock.github.integration.dynamistics.FluidCraftPatternCategory;
+import com.glodblock.github.integration.dynamistics.FluidCraftPatternPlugin;
 import com.glodblock.github.integration.dynamistics.FluidPatternCategory;
 import com.glodblock.github.integration.dynamistics.FluidPatternPlugin;
 import com.glodblock.github.integration.jei.interfaces.IngredientExtractor;
 import com.glodblock.github.loader.FCBlocks;
-import com.glodblock.github.loader.FCItems;
 import com.glodblock.github.util.ModAndClassUtil;
 import eutros.dynamistics.helper.ItemHelper;
 import eutros.dynamistics.helper.JeiHelper;
@@ -29,7 +30,8 @@ public class FCJeiPlugin implements IModPlugin {
             IJeiHelpers helpers = registry.getJeiHelpers();
             JeiHelper.makeSlotDrawable(helpers.getGuiHelper());
             registry.addRecipeCategories(
-                    new FluidPatternCategory(helpers)
+                    new FluidPatternCategory(helpers),
+                    new FluidCraftPatternCategory(helpers)
             );
         }
     }
@@ -49,6 +51,9 @@ public class FCJeiPlugin implements IModPlugin {
             registry.addRecipeRegistryPlugin(FluidPatternPlugin.INSTANCE);
             registry.addRecipeCatalyst(new ItemStack(ItemHelper.AE2.INTERFACE), FluidPatternCategory.UID);
             registry.addRecipeCatalyst(new ItemStack(FCBlocks.DUAL_INTERFACE), FluidPatternCategory.UID);
+            registry.addRecipeRegistryPlugin(FluidCraftPatternPlugin.INSTANCE);
+            registry.addRecipeCatalyst(new ItemStack(FCBlocks.DUAL_INTERFACE), FluidCraftPatternCategory.UID);
+            registry.addRecipeCatalyst(new ItemStack(FCBlocks.FLUID_ASSEMBLER), FluidCraftPatternCategory.UID);
         }
     }
 
