@@ -7,6 +7,7 @@ public final class ModAndClassUtil {
     public static boolean AUTO_P = false;
     public static boolean GT = false;
     public static boolean NEE = false;
+    public static boolean DY = false;
 
     public static void init() {
         if (Loader.isModLoaded("packagedauto")) {
@@ -19,6 +20,10 @@ public final class ModAndClassUtil {
 
         if (Loader.isModLoaded("neenergistics")) {
             NEE = true;
+        }
+
+        if (Loader.isModLoaded("dynamistics")) {
+            DY = true;
         }
     }
 

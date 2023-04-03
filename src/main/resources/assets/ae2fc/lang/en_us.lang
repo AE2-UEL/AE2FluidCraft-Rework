@@ -62,3 +62,5 @@ ae2fc.tooltip.prevent_splitting.hint=Items and fluids can only be pushed out tog
 
 ae2fc.pauto.fluid_processing.name=Fluid Processing
 ae2fc.pauto.fluid_processing.name_short=Fluid
+
+ae2fc.dynamistics.category.title.pattern=Fluid Crafting Pattern
