@@ -47,7 +47,7 @@ public class FluidCraftPatternCategory implements IRecipeCategory<SingletonRecip
         this.craftingBackground = guiHelper.createDrawable(new ResourceLocation("appliedenergistics2", "textures/guis/pattern.png"), 9, 85, 126, 68);
         this.background = guiHelper.createBlankDrawable(WIDTH, HEIGHT);
         this.icon = guiHelper.createDrawableIngredient(new ItemStack(FCItems.DENSE_CRAFT_ENCODED_PATTERN));
-        this.interfaceStack = new ItemStack(FCBlocks.DUAL_INTERFACE);
+        this.interfaceStack = new ItemStack(FCBlocks.FLUID_ASSEMBLER);
         this.arrow = guiHelper.createDrawable(new ResourceLocation("dynamistics", "textures/gui/arrows.png"), 64, 16, 32, 32);
         this.guiStartY = HEIGHT - this.craftingBackground.getHeight();
         this.guiStartX = (WIDTH - this.craftingBackground.getWidth()) / 2;

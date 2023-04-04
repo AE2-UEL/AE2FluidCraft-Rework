@@ -52,7 +52,6 @@ public class FCJeiPlugin implements IModPlugin {
             registry.addRecipeCatalyst(new ItemStack(ItemHelper.AE2.INTERFACE), FluidPatternCategory.UID);
             registry.addRecipeCatalyst(new ItemStack(FCBlocks.DUAL_INTERFACE), FluidPatternCategory.UID);
             registry.addRecipeRegistryPlugin(FluidCraftPatternPlugin.INSTANCE);
-            registry.addRecipeCatalyst(new ItemStack(FCBlocks.DUAL_INTERFACE), FluidCraftPatternCategory.UID);
             registry.addRecipeCatalyst(new ItemStack(FCBlocks.FLUID_ASSEMBLER), FluidCraftPatternCategory.UID);
         }
     }
