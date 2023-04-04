@@ -29,7 +29,7 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'idea'
 
-version = "2.4.17-r"
+version = "2.4.18-r"
 group = "ae2fc"
 archivesBaseName = "Fluid Craft for AE2"
 
