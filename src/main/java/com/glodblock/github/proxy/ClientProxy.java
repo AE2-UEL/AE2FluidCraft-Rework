@@ -31,7 +31,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public void preInit(FMLPreInitializationEvent event){
+    public void preInit(FMLPreInitializationEvent event) {
         super.preInit(event);
         MinecraftForge.EVENT_BUS.register(dropColourHandler);
         ClientRegistry.bindTileEntitySpecialRenderer(TileIngredientBuffer.class, new RenderIngredientBuffer());
@@ -45,7 +45,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public void init(FMLInitializationEvent event){
+    public void init(FMLInitializationEvent event) {
         super.init(event);
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler((s, i) -> {
             FluidStack fluid = ItemFluidDrop.getFluidStack(s);

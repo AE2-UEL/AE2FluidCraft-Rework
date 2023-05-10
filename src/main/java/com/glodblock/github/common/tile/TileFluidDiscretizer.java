@@ -20,9 +20,9 @@ import appeng.me.storage.MEInventoryHandler;
 import appeng.tile.grid.AENetworkTile;
 import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.util.Util;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -130,7 +130,7 @@ public class TileFluidDiscretizer extends AENetworkTile implements ICellContaine
 
         private final MEInventoryHandler<IAEItemStack> invHandler = new MEInventoryHandler<>(this, getChannel());
         @Nullable
-        private List<IAEItemStack> itemCache = null;
+        private ObjectArrayList<IAEItemStack> itemCache = null;
 
         FluidDiscretizingInventory() {
             invHandler.setPriority(Integer.MAX_VALUE);
@@ -177,7 +177,7 @@ public class TileFluidDiscretizer extends AENetworkTile implements ICellContaine
         @Override
         public IItemList<IAEItemStack> getAvailableItems(IItemList<IAEItemStack> out) {
             if (itemCache == null) {
-                itemCache = new ArrayList<>();
+                itemCache = new ObjectArrayList<>();
                 IMEMonitor<IAEFluidStack> fluidGrid = getFluidGrid();
                 if (fluidGrid != null) {
                     for (IAEFluidStack fluid : fluidGrid.getStorageList()) {
@@ -204,7 +204,7 @@ public class TileFluidDiscretizer extends AENetworkTile implements ICellContaine
         public void postChange(IBaseMonitor<IAEFluidStack> monitor, Iterable<IAEFluidStack> change, IActionSource actionSource) {
             itemCache = null;
             try {
-                List<IAEItemStack> mappedChanges = new ArrayList<>();
+                ObjectArrayList<IAEItemStack> mappedChanges = new ObjectArrayList<>();
                 for (IAEFluidStack fluidStack : change) {
                     boolean isNg = false;
                     if (fluidStack.getStackSize() < 0) {

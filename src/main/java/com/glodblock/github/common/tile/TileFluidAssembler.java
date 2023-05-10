@@ -32,6 +32,7 @@ import com.glodblock.github.common.item.ItemFluidCraftEncodedPattern;
 import com.glodblock.github.util.FluidCraftingPatternDetails;
 import com.glodblock.github.util.Util;
 import io.netty.buffer.ByteBuf;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -47,7 +48,10 @@ import net.minecraftforge.items.IItemHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
 
 public class TileFluidAssembler extends AENetworkInvTile implements ICraftingProvider, ITickable {
 
@@ -55,13 +59,13 @@ public class TileFluidAssembler extends AENetworkInvTile implements ICraftingPro
     public final AppEngInternalInventory upgrade = new AppEngInternalInventory(this, 2, 3);
     public final AppEngInternalInventory gridInv = new AppEngInternalInventory(this, 9, 1);
     public final AppEngInternalInventory output = new AppEngInternalInventory(this, 1);
-    private List<ICraftingPatternDetails> craftingList = null;
+    private ObjectArrayList<ICraftingPatternDetails> craftingList = null;
     private int progress = 0;
     private static final double powerUsage = 0.5D;
     public static final int TIME = 20;
     private ICraftingPatternDetails myPlan = null;
     private final IActionSource mySrc = new MachineSource(this);
-    private List<ItemStack> waitingToSend = new ArrayList<>();
+    private ObjectArrayList<ItemStack> waitingToSend = new ObjectArrayList<>();
 
     @Reflected
     public TileFluidAssembler() {
@@ -88,7 +92,7 @@ public class TileFluidAssembler extends AENetworkInvTile implements ICraftingPro
 
             if (details != null) {
                 if (this.craftingList == null) {
-                    this.craftingList = new ArrayList<>();
+                    this.craftingList = new ObjectArrayList<>();
                 }
                 this.craftingList.add(details);
             }
@@ -210,7 +214,7 @@ public class TileFluidAssembler extends AENetworkInvTile implements ICraftingPro
             ItemStack pattern = new ItemStack(data.getCompoundTag("myPlan"));
             this.myPlan = FluidCraftingPatternDetails.GetFluidPattern(pattern, this.getWorld());
         }
-        this.waitingToSend = new ArrayList<>();
+        this.waitingToSend = new ObjectArrayList<>();
         final NBTTagList waitingList = data.getTagList("waitingToSend", 10);
         for (int x = 0; x < waitingList.tagCount(); x++) {
             final NBTTagCompound c = waitingList.getCompoundTagAt(x);
@@ -313,7 +317,7 @@ public class TileFluidAssembler extends AENetworkInvTile implements ICraftingPro
                 }
             }
             if (!this.waitingToSend.isEmpty() && this.getProxy().isActive()) {
-                List<ItemStack> rst = new ArrayList<>();
+                ObjectArrayList<ItemStack> rst = new ObjectArrayList<>();
                 try {
                     IMEInventory<IAEItemStack> des = this.getProxy().getStorage().getInventory(Util.ITEM);
                     final IEnergySource src = this.getProxy().getEnergy();
@@ -361,7 +365,7 @@ public class TileFluidAssembler extends AENetworkInvTile implements ICraftingPro
     }
 
     public void dropExcessPatterns() {
-        List<ItemStack> dropList = new ArrayList<>();
+        ObjectArrayList<ItemStack> dropList = new ObjectArrayList<>();
         for (int invSlot = 0; invSlot < this.invPatterns.getSlots(); invSlot++) {
             if (invSlot > 8 + getPatternCap() * 9) {
                 ItemStack is = this.invPatterns.getStackInSlot(invSlot);

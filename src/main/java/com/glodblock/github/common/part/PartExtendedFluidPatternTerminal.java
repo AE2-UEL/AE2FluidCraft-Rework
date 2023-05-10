@@ -19,6 +19,7 @@ import com.glodblock.github.inventory.ExAppEngInternalInventory;
 import com.glodblock.github.inventory.GuiType;
 import com.glodblock.github.inventory.InventoryHandler;
 import com.glodblock.github.util.Util;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -31,7 +32,6 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
 
 public class PartExtendedFluidPatternTerminal extends PartExpandedProcessingPatternTerminal {
 
@@ -125,7 +125,7 @@ public class PartExtendedFluidPatternTerminal extends PartExpandedProcessingPatt
         super.onChangeInventory(inv, slot, mc, removedStack, newStack);
     }
 
-    public void onChangeCrafting(HashMap<Integer, ItemStack[]> inputs, ItemStack[] outputs, boolean combine) {
+    public void onChangeCrafting(Int2ObjectMap<ItemStack[]> inputs, ItemStack[] outputs, boolean combine) {
         IItemHandler crafting = this.getInventoryByName("crafting");
         IItemHandler output = this.getInventoryByName("output");
         IItemList<IAEItemStack> storageList = this.getInventory(Util.ITEM) == null ?

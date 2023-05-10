@@ -26,6 +26,7 @@ import appeng.items.parts.PartModels;
 import appeng.parts.PartBasicState;
 import appeng.parts.PartModel;
 import appeng.util.Platform;
+import appeng.util.SettingsFrom;
 import appeng.util.inv.IAEAppEngInventory;
 import appeng.util.inv.IInventoryDestination;
 import appeng.util.inv.InvOperation;
@@ -261,6 +262,22 @@ public class PartDualInterface extends PartBasicState
             return MODELS_ON;
         } else {
             return MODELS_OFF;
+        }
+    }
+
+    @Override
+    public NBTTagCompound downloadSettings(SettingsFrom from) {
+        NBTTagCompound pre = super.downloadSettings(from);
+        NBTTagCompound tag = pre == null ? new NBTTagCompound() : pre;
+        tag.setTag("pattern", this.duality.downloadSettings(from));
+        return tag.isEmpty() ? null : tag;
+    }
+
+    @Override
+    public void uploadSettings(SettingsFrom from, NBTTagCompound compound, EntityPlayer player) {
+        super.uploadSettings(from, compound, player);
+        if (compound.hasKey("pattern")) {
+            this.duality.uploadSettings(compound.getCompoundTag("pattern"), player);
         }
     }
 

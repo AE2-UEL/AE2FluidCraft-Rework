@@ -22,6 +22,7 @@ import com.glodblock.github.util.Ae2Reflect;
 import com.glodblock.github.util.FluidCraftingPatternDetails;
 import com.glodblock.github.util.FluidPatternDetails;
 import com.glodblock.github.util.Util;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
@@ -202,7 +203,7 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
     }
 
     @Override
-    public void acceptPattern(HashMap<Integer, ItemStack[]> inputs, ItemStack[] outputs, boolean combine) {
+    public void acceptPattern(Int2ObjectMap<ItemStack[]> inputs, ItemStack[] outputs, boolean combine) {
         if (Ae2Reflect.getPart(this) instanceof PartFluidPatternTerminal) {
             ((PartFluidPatternTerminal) Ae2Reflect.getPart(this)).onChangeCrafting(inputs, outputs, combine);
         }

@@ -3,6 +3,8 @@ package com.glodblock.github.network;
 import com.glodblock.github.interfaces.PatternConsumer;
 import com.glodblock.github.util.Util;
 import io.netty.buffer.ByteBuf;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -11,16 +13,15 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
 
 public class CPacketLoadPattern implements IMessage {
 
     private ItemStack[] output;
-    private HashMap<Integer, ItemStack[]> crafting;
+    private Int2ObjectMap<ItemStack[]> crafting;
     private boolean compress;
     private static final int SLOT_SIZE = 16;
 
-    public CPacketLoadPattern(HashMap<Integer, ItemStack[]> crafting, ItemStack[] output, boolean compress) {
+    public CPacketLoadPattern(Int2ObjectMap<ItemStack[]> crafting, ItemStack[] output, boolean compress) {
         this.crafting = crafting;
         this.output = output;
         this.compress = compress;
@@ -43,7 +44,7 @@ public class CPacketLoadPattern implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        crafting = new HashMap<>();
+        crafting = new Int2ObjectArrayMap<>();
         compress = buf.readBoolean();
         NBTTagCompound msg = Util.readNBTFromBytes(buf);
         for (int i = 0; i < SLOT_SIZE; i ++) {

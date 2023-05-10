@@ -1,13 +1,14 @@
 package com.glodblock.github.integration.jei;
 
 import com.glodblock.github.common.item.ItemFluidPacket;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import mezz.jei.api.gui.IGuiIngredient;
 import mezz.jei.api.gui.IRecipeLayout;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -17,7 +18,7 @@ public class RecipeTransferBuilder {
     private static ExtraExtractors extractor = null;
     private static final int MAX_ITEMS = 16;
 
-    private final HashMap<Integer, ItemStack[]> in;
+    private final Int2ObjectArrayMap<ItemStack[]> in;
     private final int bound;
     private final ItemStack[] out;
     private final IRecipeLayout recipe;
@@ -29,7 +30,7 @@ public class RecipeTransferBuilder {
     private boolean fluidFirst = false;
 
     public RecipeTransferBuilder(int maxInput, int maxOutput, IRecipeLayout recipe) {
-        this.in = new HashMap<>();
+        this.in = new Int2ObjectArrayMap<>();
         this.bound = maxInput;
         this.out = new ItemStack[maxOutput];
         this.recipe = recipe;
@@ -148,7 +149,7 @@ public class RecipeTransferBuilder {
         return this.out;
     }
 
-    public HashMap<Integer, ItemStack[]> getInput() {
+    public Int2ObjectMap<ItemStack[]> getInput() {
         return this.in;
     }
 

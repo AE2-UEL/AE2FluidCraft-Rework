@@ -23,6 +23,7 @@ import appeng.helpers.DualityInterface;
 import appeng.helpers.IInterfaceHost;
 import appeng.tile.grid.AENetworkInvTile;
 import appeng.util.Platform;
+import appeng.util.SettingsFrom;
 import appeng.util.inv.IInventoryDestination;
 import appeng.util.inv.InvOperation;
 import com.glodblock.github.common.component.DualityDualInterface;
@@ -31,6 +32,7 @@ import com.glodblock.github.inventory.GuiType;
 import com.glodblock.github.loader.FCBlocks;
 import com.google.common.collect.ImmutableSet;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -125,7 +127,6 @@ public class TileDualInterface extends AENetworkInvTile
     @Override
     public void onReady() {
         this.configureNodeSides();
-
         super.onReady();
         duality.initialize();
     }
@@ -304,6 +305,22 @@ public class TileDualInterface extends AENetworkInvTile
     @Override
     public GuiType getGuiType() {
         return GuiType.DUAL_ITEM_INTERFACE;
+    }
+
+    @Override
+    public NBTTagCompound downloadSettings(SettingsFrom from) {
+        NBTTagCompound pre = super.downloadSettings(from);
+        NBTTagCompound tag = pre == null ? new NBTTagCompound() : pre;
+        tag.setTag("pattern", this.duality.downloadSettings(from));
+        return tag.isEmpty() ? null : tag;
+    }
+
+    @Override
+    public void uploadSettings(SettingsFrom from, NBTTagCompound compound, EntityPlayer player) {
+        super.uploadSettings(from, compound, player);
+        if (compound.hasKey("pattern")) {
+            this.duality.uploadSettings(compound.getCompoundTag("pattern"), player);
+        }
     }
 
 }

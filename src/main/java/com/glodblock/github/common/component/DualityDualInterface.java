@@ -1,7 +1,9 @@
 package com.glodblock.github.common.component;
 
+import appeng.api.AEApi;
 import appeng.api.config.Actionable;
 import appeng.api.config.Upgrades;
+import appeng.api.definitions.IMaterials;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.crafting.ICraftingLink;
 import appeng.api.networking.crafting.ICraftingPatternDetails;
@@ -12,20 +14,29 @@ import appeng.api.networking.ticking.TickRateModulation;
 import appeng.api.networking.ticking.TickingRequest;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.util.IConfigManager;
+import appeng.core.localization.PlayerMessages;
 import appeng.fluids.helper.DualityFluidInterface;
 import appeng.fluids.helper.IFluidInterfaceHost;
+import appeng.fluids.util.AEFluidInventory;
 import appeng.helpers.DualityInterface;
 import appeng.helpers.IInterfaceHost;
+import appeng.items.misc.ItemEncodedPattern;
 import appeng.me.helpers.AENetworkProxy;
+import appeng.tile.inventory.AppEngInternalInventory;
+import appeng.util.Platform;
+import appeng.util.SettingsFrom;
 import appeng.util.inv.InvOperation;
 import com.google.common.collect.ImmutableSet;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -184,6 +195,68 @@ public class DualityDualInterface <H extends IInterfaceHost & IFluidInterfaceHos
     public void readFromNBT(final NBTTagCompound data) {
         itemDuality.readFromNBT(data.getCompoundTag("itemDuality"));
         fluidDuality.readFromNBT(data.getCompoundTag("fluidDuality"));
+    }
+
+    public NBTTagCompound downloadSettings(SettingsFrom from) {
+        NBTTagCompound tag = new NBTTagCompound();
+        if (from == SettingsFrom.MEMORY_CARD) {
+            final IItemHandler inv = this.getItemInventoryByName("item_patterns");
+            if (inv instanceof AppEngInternalInventory) {
+                ((AppEngInternalInventory) inv).writeToNBT(tag, "item_patterns");
+            }
+            final IFluidHandler fluidInv = this.fluidDuality.getFluidInventoryByName("config");
+            if (fluidInv instanceof AEFluidInventory) {
+                ((AEFluidInventory) fluidInv).writeToNBT(tag, "fluid_config");
+            }
+        }
+        return tag;
+    }
+
+    public void uploadSettings(NBTTagCompound compound, EntityPlayer player) {
+        final IItemHandler inv = this.getItemInventoryByName("item_patterns");
+        if (inv instanceof AppEngInternalInventory) {
+            final AppEngInternalInventory target = (AppEngInternalInventory) inv;
+            AppEngInternalInventory tmp = new AppEngInternalInventory(null, target.getSlots());
+            tmp.readFromNBT(compound, "item_patterns");
+            PlayerMainInvWrapper playerInv = new PlayerMainInvWrapper(player.inventory);
+            final IMaterials materials = AEApi.instance().definitions().materials();
+            int missingPatternsToEncode = 0;
+
+            for (int i = 0; i < inv.getSlots(); i++) {
+                if (target.getStackInSlot(i).getItem() instanceof ItemEncodedPattern) {
+                    ItemStack blank = materials.blankPattern().maybeStack(target.getStackInSlot(i).getCount()).get();
+                    if (!player.addItemStackToInventory(blank)) {
+                        player.dropItem(blank, true);
+                    }
+                    target.setStackInSlot(i, ItemStack.EMPTY);
+                }
+            }
+
+
+            for (int x = 0; x < tmp.getSlots(); x++) {
+                if (!tmp.getStackInSlot(x).isEmpty()) {
+                    boolean found = false;
+                    for (int i = 0; i < playerInv.getSlots(); i++) {
+                        if (materials.blankPattern().isSameAs(playerInv.getStackInSlot(i))) {
+                            target.setStackInSlot(x, tmp.getStackInSlot(x));
+                            playerInv.getStackInSlot(i).shrink(1);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        missingPatternsToEncode++;
+                    }
+                }
+            }
+            if (Platform.isServer() && missingPatternsToEncode > 0) {
+                player.sendMessage(PlayerMessages.MissingPatternsToEncode.get());
+            }
+        }
+        final IFluidHandler fluidInv = this.fluidDuality.getFluidInventoryByName("config");
+        if (fluidInv instanceof AEFluidInventory) {
+            ((AEFluidInventory) fluidInv).readFromNBT(compound, "fluid_config");
+        }
     }
 
 }

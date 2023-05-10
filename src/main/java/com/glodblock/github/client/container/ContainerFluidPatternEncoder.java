@@ -17,6 +17,7 @@ import com.glodblock.github.interfaces.PatternConsumer;
 import com.glodblock.github.interfaces.SlotFluid;
 import com.glodblock.github.loader.FCItems;
 import com.glodblock.github.util.FluidPatternDetails;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
@@ -27,7 +28,6 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -156,7 +156,7 @@ public class ContainerFluidPatternEncoder extends AEBaseContainer implements Pat
     }
 
     @Override
-    public void acceptPattern(HashMap<Integer, ItemStack[]> inputs, ItemStack[] outputs, boolean combine) {
+    public void acceptPattern(Int2ObjectMap<ItemStack[]> inputs, ItemStack[] outputs, boolean combine) {
         AeStackInventory<IAEItemStack> craftingSlot = tile.getCraftingSlots();
         AeStackInventory<IAEItemStack> outputSlot = tile.getOutputSlots();
         for (int index : inputs.keySet()) {

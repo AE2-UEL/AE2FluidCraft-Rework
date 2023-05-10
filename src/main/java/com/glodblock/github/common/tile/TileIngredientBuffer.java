@@ -1,8 +1,6 @@
 package com.glodblock.github.common.tile;
 
-import appeng.api.storage.data.IAEFluidStack;
 import appeng.fluids.util.AEFluidInventory;
-import appeng.fluids.util.AEFluidStack;
 import appeng.fluids.util.IAEFluidInventory;
 import appeng.fluids.util.IAEFluidTank;
 import appeng.tile.AEBaseInvTile;

@@ -20,6 +20,7 @@ import com.glodblock.github.loader.FCItems;
 import com.glodblock.github.util.Ae2Reflect;
 import com.glodblock.github.util.FluidPatternDetails;
 import com.glodblock.github.util.Util;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
@@ -29,7 +30,6 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -427,7 +427,7 @@ public class ContainerExtendedFluidPatternTerminal extends ContainerExpandedProc
     }
 
     @Override
-    public void acceptPattern(HashMap<Integer, ItemStack[]> inputs, ItemStack[] outputs, boolean combine) {
+    public void acceptPattern(Int2ObjectMap<ItemStack[]> inputs, ItemStack[] outputs, boolean combine) {
         if (part instanceof PartExtendedFluidPatternTerminal) {
             ((PartExtendedFluidPatternTerminal) part).onChangeCrafting(inputs, outputs, combine);
         }
