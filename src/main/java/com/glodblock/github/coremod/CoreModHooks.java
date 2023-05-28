@@ -16,6 +16,7 @@ import appeng.crafting.MECraftingInventory;
 import appeng.fluids.parts.PartFluidInterface;
 import appeng.fluids.tile.TileFluidInterface;
 import appeng.helpers.DualityInterface;
+import appeng.helpers.IInterfaceHost;
 import appeng.me.MachineSet;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.parts.misc.PartInterface;
@@ -225,6 +226,25 @@ public class CoreModHooks {
         }
 
         Ae2Reflect.markCPUDirty(instance);
+    }
+
+    public static void downloadExtraNBT(Object host, NBTTagCompound tag) {
+        if (host instanceof IInterfaceHost) {
+            DualityInterface dual = ((IInterfaceHost) host).getInterfaceDuality();
+            NBTTagCompound extra = new NBTTagCompound();
+            extra.setBoolean("fluidPacket", Ae2Reflect.getFluidPacketMode(dual));
+            extra.setBoolean("allowSplitting", Ae2Reflect.getSplittingMode(dual));
+            tag.setTag("extraNBTData", extra);
+        }
+    }
+
+    public static void uploadExtraNBT(Object host, NBTTagCompound tag) {
+        if (host instanceof IInterfaceHost && tag != null && tag.hasKey("extraNBTData")) {
+            DualityInterface dual = ((IInterfaceHost) host).getInterfaceDuality();
+            NBTTagCompound extra = tag.getCompoundTag("extraNBTData");
+            Ae2Reflect.setFluidPacketMode(dual, extra.getBoolean("fluidPacket"));
+            Ae2Reflect.setSplittingMode(dual, extra.getBoolean("allowSplitting"));
+        }
     }
 
 }

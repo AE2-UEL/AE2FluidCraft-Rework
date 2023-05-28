@@ -55,6 +55,10 @@ public class FCClassTransformer implements IClassTransformer {
             case "p455w0rd.wct.client.gui.GuiCraftConfirm":
                 tform = WCTGuiCraftingTransformer.INSTANCE;
                 break;
+            case "appeng.tile.AEBaseTile":
+            case "appeng.parts.AEBasePart":
+                tform = AEBaseTilePartTransformer.INSTANCE;
+                break;
             default:
                 return code;
         }
