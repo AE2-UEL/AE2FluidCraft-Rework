@@ -242,7 +242,13 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
 
     @Override
     public boolean containsItems() {
-        if (invFluids != null) {
+        int blockMode = 0;
+        if (this.self != null) {
+            blockMode = Ae2Reflect.getExtendedBlockMode(this.self);
+        }
+        boolean checkFluid = blockMode != 1;
+        boolean checkItem = blockMode != 2;
+        if (invFluids != null && checkFluid) {
             for (IFluidTankProperties tank : invFluids.getTankProperties()) {
                 FluidStack fluid = tank.getContents();
                 if (fluid != null && fluid.amount > 0) {
@@ -250,7 +256,10 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
                 }
             }
         }
-        return invItems != null && invItems.containsItems();
+        if (invItems != null && checkItem) {
+            return invItems.containsItems();
+        }
+        return false;
     }
 
     @Override

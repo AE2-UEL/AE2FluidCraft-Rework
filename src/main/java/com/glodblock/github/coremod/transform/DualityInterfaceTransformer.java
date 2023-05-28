@@ -14,6 +14,7 @@ public class DualityInterfaceTransformer extends FCClassTransformer.ClassMapper 
     @Override
     protected ClassVisitor getClassMapper(ClassVisitor downstream) {
         downstream.visitField(Opcodes.ACC_PUBLIC, "fluidPacket", "Z", null, false).visitEnd();
+        downstream.visitField(Opcodes.ACC_PUBLIC, "blockModeEx", "I", null, 0).visitEnd();
         // Cannot set instance fields directly, injecting initialization code into the constructor is necessary
         downstream.visitField(Opcodes.ACC_PUBLIC, "allowSplitting", "Z", null, false).visitEnd();
 

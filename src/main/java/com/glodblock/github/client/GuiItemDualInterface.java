@@ -1,6 +1,7 @@
 package com.glodblock.github.client;
 
 import appeng.api.AEApi;
+import appeng.api.config.YesNo;
 import appeng.client.gui.implementations.GuiInterface;
 import appeng.client.gui.widgets.GuiTabButton;
 import appeng.helpers.IInterfaceHost;
@@ -22,9 +23,9 @@ public class GuiItemDualInterface extends GuiInterface {
     private final ContainerItemDualInterface container;
     private GuiTabButton switchInterface;
     private GuiTabButton priorityBtn;
-    private GuiFCImgButton fluidPacketOffBtn;
-    private GuiFCImgButton fluidPacketOnBtn;
+    private GuiFCImgButton fluidPacketBtn;
     private GuiFCImgButton splittingBtn;
+    private GuiFCImgButton blockingBtn;
 
     public GuiItemDualInterface(final InventoryPlayer inventoryPlayer, final IInterfaceHost te) {
         super(inventoryPlayer, te);
@@ -39,12 +40,12 @@ public class GuiItemDualInterface extends GuiInterface {
         ItemStack icon = AEApi.instance().definitions().blocks().fluidIface().maybeStack(1).orElse(ItemStack.EMPTY);
         switchInterface = new GuiTabButton(guiLeft + 133, guiTop, icon, icon.getDisplayName(), itemRender);
         buttonList.add(switchInterface);
-        fluidPacketOffBtn = new GuiFCImgButton(this.guiLeft - 18, this.guiTop + 44, "SEND_FLUID", "REAL_FLUID");
-        buttonList.add(fluidPacketOffBtn);
-        fluidPacketOnBtn = new GuiFCImgButton(this.guiLeft - 18, this.guiTop + 44, "SEND_PACKET", "FLUID_PACKET");
-        buttonList.add(fluidPacketOnBtn);
+        fluidPacketBtn = new GuiFCImgButton(this.guiLeft - 18, this.guiTop + 44, "SEND_MODE", "REAL_FLUID");
+        buttonList.add(fluidPacketBtn);
         splittingBtn = new GuiFCImgButton(this.guiLeft - 18, this.guiTop + 62, "SPLITTING", "ALLOW");
         buttonList.add(splittingBtn);
+        blockingBtn = new GuiFCImgButton(this.guiLeft - 18, this.guiTop + 80, "BLOCK", "ALL");
+        buttonList.add(blockingBtn);
         priorityBtn = Ae2ReflectClient.getPriorityButton(this);
     }
 
@@ -59,28 +60,23 @@ public class GuiItemDualInterface extends GuiInterface {
             InventoryHandler.switchGui(GuiType.DUAL_FLUID_INTERFACE);
         } else if (btn == priorityBtn) {
             InventoryHandler.switchGui(GuiType.PRIORITY);
-        } else if (btn == fluidPacketOffBtn || btn == fluidPacketOnBtn) {
-            FluidCraft.proxy.netHandler.sendToServer(new CPacketFluidPatternTermBtns("DualInterface.FluidPacket", btn == fluidPacketOnBtn ? "0" : "1"));
+        } else if (btn == fluidPacketBtn) {
+            FluidCraft.proxy.netHandler.sendToServer(new CPacketFluidPatternTermBtns("DualInterface.FluidPacket", this.fluidPacketBtn.getCurrentValue().equals("FLUID_PACKET") ? "0" : "1"));
         } else if (btn == splittingBtn) {
             FluidCraft.proxy.netHandler.sendToServer(new CPacketFluidPatternTermBtns("DualInterface.AllowSplitting", this.splittingBtn.getCurrentValue().equals("ALLOW") ? "0" : "1"));
-        } else {
+        } else if (btn == blockingBtn) {
+            FluidCraft.proxy.netHandler.sendToServer(new CPacketFluidPatternTermBtns("DualInterface.ExtendedBlockMode", this.blockingBtn.getCurrentValue().equals("ALL") ? "1" : this.blockingBtn.getCurrentValue().equals("ITEM") ? "2" : "0"));
+        }  else {
             super.actionPerformed(btn);
         }
     }
 
     @Override
     public void drawFG(int offsetX, int offsetY, int mouseX, int mouseY) {
-        if (this.container.fluidPacket) {
-            this.fluidPacketOnBtn.visible = true;
-            this.fluidPacketOffBtn.visible = false;
-        }
-        else {
-            this.fluidPacketOnBtn.visible = false;
-            this.fluidPacketOffBtn.visible = true;
-        }
-
-        this.splittingBtn.set(container.allowSplitting ? "ALLOW" : "PREVENT");
-
+        this.fluidPacketBtn.set(this.container.fluidPacket ? "FLUID_PACKET" : "REAL_FLUID");
+        this.splittingBtn.set(this.container.allowSplitting ? "ALLOW" : "PREVENT");
+        this.blockingBtn.set(this.container.blockModeEx == 0 ? "ALL" : this.container.blockModeEx == 1 ? "ITEM" : "FLUID");
+        this.blockingBtn.visible = this.container.getBlockingMode() == YesNo.YES;
         super.drawFG(offsetX, offsetY, mouseX, mouseY);
     }
 

@@ -97,6 +97,9 @@ public class CPacketFluidPatternTermBtns implements IMessage {
                         case "DualInterface.AllowSplitting":
                             cdi.setAllowSplittingInTile(Value.equals("1"));
                             break;
+                        case "DualInterface.ExtendedBlockMode":
+                            cdi.setExtendedBlockMode(Integer.parseInt(Value));
+                            break;
                     }
                 } else if (c instanceof ContainerWrapInterface) {
                     final ContainerWrapInterface cdi = (ContainerWrapInterface) c;
@@ -106,6 +109,9 @@ public class CPacketFluidPatternTermBtns implements IMessage {
                             break;
                         case "WrapDualInterface.AllowSplitting":
                             cdi.setAllowSplittingInTile(Value.equals("1"));
+                            break;
+                        case "WrapDualInterface.ExtendedBlockMode":
+                            cdi.setExtendedBlockMode(Integer.parseInt(Value));
                             break;
                     }
                 }

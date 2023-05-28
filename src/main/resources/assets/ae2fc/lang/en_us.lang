@@ -59,6 +59,12 @@ ae2fc.tooltip.allow_splitting=Allow Splitting Items and Fluids
 ae2fc.tooltip.allow_splitting.hint=Items and fluids may be separated to different sides if the interface does not point into any direction.
 ae2fc.tooltip.prevent_splitting=Prevent Splitting Items and Fluids
 ae2fc.tooltip.prevent_splitting.hint=Items and fluids can only be pushed out together through the same side of the interface.
+ae2fc.tooltip.block_all=Block All
+ae2fc.tooltip.block_all.hint=Blocking mode checks both item and fluid.
+ae2fc.tooltip.block_item=Block Item
+ae2fc.tooltip.block_item.hint=Blocking mode only checks item.
+ae2fc.tooltip.block_fluid=Block Fluid
+ae2fc.tooltip.block_fluid.hint=Blocking mode only checks fluid.
 
 ae2fc.pauto.fluid_processing.name=Fluid Processing
 ae2fc.pauto.fluid_processing.name_short=Fluid

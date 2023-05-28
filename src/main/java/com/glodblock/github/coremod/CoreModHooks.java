@@ -83,11 +83,13 @@ public class CoreModHooks {
     public static void writeExtraNBTInterface(DualityInterface dual, NBTTagCompound nbt) {
         nbt.setBoolean("fluidPacket", Ae2Reflect.getFluidPacketMode(dual));
         nbt.setBoolean("allowSplitting", Ae2Reflect.getSplittingMode(dual));
+        nbt.setInteger("blockModeEx", Ae2Reflect.getExtendedBlockMode(dual));
     }
 
     public static void readExtraNBTInterface(DualityInterface dual, NBTTagCompound nbt) {
         Ae2Reflect.setFluidPacketMode(dual, nbt.getBoolean("fluidPacket"));
         Ae2Reflect.setSplittingMode(dual, !nbt.hasKey("allowSplitting") || nbt.getBoolean("allowSplitting"));
+        Ae2Reflect.setExtendedBlockMode(dual, nbt.getInteger("blockModeEx"));
     }
 
     public static ItemStack removeFluidPackets(InventoryCrafting inv, int index) {
@@ -234,6 +236,7 @@ public class CoreModHooks {
             NBTTagCompound extra = new NBTTagCompound();
             extra.setBoolean("fluidPacket", Ae2Reflect.getFluidPacketMode(dual));
             extra.setBoolean("allowSplitting", Ae2Reflect.getSplittingMode(dual));
+            extra.setInteger("blockModeEx", Ae2Reflect.getExtendedBlockMode(dual));
             tag.setTag("extraNBTData", extra);
         }
     }
@@ -244,6 +247,7 @@ public class CoreModHooks {
             NBTTagCompound extra = tag.getCompoundTag("extraNBTData");
             Ae2Reflect.setFluidPacketMode(dual, extra.getBoolean("fluidPacket"));
             Ae2Reflect.setSplittingMode(dual, extra.getBoolean("allowSplitting"));
+            Ae2Reflect.setExtendedBlockMode(dual, extra.getInteger("blockModeEx"));
         }
     }
 

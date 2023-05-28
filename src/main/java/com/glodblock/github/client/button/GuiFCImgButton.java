@@ -41,13 +41,16 @@ public class GuiFCImgButton extends GuiButton implements ITooltip {
             appearances = new HashMap<>();
             this.registerApp( 0, "NOT_COMBINE", "DONT_COMBINE", "not_combine" );
             this.registerApp( 1, "FORCE_COMBINE", "DO_COMBINE", "combine" );
-            this.registerApp( 2, "SEND_FLUID", "REAL_FLUID", "real_fluid" );
-            this.registerApp( 3, "SEND_PACKET", "FLUID_PACKET", "fake_packet" );
+            this.registerApp( 2, "SEND_MODE", "REAL_FLUID", "real_fluid" );
+            this.registerApp( 3, "SEND_MODE", "FLUID_PACKET", "fake_packet" );
             this.registerApp( 4, "FLUID_FIRST", "FLUID", "fluid_first" );
             this.registerApp( 5, "ORIGIN_ORDER", "ITEM", "origin_order" );
             this.registerApp( 6, "CRAFT_FLUID", "ENCODE", "craft_fluid" );
             this.registerApp( 7, "SPLITTING", "ALLOW", "allow_splitting" );
             this.registerApp( 8, "SPLITTING", "PREVENT", "prevent_splitting" );
+            this.registerApp( 9, "BLOCK", "ALL", "block_all" );
+            this.registerApp( 10, "BLOCK", "ITEM", "block_item" );
+            this.registerApp( 11, "BLOCK", "FLUID", "block_fluid" );
         }
     }
 
