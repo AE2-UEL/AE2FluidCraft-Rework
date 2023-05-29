@@ -269,7 +269,7 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
     }
 
     @Nullable
-    private static IInterfaceHost getInterfaceTE(TileEntity te, EnumFacing face) {
+    protected static IInterfaceHost getInterfaceTE(TileEntity te, EnumFacing face) {
         if (te instanceof IInterfaceHost) {
             return (IInterfaceHost) te;
         } else if (te instanceof TileCableBus) {
@@ -282,7 +282,7 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
     }
 
     @Nullable
-    private static IFluidInterfaceHost getFluidInterfaceTE(TileEntity te, EnumFacing face) {
+    protected static IFluidInterfaceHost getFluidInterfaceTE(TileEntity te, EnumFacing face) {
         if (te instanceof IFluidInterfaceHost) {
             return (IFluidInterfaceHost) te;
         } else if (te instanceof TileCableBus) {
