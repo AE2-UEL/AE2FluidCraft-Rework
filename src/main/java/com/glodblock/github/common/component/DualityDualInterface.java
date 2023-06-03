@@ -18,6 +18,7 @@ import appeng.core.localization.PlayerMessages;
 import appeng.fluids.helper.DualityFluidInterface;
 import appeng.fluids.helper.IFluidInterfaceHost;
 import appeng.fluids.util.AEFluidInventory;
+import appeng.fluids.util.IAEFluidInventory;
 import appeng.helpers.DualityInterface;
 import appeng.helpers.IInterfaceHost;
 import appeng.items.misc.ItemEncodedPattern;
@@ -255,7 +256,13 @@ public class DualityDualInterface <H extends IInterfaceHost & IFluidInterfaceHos
         }
         final IFluidHandler fluidInv = this.fluidDuality.getFluidInventoryByName("config");
         if (fluidInv instanceof AEFluidInventory) {
-            ((AEFluidInventory) fluidInv).readFromNBT(compound, "fluid_config");
+            AEFluidInventory target = (AEFluidInventory) fluidInv;
+            AEFluidInventory tmp = new AEFluidInventory(null, target.getSlots());
+            tmp.readFromNBT(compound, "fluid_config");
+
+            for(int x = 0; x < tmp.getSlots(); x++) {
+                target.setFluidInSlot(x, tmp.getFluidInSlot(x));
+            }
         }
     }
 
