@@ -50,11 +50,6 @@ public class GuiItemDualInterface extends GuiInterface {
     }
 
     @Override
-    protected String getBackground() {
-        return "guis/interface.png";
-    }
-
-    @Override
     protected void actionPerformed(final GuiButton btn) throws IOException {
         if (btn == switchInterface) {
             InventoryHandler.switchGui(GuiType.DUAL_FLUID_INTERFACE);
