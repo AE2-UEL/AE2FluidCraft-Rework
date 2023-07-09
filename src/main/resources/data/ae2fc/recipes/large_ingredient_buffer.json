@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "item": "ae2fc:large_ingredient_buffer",
+    "count": 1
+  },
+  "pattern": [
+    "bgb",
+    "geg",
+    "bgb"
+  ],
+  "key": {
+    "b": {
+      "item": "ae2fc:ingredient_buffer"
+    },
+    "g": {
+      "item": "appliedenergistics2:quartz_glass"
+    },
+    "e": {
+      "item": "appliedenergistics2:engineering_processor"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "item": "ae2fc:fluid_discretizer",
+    "count": 1
+  },
+  "pattern": [
+    "ipi",
+    "smt",
+    "ipi"
+  ],
+  "key": {
+    "i": {
+      "tag": "forge:ingots/iron"
+    },
+    "p": {
+      "item": "appliedenergistics2:engineering_processor"
+    },
+    "s": {
+      "item": "appliedenergistics2:fluid_storage_bus"
+    },
+    "m": {
+      "item": "appliedenergistics2:condenser"
+    },
+    "t": {
+      "item": "appliedenergistics2:storage_bus"
+    }
+  }
+}

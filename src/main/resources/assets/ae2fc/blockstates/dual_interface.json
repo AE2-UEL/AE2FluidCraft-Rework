@@ -1,0 +1,48 @@
+{
+  "variants": {
+    "omnidirectional=true,facing=east": {
+      "model": "ae2fc:block/dual_interface"
+    },
+    "omnidirectional=true,facing=west": {
+      "model": "ae2fc:block/dual_interface"
+    },
+    "omnidirectional=true,facing=south": {
+      "model": "ae2fc:block/dual_interface"
+    },
+    "omnidirectional=true,facing=north": {
+      "model": "ae2fc:block/dual_interface"
+    },
+    "omnidirectional=true,facing=up": {
+      "model": "ae2fc:block/dual_interface"
+    },
+    "omnidirectional=true,facing=down": {
+      "model": "ae2fc:block/dual_interface"
+    },
+    "omnidirectional=false,facing=east": {
+      "model": "ae2fc:block/dual_interface_oriented",
+      "x": 90,
+      "y": 90
+    },
+    "omnidirectional=false,facing=west": {
+      "model": "ae2fc:block/dual_interface_oriented",
+      "x": 90,
+      "y": 270
+    },
+    "omnidirectional=false,facing=south": {
+      "model": "ae2fc:block/dual_interface_oriented",
+      "x": 270
+    },
+    "omnidirectional=false,facing=north": {
+      "model": "ae2fc:block/dual_interface_oriented",
+      "x": 90
+    },
+    "omnidirectional=false,facing=up": {
+      "model": "ae2fc:block/dual_interface_oriented",
+      "x": 0
+    },
+    "omnidirectional=false,facing=down": {
+      "model": "ae2fc:block/dual_interface_oriented",
+      "x": 180
+    }
+  }
+}

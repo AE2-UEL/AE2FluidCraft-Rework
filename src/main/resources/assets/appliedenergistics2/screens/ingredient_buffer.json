@@ -1,0 +1,26 @@
+{
+  "$schema": "schema.json",
+  "includes": ["common/common.json", "common/player_inventory.json"],
+  "background": {
+    "texture": "gui/ingredient_buffer.png",
+    "srcRect": [0, 0, 176, 222]
+  },
+  "slots": {
+    "STORAGE": {
+      "left": 8,
+      "top": 108,
+      "grid": "HORIZONTAL"
+    }
+  },
+  "text": {
+    "dialog_title": {
+      "text": {
+        "translate": "ae2fc.gui.ingredient_buffer"
+      },
+      "position": {
+        "left": 8,
+        "top": 6
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "item": "ae2fc:fluid_packet_decoder",
+    "count": 1
+  },
+  "pattern": [
+    "ihi",
+    "cfc",
+    "ipi"
+  ],
+  "key": {
+    "i": {
+      "tag": "forge:ingots/iron"
+    },
+    "h": {
+      "item": "minecraft:hopper"
+    },
+    "c": {
+      "item": "appliedenergistics2:fluix_glass_cable"
+    },
+    "f": {
+      "tag": "appliedenergistics2:fluid_interface"
+    },
+    "p": {
+      "item": "appliedenergistics2:calculation_processor"
+    }
+  }
+}

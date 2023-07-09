@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "particle": "ae2fc:blocks/interface",
+    "down": "ae2fc:blocks/interface_alternate",
+    "up": "ae2fc:blocks/interface",
+    "north": "ae2fc:blocks/interface_alternate_arrow",
+    "south": "ae2fc:blocks/interface_alternate_arrow",
+    "east": "ae2fc:blocks/interface_alternate_arrow",
+    "west": "ae2fc:blocks/interface_alternate_arrow"
+  }
+}

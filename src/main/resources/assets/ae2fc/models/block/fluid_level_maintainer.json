@@ -1,0 +1,12 @@
+{
+  "parent": "block/orientable",
+  "textures": {
+    "particle": "ae2fc:blocks/fluid_level_maintainer",
+    "down": "ae2fc:blocks/fluid_level_maintainer_side",
+    "up": "ae2fc:blocks/fluid_level_maintainer",
+    "north": "ae2fc:blocks/fluid_level_maintainer_side",
+    "south": "ae2fc:blocks/fluid_level_maintainer_side",
+    "east": "ae2fc:blocks/fluid_level_maintainer_side",
+    "west": "ae2fc:blocks/fluid_level_maintainer_side"
+  }
+}

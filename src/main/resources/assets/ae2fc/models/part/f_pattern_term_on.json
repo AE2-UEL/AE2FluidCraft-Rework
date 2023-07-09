@@ -1,0 +1,8 @@
+{
+    "parent": "appliedenergistics2:part/pattern_terminal_on",
+    "textures": {
+        "lightsBright": "ae2fc:parts/pattern_terminal_bright",
+        "lightsMedium": "ae2fc:parts/pattern_terminal_medium",
+        "lightsDark": "ae2fc:parts/pattern_terminal_dark"
+    }
+}

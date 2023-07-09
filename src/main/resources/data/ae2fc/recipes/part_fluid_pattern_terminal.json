@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "appliedenergistics2:pattern_terminal"
+    },
+    {
+      "item": "ae2fc:fluid_packet_decoder"
+    }
+  ],
+  "result": {
+    "item": "ae2fc:part_fluid_pattern_terminal"
+  }
+}

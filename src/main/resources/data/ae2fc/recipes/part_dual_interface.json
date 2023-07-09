@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "ae2fc:dual_interface"
+    }
+  ],
+  "result": {
+    "item": "ae2fc:part_dual_interface"
+  }
+}

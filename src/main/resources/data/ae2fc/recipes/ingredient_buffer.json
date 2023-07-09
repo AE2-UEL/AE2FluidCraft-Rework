@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "result": {
+    "item": "ae2fc:ingredient_buffer",
+    "count": 1
+  },
+  "pattern": [
+    "ili",
+    "agf",
+    "isi"
+  ],
+  "key": {
+    "i": {
+      "tag": "forge:ingots/iron"
+    },
+    "g": {
+      "item": "appliedenergistics2:quartz_glass"
+    },
+    "l": {
+      "item": "appliedenergistics2:1k_cell_component"
+    },
+    "a": {
+      "item": "appliedenergistics2:annihilation_core"
+    },
+    "f": {
+      "item": "appliedenergistics2:formation_core"
+    },
+    "s": {
+      "item": "appliedenergistics2:1k_fluid_cell_component"
+    }
+  }
+}

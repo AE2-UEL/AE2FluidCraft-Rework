@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "ae2fc:block/fluid_packet_decoder"
+    }
+  }
+}

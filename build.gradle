@@ -1,0 +1,137 @@
+buildscript {
+    repositories {
+        maven {
+            url 'https://maven.minecraftforge.net/'
+        }
+        maven {
+            name 'Scala CI dependencies'
+            url 'https://repo1.maven.org/maven2/'
+        }
+        maven {
+            name "forge"
+            url "https://files.minecraftforge.net/maven"
+        }
+        maven {
+            name "mixins"
+            url "https://repo.spongepowered.org/repository/maven-public/"
+        }
+        mavenLocal()
+    }
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath "org.spongepowered:mixingradle:0.7-SNAPSHOT"
+    }
+}
+
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'idea'
+apply plugin: 'org.spongepowered.mixin'
+
+version = "1.0.0-a"
+group = "ae2fc"
+archivesBaseName = "Fluid Craft for AE2"
+
+sourceCompatibility = targetCompatibility = '1.8'
+compileJava {
+    sourceCompatibility = targetCompatibility = '1.8'
+}
+
+
+// Generate a fixed tsrg file after generating the default tsrg file
+createMcpToSrg {
+    outputs.upToDateWhen {false}
+    doLast {
+        fixFG5TsrgForMixinAP(output.get().asFile, file("${buildDir}/fixMcpToSrg/output.tsrg"))
+    }
+}
+
+// Function that actually fixes the TSRG file
+static def fixFG5TsrgForMixinAP(File inFile, File outFile) {
+    // Make directory if needed
+    outFile.parentFile.mkdirs()
+
+    try (Scanner scanner = new Scanner(inFile); PrintWriter out = new PrintWriter(outFile)) {
+        boolean firstLine = true
+        while (scanner.hasNextLine()) {
+            String next = scanner.nextLine()
+
+            // Skip first 'tsrg left right' header line
+            if (firstLine) {
+                firstLine = false
+                continue
+            }
+
+            // Skip 'static' indicators
+            if (next.trim() == "static") {
+                continue
+            }
+
+            // Export line otherwise
+            out.println(next)
+        }
+    }
+}
+
+repositories {
+    maven { url 'https://dvs1.progwml6.com/files/maven/' }
+    maven { url 'https://cursemaven.com/' }
+    maven { url "https://www.cursemaven.com" }
+}
+
+dependencies {
+    minecraft([
+            group  : "net.minecraftforge",
+            name   : "forge",
+            version: "1.16.5-36.1.17"
+    ])
+    annotationProcessor 'org.spongepowered:mixin:0.8.2:processor'
+    implementation fg.deobf('mezz.jei:jei-1.16.5:7.7.0.98') //jei
+    implementation fg.deobf('curse.maven:ae2-extended-life-223794:3608871') //ae2
+    implementation fg.deobf('curse.maven:packagedauto-308380:4478954') //pauto
+}
+
+minecraft {
+    mappings channel: 'snapshot', version: '20210309-1.16.5'
+    accessTransformer = file('src/main/resources/META-INF/ae2fc_at.cfg')
+    runs {
+        client = {
+            properties "forge.logging.markers": "SCAN,REGISTRIES,REGISTRYDUMP"
+            properties "forge.logging.console.level": "debug"
+            properties "mixin.env.remapRefMap": "true"
+            properties "mixin.env.refMapRemappingFile": "${projectDir}/build/createSrgToMcp/output.srg".toString()
+            workingDirectory project.file("run").canonicalPath
+            arg "-mixin.config=" + "mixins.ae2fc.json"
+            source sourceSets.main
+        }
+        server = {
+            properties "forge.logging.markers": "SCAN,REGISTRIES,REGISTRYDUMP"
+            properties "forge.logging.console.level": "debug"
+            properties "mixin.env.remapRefMap": "true"
+            properties "mixin.env.refMapRemappingFile": "${projectDir}/build/createSrgToMcp/output.srg".toString()
+            workingDirectory project.file("run").canonicalPath
+            arg "-mixin.config=" + "mixins.ae2fc.json"
+            source sourceSets.main
+        }
+    }
+}
+
+jar {
+    manifest {
+        attributes([
+                "Specification-Title": "FluidCraftForAE2",
+                "Specification-Vendor": "GlodBlock",
+                "Specification-Version": "1",
+                "Implementation-Title": "${archivesBaseName}",
+                "Implementation-Version": "${version}",
+                "Implementation-Vendor": "GlodBlock",
+                "TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
+                "TweakOrder": 0,
+                "MixinConfigs": "mixins.ae2fc.json"
+        ])
+    }
+}
+
+mixin {
+    reobfSrgFile = file("${buildDir}/fixMcpToSrg/output.tsrg")
+    add sourceSets.main, "mixins.ae2fc.refmap.json"
+}

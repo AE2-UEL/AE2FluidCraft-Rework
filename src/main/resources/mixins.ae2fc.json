@@ -1,0 +1,25 @@
+{
+  "required": true,
+  "package": "com.glodblock.github.mixins",
+  "refmap": "mixins.ae2fc.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "ApiCraftingMixin",
+    "CraftConfirmContainerMixin",
+    "CraftingCpuMixin",
+    "CraftingGridCacheMixin",
+    "CraftingTreeNodeMixin",
+    "DualityInterfaceMixin",
+    "InterfaceSlotMixin",
+    "InterfaceTerminalContainerMixin",
+    "PatternSlotPacketMixin",
+    "RestrictedInputSlotMixin"
+  ],
+  "client": [
+    "AESubScreenMixin",
+    "CraftConfirmTableRendererMixin",
+    "CraftingStatusTableRendererMixin",
+    "EncodedPatternBakedModelMixin"
+  ],
+  "server": []
+}

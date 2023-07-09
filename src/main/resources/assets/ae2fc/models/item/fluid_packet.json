@@ -1,0 +1,8 @@
+{
+  "loader": "ae2fc:fluid_packet",
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "ae2fc:items/fluid_packet_mask",
+    "layer1": "ae2fc:items/fluid_packet"
+  }
+}

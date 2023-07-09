@@ -1,0 +1,204 @@
+package com.glodblock.github.common.me;
+
+import appeng.api.config.Actionable;
+import appeng.api.config.Upgrades;
+import appeng.api.networking.IGridNode;
+import appeng.api.networking.crafting.ICraftingLink;
+import appeng.api.networking.crafting.ICraftingPatternDetails;
+import appeng.api.networking.crafting.ICraftingProviderHelper;
+import appeng.api.networking.events.MENetworkChannelsChanged;
+import appeng.api.networking.events.MENetworkPowerStatusChange;
+import appeng.api.networking.ticking.TickRateModulation;
+import appeng.api.networking.ticking.TickingRequest;
+import appeng.api.storage.data.IAEItemStack;
+import appeng.api.util.IConfigManager;
+import appeng.fluids.helper.DualityFluidInterface;
+import appeng.fluids.helper.IFluidInterfaceHost;
+import appeng.fluids.util.AEFluidInventory;
+import appeng.helpers.DualityInterface;
+import appeng.helpers.IInterfaceHost;
+import appeng.me.helpers.AENetworkProxy;
+import appeng.util.SettingsFrom;
+import appeng.util.inv.InvOperation;
+import com.google.common.collect.ImmutableSet;
+import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.IItemHandler;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
+
+public class DualityDualInterface <H extends IInterfaceHost & IFluidInterfaceHost> implements ICapabilityProvider {
+
+    private final DualityInterface itemDuality;
+    private final DualityFluidInterface fluidDuality;
+
+    public DualityDualInterface(AENetworkProxy networkProxy, H host) {
+        this.itemDuality = new DualityInterface(networkProxy, host);
+        this.fluidDuality = new DualityFluidInterface(networkProxy, host);
+    }
+
+    public DualityInterface getItemInterface() {
+        return itemDuality;
+    }
+
+    public DualityFluidInterface getFluidInterface() {
+        return fluidDuality;
+    }
+
+    public IConfigManager getConfigManager() {
+        return itemDuality.getConfigManager(); // fluid interface has no meaningful config, so this is fine
+    }
+
+    public int getInstalledUpgrades(final Upgrades u) {
+        return itemDuality.getInstalledUpgrades(u) + fluidDuality.getInstalledUpgrades(u);
+    }
+
+    public int getPriority() {
+        return itemDuality.getPriority(); // both interfaces should always have the same priority
+    }
+
+    public void setPriority(final int newValue) {
+        itemDuality.setPriority(newValue);
+        fluidDuality.setPriority(newValue);
+    }
+
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing) {
+        LazyOptional<T> capInst = itemDuality.getCapability(capability, facing);
+        return capInst.isPresent() ? capInst : fluidDuality.getCapability(capability, facing);
+    }
+
+    // dual behaviour
+
+    public void initialize() {
+        itemDuality.initialize();
+    }
+
+    public TickingRequest getTickingRequest(IGridNode node) {
+        TickingRequest item = itemDuality.getTickingRequest(node), fluid = fluidDuality.getTickingRequest(node);
+        return new TickingRequest(
+                Math.min(item.minTickRate, fluid.minTickRate),
+                Math.max(item.maxTickRate, fluid.maxTickRate),
+                item.isSleeping && fluid.isSleeping, // might cause some unnecessary ticking, but oh well
+                true);
+    }
+
+    public TickRateModulation onTick(IGridNode node, int ticksSinceLastCall) {
+        TickRateModulation item = itemDuality.tickingRequest(node, ticksSinceLastCall);
+        TickRateModulation fluid = fluidDuality.tickingRequest(node, ticksSinceLastCall);
+        if (item.ordinal() >= fluid.ordinal()) { // return whichever is most urgent
+            return item;
+        } else {
+            return fluid;
+        }
+    }
+
+    public void onChannelStateChange(final MENetworkChannelsChanged c) {
+        itemDuality.notifyNeighbors();
+        fluidDuality.notifyNeighbors();
+    }
+
+    public void onPowerStateChange(final MENetworkPowerStatusChange c) {
+        itemDuality.notifyNeighbors();
+        fluidDuality.notifyNeighbors();
+    }
+
+    public void onGridChanged() {
+        itemDuality.gridChanged();
+        fluidDuality.gridChanged();
+    }
+
+    public void addDrops(List<ItemStack> drops) {
+        itemDuality.addDrops(drops);
+    }
+
+    public boolean canInsertItem(ItemStack stack) {
+        return itemDuality.canInsert(stack);
+    }
+
+    public IItemHandler getItemInventoryByName(String name) {
+        return itemDuality.getInventoryByName(name);
+    }
+
+    public IItemHandler getInternalItemInventory() {
+        return itemDuality.getInternalInventory();
+    }
+
+    public void onItemInventoryChange(IItemHandler inv, int slot, InvOperation op, ItemStack removed, ItemStack added) {
+        itemDuality.onChangeInventory(inv, slot, op, removed, added);
+    }
+
+    // autocrafting
+
+    public boolean pushPattern(ICraftingPatternDetails patternDetails, CraftingInventory table) {
+        return itemDuality.pushPattern(patternDetails, table);
+    }
+
+    public boolean isCraftingBusy() {
+        return itemDuality.isBusy();
+    }
+
+    public void provideCrafting(ICraftingProviderHelper craftingTracker) {
+        itemDuality.provideCrafting(craftingTracker);
+    }
+
+    public ImmutableSet<ICraftingLink> getRequestCraftingJobs() {
+        return itemDuality.getRequestedJobs();
+    }
+
+    public IAEItemStack injectCraftedItems(ICraftingLink link, IAEItemStack items, Actionable mode) {
+        return itemDuality.injectCraftedItems(link, items, mode);
+    }
+
+    public void onCraftingJobStateChange(ICraftingLink link) {
+        itemDuality.jobStateChange(link);
+    }
+
+    // serialization
+
+    public void writeToNBT(final CompoundNBT data) {
+        CompoundNBT itemIfaceTag = new CompoundNBT(), fluidIfaceTag = new CompoundNBT();
+        itemDuality.writeToNBT(itemIfaceTag);
+        fluidDuality.writeToNBT(fluidIfaceTag);
+        data.put("itemDuality", itemIfaceTag);
+        data.put("fluidDuality", fluidIfaceTag);
+    }
+
+    public void readFromNBT(final CompoundNBT data) {
+        itemDuality.readFromNBT(data.getCompound("itemDuality"));
+        fluidDuality.readFromNBT(data.getCompound("fluidDuality"));
+    }
+
+    public CompoundNBT downloadSettings(SettingsFrom from) {
+        CompoundNBT tag = new CompoundNBT();
+        if (from == SettingsFrom.MEMORY_CARD) {
+            final IFluidHandler fluidInv = this.fluidDuality.getFluidInventoryByName("config");
+            if (fluidInv instanceof AEFluidInventory) {
+                ((AEFluidInventory) fluidInv).writeToNBT(tag, "fluid_config");
+            }
+        }
+        return tag;
+    }
+
+    public void uploadSettings(SettingsFrom from, CompoundNBT compound) {
+        final IFluidHandler fluidInv = this.fluidDuality.getFluidInventoryByName("config");
+        if (from == SettingsFrom.MEMORY_CARD && fluidInv instanceof AEFluidInventory) {
+            AEFluidInventory target = (AEFluidInventory) fluidInv;
+            AEFluidInventory tmp = new AEFluidInventory(null, target.getSlots());
+            tmp.readFromNBT(compound, "fluid_config");
+            for(int x = 0; x < tmp.getSlots(); x++) {
+                target.setFluidInSlot(x, tmp.getFluidInSlot(x));
+            }
+        }
+    }
+
+}
