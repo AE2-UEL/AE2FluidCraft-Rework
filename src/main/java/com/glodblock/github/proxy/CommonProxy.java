@@ -71,6 +71,9 @@ public class CommonProxy {
             Ae2Reflect.getDisassemblyNonCellMap((DisassembleRecipe)disassembleRecipe).put(
                     createItemDefn(FCItems.DENSE_ENCODED_PATTERN),
                     AEApi.instance().definitions().materials().blankPattern());
+            Ae2Reflect.getDisassemblyNonCellMap((DisassembleRecipe)disassembleRecipe).put(
+                    createItemDefn(FCItems.DENSE_CRAFT_ENCODED_PATTERN),
+                    AEApi.instance().definitions().materials().blankPattern());
         }
     }
 

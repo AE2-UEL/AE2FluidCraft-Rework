@@ -65,7 +65,7 @@ public class GuiLargeIngredientBuffer extends AEBaseGui {
         mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         Tessellator tess = Tessellator.getInstance();
         BufferBuilder buf = tess.getBuffer();
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 7; i++) {
             FluidRenderUtils.renderFluidIntoGui(tess, buf, TANK_X + i * TANK_X_OFF, TANK_Y, TANK_WIDTH, TANK_HEIGHT,
                     fluidInv.getFluidInSlot(i), fluidInv.getTankProperties()[i].getCapacity());
         }
