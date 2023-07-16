@@ -108,6 +108,11 @@ public class CoreModHooks {
                 ? (long)Math.ceil(stack.getStackSize() / 1000D) : stack.getStackSize();
     }
 
+    public static long getCraftingByteCost(long originBytes, long missingBytes, IAEItemStack stack) {
+        return stack != null && stack.getItem() instanceof ItemFluidDrop
+                ? (long) Math.ceil(missingBytes / 1000D) + originBytes : missingBytes + originBytes;
+    }
+
     public static boolean checkForItemHandler(ICapabilityProvider capProvider, Capability<?> capability, EnumFacing side) {
         return capProvider.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side)
                 || capProvider.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side);

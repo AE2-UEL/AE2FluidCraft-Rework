@@ -37,7 +37,8 @@ public class CraftingTreeNodeTransformer extends FCClassTransformer.ClassMapper 
 
     private static class TransformRequest extends MethodVisitor {
 
-        private boolean writingBytes = false;
+        private int writingBytes = 0;
+        private boolean fired = false;
 
         TransformRequest(int api, MethodVisitor mv) {
             super(api, mv);
@@ -46,22 +47,17 @@ public class CraftingTreeNodeTransformer extends FCClassTransformer.ClassMapper 
         @Override
         public void visitFieldInsn(int opcode, String owner, String name, String desc) {
             if (opcode == Opcodes.GETFIELD && owner.equals("appeng/crafting/CraftingTreeNode") && name.equals("bytes")) {
-                writingBytes = true;
+                writingBytes ++;
+                fired = true;
             }
             super.visitFieldInsn(opcode, owner, name, desc);
         }
 
         @Override
-        public void visitLineNumber(int line, Label start) {
-            writingBytes = false; // no write here
-            super.visitLineNumber(line, start);
-        }
-
-        @Override
         public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-            if (writingBytes && opcode == Opcodes.INVOKEINTERFACE
+            if (writingBytes <= 5 && fired && opcode == Opcodes.INVOKEINTERFACE
                     && owner.equals("appeng/api/storage/data/IAEItemStack") && name.equals("getStackSize")) {
-                writingBytes = false;
+                this.fired = false;
                 super.visitMethodInsn(Opcodes.INVOKESTATIC,
                         "com/glodblock/github/coremod/CoreModHooks",
                         "getCraftingByteCost",
@@ -69,6 +65,25 @@ public class CraftingTreeNodeTransformer extends FCClassTransformer.ClassMapper 
                         false);
             } else {
                 super.visitMethodInsn(opcode, owner, name, desc, itf);
+            }
+        }
+
+        @Override
+        public void visitInsn(int opcode) {
+            if (writingBytes == 6 && fired && opcode == Opcodes.LADD) {
+                this.fired = false;
+                super.visitVarInsn(Opcodes.ALOAD, 0);
+                super.visitFieldInsn(Opcodes.GETFIELD,
+                        "appeng/crafting/CraftingTreeNode",
+                        "what",
+                        "Lappeng/api/storage/data/IAEItemStack;");
+                super.visitMethodInsn(Opcodes.INVOKESTATIC,
+                        "com/glodblock/github/coremod/CoreModHooks",
+                        "getCraftingByteCost",
+                        "(JJLappeng/api/storage/data/IAEItemStack;)J",
+                        false);
+            } else {
+                super.visitInsn(opcode);
             }
         }
 
