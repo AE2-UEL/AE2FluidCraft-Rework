@@ -53,6 +53,8 @@ dependencies {
     deobfCompile 'curse.maven:gregtech-ce-unofficial-557242:3784798' // gt
     deobfCompile 'curse.maven:ae2-extended-life-570458:4429430' //pae2
     deobfCompile 'curse.maven:dynamistics-383632:3056455' // dy
+    compileOnly 'curse.maven:opencomputers-223008:4630537' //oc
+    runtime 'curse.maven:opencomputers-223008:4630537' //oc
 }
 
 minecraft {

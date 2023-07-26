@@ -8,6 +8,7 @@ public final class ModAndClassUtil {
     public static boolean GT = false;
     public static boolean NEE = false;
     public static boolean DY = false;
+    public static boolean OC = false;
 
     public static void init() {
         if (Loader.isModLoaded("packagedauto")) {
@@ -24,6 +25,10 @@ public final class ModAndClassUtil {
 
         if (Loader.isModLoaded("dynamistics")) {
             DY = true;
+        }
+
+        if (Loader.isModLoaded("opencomputers")) {
+            OC = true;
         }
     }
 

@@ -9,6 +9,7 @@ import appeng.recipes.game.DisassembleRecipe;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.common.tile.*;
 import com.glodblock.github.handler.RegistryHandler;
+import com.glodblock.github.integration.opencomputer.OCInit;
 import com.glodblock.github.integration.pauto.PackagedFluidCrafting;
 import com.glodblock.github.inventory.InventoryHandler;
 import com.glodblock.github.loader.ChannelLoader;
@@ -57,6 +58,9 @@ public class CommonProxy {
         (new ChannelLoader()).run();
         if (ModAndClassUtil.AUTO_P) {
             initPackagedAutoIntegration();
+        }
+        if (ModAndClassUtil.OC) {
+            OCInit.run();
         }
     }
 
