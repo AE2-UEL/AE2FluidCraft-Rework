@@ -12,6 +12,7 @@ import appeng.api.storage.channels.IFluidStorageChannel;
 import appeng.api.storage.channels.IItemStorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
+import appeng.container.implementations.ContainerPatternEncoder;
 import appeng.crafting.MECraftingInventory;
 import appeng.fluids.parts.PartFluidInterface;
 import appeng.fluids.tile.TileFluidInterface;
@@ -24,7 +25,9 @@ import appeng.tile.misc.TileInterface;
 import appeng.util.InventoryAdaptor;
 import appeng.util.inv.BlockingInventoryAdaptor;
 import appeng.util.item.AEItemStack;
+import com.glodblock.github.common.item.ItemFluidCraftEncodedPattern;
 import com.glodblock.github.common.item.ItemFluidDrop;
+import com.glodblock.github.common.item.ItemFluidEncodedPattern;
 import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.common.part.PartDualInterface;
 import com.glodblock.github.common.tile.TileDualInterface;
@@ -51,6 +54,7 @@ import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @SuppressWarnings("unused")
@@ -254,6 +258,16 @@ public class CoreModHooks {
             Ae2Reflect.setSplittingMode(dual, extra.getBoolean("allowSplitting"));
             Ae2Reflect.setExtendedBlockMode(dual, extra.getInteger("blockModeEx"));
         }
+    }
+
+    public static ItemStack transformPattern(ContainerPatternEncoder container, ItemStack output) {
+        if (output.getItem() instanceof ItemFluidEncodedPattern || output.getItem() instanceof ItemFluidCraftEncodedPattern) {
+            Optional<ItemStack> maybePattern = AEApi.instance().definitions().items().encodedPattern().maybeStack(1);
+            if (maybePattern.isPresent()) {
+                return maybePattern.get();
+            }
+        }
+        return output;
     }
 
 }

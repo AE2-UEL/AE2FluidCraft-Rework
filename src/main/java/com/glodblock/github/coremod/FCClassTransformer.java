@@ -59,6 +59,9 @@ public class FCClassTransformer implements IClassTransformer {
             case "appeng.parts.AEBasePart":
                 tform = AEBaseTilePartTransformer.INSTANCE;
                 break;
+            case "appeng.container.implementations.ContainerPatternEncoder":
+                tform = ContainerPatternEncoderTransformer.INSTANCE;
+                break;
             default:
                 return code;
         }
