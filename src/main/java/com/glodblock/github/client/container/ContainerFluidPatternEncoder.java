@@ -156,7 +156,7 @@ public class ContainerFluidPatternEncoder extends AEBaseContainer implements Pat
     }
 
     @Override
-    public void acceptPattern(Int2ObjectMap<ItemStack[]> inputs, ItemStack[] outputs, boolean combine) {
+    public void acceptPattern(Int2ObjectMap<ItemStack[]> inputs, List<ItemStack> outputs, boolean combine) {
         AeStackInventory<IAEItemStack> craftingSlot = tile.getCraftingSlots();
         AeStackInventory<IAEItemStack> outputSlot = tile.getOutputSlots();
         for (int index : inputs.keySet()) {
@@ -165,9 +165,9 @@ public class ContainerFluidPatternEncoder extends AEBaseContainer implements Pat
                 craftingSlot.setStack(index, AEItemStack.fromItemStack(items[0]));
             }
         }
-        int bound = Math.min(outputSlot.getSlotCount(), outputs.length);
+        int bound = Math.min(outputSlot.getSlotCount(), outputs.size());
         for (int index = 0; index < bound; index ++) {
-            outputSlot.setStack(index, AEItemStack.fromItemStack(outputs[index]));
+            outputSlot.setStack(index, AEItemStack.fromItemStack(outputs.get(index)));
         }
     }
 

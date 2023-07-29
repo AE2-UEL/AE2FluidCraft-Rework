@@ -35,6 +35,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public class PartFluidPatternTerminal extends PartPatternTerminal {
 
@@ -168,7 +169,7 @@ public class PartFluidPatternTerminal extends PartPatternTerminal {
         }
     }
 
-    public void onChangeCrafting(Int2ObjectMap<ItemStack[]> inputs, ItemStack[] outputs, boolean combine) {
+    public void onChangeCrafting(Int2ObjectMap<ItemStack[]> inputs, List<ItemStack> outputs, boolean combine) {
         IItemHandler crafting = this.getInventoryByName("crafting");
         IItemHandler output = this.getInventoryByName("output");
         IItemList<IAEItemStack> storageList = this.getInventory(Util.ITEM) == null ?
@@ -188,9 +189,9 @@ public class PartFluidPatternTerminal extends PartPatternTerminal {
                 final ItemStack item = fuzzyFind[x];
                 ((AppEngInternalInventory) crafting).setStackInSlot(x, item == null ? ItemStack.EMPTY : item);
             }
-            bound = Math.min(output.getSlots(), outputs.length);
+            bound = Math.min(output.getSlots(), outputs.size());
             for (int x = 0; x < bound; x++) {
-                final ItemStack item = outputs[x];
+                final ItemStack item = outputs.get(x);
                 ((AppEngInternalInventory) output).setStackInSlot(x, item == null ? ItemStack.EMPTY : item);
             }
         }

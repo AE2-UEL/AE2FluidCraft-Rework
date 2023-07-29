@@ -203,7 +203,7 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
     }
 
     @Override
-    public void acceptPattern(Int2ObjectMap<ItemStack[]> inputs, ItemStack[] outputs, boolean combine) {
+    public void acceptPattern(Int2ObjectMap<ItemStack[]> inputs, List<ItemStack> outputs, boolean combine) {
         if (Ae2Reflect.getPart(this) instanceof PartFluidPatternTerminal) {
             ((PartFluidPatternTerminal) Ae2Reflect.getPart(this)).onChangeCrafting(inputs, outputs, combine);
         }

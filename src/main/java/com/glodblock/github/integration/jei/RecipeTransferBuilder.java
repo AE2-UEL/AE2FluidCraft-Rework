@@ -19,8 +19,7 @@ public class RecipeTransferBuilder {
     private static final int MAX_ITEMS = 16;
 
     private final Int2ObjectArrayMap<ItemStack[]> in;
-    private final int bound;
-    private final ItemStack[] out;
+    private final List<ItemStack> out;
     private final IRecipeLayout recipe;
     private List<ItemStack[]> itemsIn;
     private List<FluidStack> fluidIn;
@@ -29,10 +28,9 @@ public class RecipeTransferBuilder {
     private boolean noNull = true;
     private boolean fluidFirst = false;
 
-    public RecipeTransferBuilder(int maxInput, int maxOutput, IRecipeLayout recipe) {
+    public RecipeTransferBuilder(IRecipeLayout recipe) {
         this.in = new Int2ObjectArrayMap<>();
-        this.bound = maxInput;
-        this.out = new ItemStack[maxOutput];
+        this.out = new ArrayList<>();
         this.recipe = recipe;
         this.itemsIn = new ArrayList<>();
         this.itemOut = new ArrayList<>();
@@ -88,7 +86,7 @@ public class RecipeTransferBuilder {
     }
 
     private void setItemIn(int offset) {
-        int bound = Math.min(this.bound, this.itemsIn.size() + offset);
+        int bound = this.itemsIn.size() + offset;
         for (int index = offset; index < bound; index ++) {
             int i = index - offset;
             if (this.itemsIn.get(i) != null && this.itemsIn.get(i).length > 0) {
@@ -98,7 +96,7 @@ public class RecipeTransferBuilder {
     }
 
     private void setFluidIn(int offset) {
-        int bound = Math.min(this.bound, this.fluidIn.size() + offset);
+        int bound = this.fluidIn.size() + offset;
         for (int index = offset; index < bound; index ++) {
             int i = index - offset;
             if (this.fluidIn.get(i) != null) {
@@ -108,11 +106,11 @@ public class RecipeTransferBuilder {
     }
 
     private void setOutputs() {
-        for (int index = 0; index < this.out.length; index ++) {
+        for (int index = 0; index < this.out.size(); index ++) {
             if (index < this.itemOut.size()) {
-                this.out[index] = this.itemOut.get(index);
+                this.out.add(this.itemOut.get(index));
             } else if (index - this.itemOut.size() < this.fluidOut.size()) {
-                this.out[index] = ItemFluidPacket.newStack(this.fluidOut.get(index - this.itemOut.size()));
+                this.out.add(ItemFluidPacket.newStack(this.fluidOut.get(index - this.itemOut.size())));
             }
         }
     }
@@ -145,7 +143,7 @@ public class RecipeTransferBuilder {
         return this;
     }
 
-    public ItemStack[] getOutput() {
+    public List<ItemStack> getOutput() {
         return this.out;
     }
 

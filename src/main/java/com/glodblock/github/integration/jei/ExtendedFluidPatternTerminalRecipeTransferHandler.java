@@ -33,10 +33,7 @@ public class ExtendedFluidPatternTerminalRecipeTransferHandler implements IRecip
        }
 
        if (doTransfer && container.part instanceof PartExtendedFluidPatternTerminal) {
-           PartExtendedFluidPatternTerminal tile = (PartExtendedFluidPatternTerminal)container.part;
            RecipeTransferBuilder transfer = new RecipeTransferBuilder(
-                   tile.getInventoryByName("crafting").getSlots(),
-                   tile.getInventoryByName("output").getSlots(),
                    recipeLayout)
                    .clearEmptySlot(true)
                    .putFluidFirst(container.fluidFirst)

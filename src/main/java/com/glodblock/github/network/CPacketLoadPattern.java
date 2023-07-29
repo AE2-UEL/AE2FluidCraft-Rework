@@ -11,17 +11,19 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import scala.actors.threadpool.Arrays;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class CPacketLoadPattern implements IMessage {
 
-    private ItemStack[] output;
+    private List<ItemStack> output;
     private Int2ObjectMap<ItemStack[]> crafting;
     private boolean compress;
     private static final int SLOT_SIZE = 16;
 
-    public CPacketLoadPattern(Int2ObjectMap<ItemStack[]> crafting, ItemStack[] output, boolean compress) {
+    public CPacketLoadPattern(Int2ObjectMap<ItemStack[]> crafting, List<ItemStack> output, boolean compress) {
         this.crafting = crafting;
         this.output = output;
         this.compress = compress;
@@ -38,11 +40,12 @@ public class CPacketLoadPattern implements IMessage {
         for (int index : crafting.keySet()) {
             writeItemArray(msg, crafting.get(index), index + "#");
         }
-        writeItemArray(msg, output, "o");
+        writeItemArray(msg, output.toArray(new ItemStack[0]), "o");
         Util.writeNBTToBytes(buf, msg);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void fromBytes(ByteBuf buf) {
         crafting = new Int2ObjectArrayMap<>();
         compress = buf.readBoolean();
@@ -52,7 +55,7 @@ public class CPacketLoadPattern implements IMessage {
                 crafting.put(i, readItemArray(msg, i + "#"));
             }
         }
-        output = readItemArray(msg, "o");
+        output = Arrays.asList(readItemArray(msg, "o"));
     }
 
     private void writeItemArray(NBTTagCompound nbt, ItemStack[] itemList, String key) {

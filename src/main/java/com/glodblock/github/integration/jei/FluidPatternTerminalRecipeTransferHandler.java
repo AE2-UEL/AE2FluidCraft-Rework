@@ -42,10 +42,7 @@ public class FluidPatternTerminalRecipeTransferHandler implements IRecipeTransfe
                 }
             } catch (IOException ignore) {
             }
-            PartFluidPatternTerminal tile = (PartFluidPatternTerminal) Ae2Reflect.getPart(container);
             RecipeTransferBuilder transfer = new RecipeTransferBuilder(
-                    tile.getInventoryByName("crafting").getSlots(),
-                    tile.getInventoryByName("output").getSlots(),
                     recipeLayout)
                     .clearEmptySlot(!craftMode)
                     .putFluidFirst(container.fluidFirst)

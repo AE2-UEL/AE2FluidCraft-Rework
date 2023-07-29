@@ -427,7 +427,7 @@ public class ContainerExtendedFluidPatternTerminal extends ContainerExpandedProc
     }
 
     @Override
-    public void acceptPattern(Int2ObjectMap<ItemStack[]> inputs, ItemStack[] outputs, boolean combine) {
+    public void acceptPattern(Int2ObjectMap<ItemStack[]> inputs, List<ItemStack> outputs, boolean combine) {
         if (part instanceof PartExtendedFluidPatternTerminal) {
             ((PartExtendedFluidPatternTerminal) part).onChangeCrafting(inputs, outputs, combine);
         }

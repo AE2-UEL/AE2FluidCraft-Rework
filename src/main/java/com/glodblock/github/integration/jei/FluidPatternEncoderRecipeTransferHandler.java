@@ -31,10 +31,7 @@ public class FluidPatternEncoderRecipeTransferHandler implements IRecipeTransfer
             return new RecipeTransferErrorTooltip(I18n.format(NameConst.TT_PROCESSING_RECIPE_ONLY));
         }
         if (doTransfer) {
-            TileFluidPatternEncoder tile = container.getTile();
             RecipeTransferBuilder transfer = new RecipeTransferBuilder(
-                    tile.getCraftingSlots().getSlotCount(),
-                    tile.getOutputSlots().getSlotCount(),
                     recipeLayout)
                     .clearEmptySlot(true)
                     .putFluidFirst(false)
