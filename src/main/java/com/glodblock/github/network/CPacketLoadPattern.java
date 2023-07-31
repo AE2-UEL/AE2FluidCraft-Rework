@@ -45,7 +45,6 @@ public class CPacketLoadPattern implements IMessage {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void fromBytes(ByteBuf buf) {
         crafting = new Int2ObjectArrayMap<>();
         compress = buf.readBoolean();
