@@ -106,7 +106,7 @@ public class RecipeTransferBuilder {
     }
 
     private void setOutputs() {
-        for (int index = 0; index < this.out.size(); index ++) {
+        for (int index = 0; index < this.itemOut.size() + this.fluidOut.size(); index ++) {
             if (index < this.itemOut.size()) {
                 this.out.add(this.itemOut.get(index));
             } else if (index - this.itemOut.size() < this.fluidOut.size()) {
