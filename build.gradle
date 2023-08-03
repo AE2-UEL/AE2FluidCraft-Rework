@@ -27,7 +27,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'idea'
 apply plugin: 'org.spongepowered.mixin'
 
-version = "1.0.0-a"
+version = "1.0.1-a"
 group = "ae2fc"
 archivesBaseName = "Fluid Craft for AE2"
 
