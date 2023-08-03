@@ -34,6 +34,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public final class FCUtil {
 
@@ -94,6 +95,10 @@ public final class FCUtil {
         for (int i = 0; i < inv.getSlots(); i ++) {
             inv.setStackInSlot(i, ItemStack.EMPTY);
         }
+    }
+
+    public static Collection<Integer> sort(Collection<Integer> arr) {
+        return arr.stream().sorted().collect(Collectors.toList());
     }
 
     public static int findMax(Collection<Integer> list) {

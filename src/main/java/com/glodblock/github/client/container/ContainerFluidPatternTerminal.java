@@ -76,10 +76,10 @@ public class ContainerFluidPatternTerminal extends ItemTerminalContainer impleme
     public boolean craftingMode;
     @GuiSync(96)
     public boolean substitute;
-    @GuiSync(105)
-    public boolean combine = false;
-    @GuiSync(106)
-    public boolean fluidFirst = false;
+    @GuiSync(95)
+    public boolean combine;
+    @GuiSync(94)
+    public boolean fluidFirst;
 
     public ContainerFluidPatternTerminal(int id, PlayerInventory ip, ITerminalHost monitorable) {
         super(TYPE, id, ip, monitorable, false);
@@ -458,8 +458,8 @@ public class ContainerFluidPatternTerminal extends ItemTerminalContainer impleme
                 this.setCraftingMode(this.patternTerminal.isCraftingRecipe());
             }
             this.substitute = this.patternTerminal.isSubstitution();
-            this.combine = patternTerminal.getCombineMode();
-            this.fluidFirst = patternTerminal.getFluidPlaceMode();
+            this.combine = this.patternTerminal.getCombineMode();
+            this.fluidFirst = this.patternTerminal.getFluidPlaceMode();
         }
     }
 

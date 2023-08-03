@@ -118,6 +118,9 @@ public class GuiFluidPatternTerminal extends ItemTerminalScreen<ContainerFluidPa
             this.combineBtn.visible = true;
         }
 
+        this.fluidBtn.forceActive(this.container.fluidFirst ? 0 : 1);
+        this.combineBtn.forceActive(this.container.combine ? 1 : 0);
+
         setSlotsHidden(SlotSemantic.CRAFTING_RESULT, !this.container.isCraftingMode());
         setSlotsHidden(SlotSemantic.PROCESSING_RESULT, this.container.isCraftingMode());
     }

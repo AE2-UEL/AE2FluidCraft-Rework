@@ -1,6 +1,7 @@
 package com.glodblock.github.integration.builder;
 
 import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.util.FCUtil;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import mezz.jei.api.gui.IRecipeLayout;
@@ -41,8 +42,11 @@ public class RecipeTransferBuilder {
     }
 
     private void split() {
-        for (int index = 0; index < this.recipe.getItemStacks().getGuiIngredients().size(); index ++) {
+        for (int index : FCUtil.sort(this.recipe.getItemStacks().getGuiIngredients().keySet())) {
             IGuiIngredient<ItemStack> ing = this.recipe.getItemStacks().getGuiIngredients().get(index);
+            if (ing == null) {
+                continue;
+            }
             if (ing.isInput()) {
                 List<ItemStack> holder;
                 if (ing.getAllIngredients().size() < MAX_ITEMS - 1) {
@@ -59,8 +63,11 @@ public class RecipeTransferBuilder {
                 this.itemOut.add(ing.getDisplayedIngredient());
             }
         }
-        for (int index = 0; index < this.recipe.getFluidStacks().getGuiIngredients().size(); index ++) {
+        for (int index : FCUtil.sort(this.recipe.getFluidStacks().getGuiIngredients().keySet())) {
             IGuiIngredient<FluidStack> ing = this.recipe.getFluidStacks().getGuiIngredients().get(index);
+            if (ing == null) {
+                continue;
+            }
             if (ing.isInput()) {
                 this.fluidIn.add(ing.getDisplayedIngredient());
             } else {
