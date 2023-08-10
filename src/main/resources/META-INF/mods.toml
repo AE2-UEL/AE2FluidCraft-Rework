@@ -8,7 +8,7 @@ license="LGPL-3.0"
 
 [[mods]]
 modId="ae2fc"
-version="1.0.1-a"
+version="1.0.2-a"
 displayName="Fluid Craft for AE2"
 description="Lets you do Crafting... with Fluids!"
 
