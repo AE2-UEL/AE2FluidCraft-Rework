@@ -10,11 +10,9 @@ import appeng.client.gui.widgets.TabButton;
 import appeng.container.SlotSemantic;
 import appeng.container.slot.FakeSlot;
 import appeng.core.localization.GuiText;
-import appeng.util.item.AEItemStack;
 import com.glodblock.github.client.button.BlitMap;
 import com.glodblock.github.client.button.FCToggleButton;
 import com.glodblock.github.client.container.ContainerFluidPatternTerminal;
-import com.glodblock.github.client.slot.SlotSingleItem;
 import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.network.NetworkManager;
 import com.glodblock.github.network.packets.CPacketFluidCraftBtns;
@@ -26,8 +24,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
-
-import javax.annotation.Nonnull;
 
 public class GuiFluidPatternTerminal extends ItemTerminalScreen<ContainerFluidPatternTerminal> {
     private static final String MODES_TEXTURE = "guis/pattern_modes.png";
@@ -143,21 +139,11 @@ public class GuiFluidPatternTerminal extends ItemTerminalScreen<ContainerFluidPa
 
     @Override
     protected void moveItems(MatrixStack matrices, Slot slot) {
-        if (!(slot instanceof FakeSlot && (FluidRenderUtils.renderFluidPacketIntoGuiSlot(
-                slot, slot.getStack(), stackSizeRenderer, font) || renderMEStyleSlot(slot, slot.getStack(), matrices)))) {
-            super.moveItems(matrices, slot);
+        if (slot instanceof FakeSlot && slot.getStack().getItem() instanceof ItemFluidPacket) {
+            FluidRenderUtils.renderFluidPacketIntoGuiSlot(slot, slot.getStack(), stackSizeRenderer, font);
+            return;
         }
-    }
-
-    private boolean renderMEStyleSlot(Slot slot, @Nonnull ItemStack stack, MatrixStack matrices) {
-        if (slot instanceof FakeSlot && !stack.isEmpty() && !(stack.getItem() instanceof ItemFluidPacket)) {
-            super.moveItems(matrices, new SlotSingleItem(slot));
-            if (stack.getCount() > 1) {
-                this.stackSizeRenderer.renderStackSize(font, AEItemStack.fromItemStack(stack).getStackSize(), false, slot.xPos, slot.yPos);
-            }
-            return true;
-        }
-        return false;
+        super.moveItems(matrices, slot);
     }
 
     @Override

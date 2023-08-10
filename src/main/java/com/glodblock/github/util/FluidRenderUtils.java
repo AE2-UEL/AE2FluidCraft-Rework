@@ -2,9 +2,10 @@ package com.glodblock.github.util;
 
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.client.gui.me.common.StackSizeRenderer;
-import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidPacket;
 import com.mojang.blaze3d.platform.GlStateManager;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -22,23 +23,24 @@ import org.lwjgl.opengl.GL11;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-@SuppressWarnings("deprecation")
 public class FluidRenderUtils {
+
+    private final static Object2ObjectMap<Fluid, TextureAtlasSprite> cache = new Object2ObjectOpenHashMap<>();
+
+    public static void resetCache() {
+        cache.clear();
+    }
 
     @Nullable
     public static TextureAtlasSprite prepareRender(@Nullable Fluid fluid) {
         if (fluid == null || fluid == Fluids.EMPTY) {
             return null;
         }
-        TextureAtlasSprite sprite = Minecraft.getInstance().getAtlasSpriteGetter(PlayerContainer.LOCATION_BLOCKS_TEXTURE)
-                .apply(fluid.getAttributes().getStillTexture());
-        int colour = fluid.getAttributes().getColor();
-        GlStateManager.color4f(
-                ((colour >> 16) & 0xFF) / 255F,
-                ((colour >> 8) & 0xFF) / 255F,
-                (colour & 0xFF) / 255F,
-                ((colour >> 24) & 0xFF) / 255F);
-        return sprite;
+        return cache.computeIfAbsent(
+                fluid,
+                f -> Minecraft.getInstance().getAtlasSpriteGetter(PlayerContainer.LOCATION_BLOCKS_TEXTURE)
+                        .apply(f.getAttributes().getStillTexture())
+        );
     }
 
     @Nullable
@@ -49,7 +51,7 @@ public class FluidRenderUtils {
         return null;
     }
 
-    private static void doRenderFluid(Tessellator tess, BufferBuilder buf, int x, int y, int width, int height,
+    private static void doRenderFluid(Tessellator tess, BufferBuilder buf, int color, int x, int y, int width, int height,
                                       TextureAtlasSprite sprite, double fraction) {
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(
@@ -59,7 +61,7 @@ public class FluidRenderUtils {
         int fluidHeight = Math.round(height * (float)Math.min(1D, Math.max(0D, fraction)));
         double x2 = x + width;
         while (fluidHeight > 0) {
-            buf.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+            buf.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR_TEX);
             float y1 = y + height - fluidHeight, y2 = y1 + Math.min(fluidHeight, width);
             float u1 = sprite.getMinU(), v1 = sprite.getMinV(), u2 = sprite.getMaxU(), v2 = sprite.getMaxV();
             if (fluidHeight < width) {
@@ -69,10 +71,14 @@ public class FluidRenderUtils {
                 //noinspection SuspiciousNameCombination
                 fluidHeight -= width;
             }
-            buf.pos(x, y1, 0D).tex(u1, v1).endVertex();
-            buf.pos(x, y2, 0D).tex(u1, v2).endVertex();
-            buf.pos(x2, y2, 0D).tex(u2, v2).endVertex();
-            buf.pos(x2, y1, 0D).tex(u2, v1).endVertex();
+            int r = (color >> 16) & 0xFF;
+            int g = (color >> 8) & 0xFF;
+            int b = color & 0xFF;
+            int a = (color >> 24) & 0xFF;
+            buf.pos(x, y1, 0D).color(r, g, b, a).tex(u1, v1).endVertex();
+            buf.pos(x, y2, 0D).color(r, g, b, a).tex(u1, v2).endVertex();
+            buf.pos(x2, y2, 0D).color(r, g, b, a).tex(u2, v2).endVertex();
+            buf.pos(x2, y1, 0D).color(r, g, b, a).tex(u2, v1).endVertex();
             tess.draw();
         }
     }
@@ -82,7 +88,6 @@ public class FluidRenderUtils {
         Minecraft.getInstance().getTextureManager().bindTexture(PlayerContainer.LOCATION_BLOCKS_TEXTURE);
         Tessellator tess = Tessellator.getInstance();
         renderFluidIntoGui(tess, tess.getBuffer(), x, y, width, height, fluidStack, capacity);
-        GlStateManager.color4f(1F, 1F, 1F, 1F);
     }
 
     public static boolean renderFluidIntoGuiSlot(Slot slot, @Nonnull FluidStack fluid,
@@ -91,7 +96,7 @@ public class FluidRenderUtils {
             return false;
         }
         renderFluidIntoGuiCleanly(slot.xPos, slot.yPos, 16, 16, fluid, fluid.getAmount());
-        stackSizeRenderer.renderStackSize(fontRenderer, ItemFluidDrop.newAeStack(fluid).getStackSize(), false, slot.xPos, slot.yPos);
+        stackSizeRenderer.renderStackSize(fontRenderer, fluid.getAmount(), false, slot.xPos, slot.yPos);
         return true;
     }
 
@@ -100,7 +105,7 @@ public class FluidRenderUtils {
         if (aeFluidStack != null) {
             TextureAtlasSprite sprite = FluidRenderUtils.prepareRender(aeFluidStack.getFluidStack());
             if (sprite != null) {
-                doRenderFluid(tess, buf, x, y, width, height, sprite, aeFluidStack.getStackSize() / (double)capacity);
+                doRenderFluid(tess, buf, aeFluidStack.getFluid().getAttributes().getColor(), x, y, width, height, sprite, aeFluidStack.getStackSize() / (double)capacity);
             }
         }
     }
@@ -110,7 +115,7 @@ public class FluidRenderUtils {
         if (!fluidStack.isEmpty()) {
             TextureAtlasSprite sprite = FluidRenderUtils.prepareRender(fluidStack);
             if (sprite != null) {
-                doRenderFluid(tess, buf, x, y, width, height, sprite, fluidStack.getAmount() / (double)capacity);
+                doRenderFluid(tess, buf, fluidStack.getFluid().getAttributes().getColor(), x, y, width, height, sprite, fluidStack.getAmount() / (double)capacity);
             }
         }
     }

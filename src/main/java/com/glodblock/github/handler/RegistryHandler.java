@@ -2,11 +2,14 @@ package com.glodblock.github.handler;
 
 import appeng.block.AEBaseBlockItem;
 import appeng.block.AEBaseTileBlock;
+import appeng.core.Api;
 import appeng.core.features.ActivityState;
 import appeng.core.features.BlockStackSrc;
 import appeng.tile.AEBaseTileEntity;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.container.*;
+import com.glodblock.github.common.part.PartDualInterface;
+import com.glodblock.github.common.part.PartFluidPatternTerminal;
 import com.glodblock.github.loader.FCItems;
 import com.glodblock.github.util.FCUtil;
 import net.minecraft.block.Block;
@@ -63,6 +66,7 @@ public class RegistryHandler {
         for (Pair<String, Item> entry : items) {
             event.getRegistry().register(initItem(entry.getLeft(), entry.getRight()));
         }
+        this.registerPartModel();
     }
 
     @SubscribeEvent
@@ -101,6 +105,11 @@ public class RegistryHandler {
                 );
             }
         }
+    }
+
+    private void registerPartModel() {
+        Api.instance().registries().partModels().registerModels(PartDualInterface.MODELS);
+        Api.instance().registries().partModels().registerModels(PartFluidPatternTerminal.MODELS);
     }
 
 }

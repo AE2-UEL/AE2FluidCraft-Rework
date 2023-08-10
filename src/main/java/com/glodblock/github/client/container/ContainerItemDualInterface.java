@@ -81,9 +81,16 @@ public class ContainerItemDualInterface extends UpgradeableContainer implements 
         this.verifyPermissions(SecurityPermissions.BUILD, false);
         super.detectAndSendChanges();
         if (Platform.isServer()) {
-            fluidPacket = ((ExtendedInterface) dualityInterfaceCopy).getFluidPacketMode();
-            allowSplitting = ((ExtendedInterface) dualityInterfaceCopy).getSplittingMode();
-            blockModeEx = ((ExtendedInterface) dualityInterfaceCopy).getExtendedBlockMode();
+            ExtendedInterface eif = (ExtendedInterface) dualityInterfaceCopy;
+            if (fluidPacket != eif.getFluidPacketMode()) {
+                fluidPacket = eif.getFluidPacketMode();
+            }
+            if (allowSplitting != eif.getSplittingMode()) {
+                allowSplitting = eif.getSplittingMode();
+            }
+            if (blockModeEx != eif.getExtendedBlockMode()) {
+                blockModeEx = eif.getExtendedBlockMode();
+            }
         }
     }
 

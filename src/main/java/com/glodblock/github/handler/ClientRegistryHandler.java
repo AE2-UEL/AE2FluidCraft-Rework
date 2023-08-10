@@ -1,22 +1,22 @@
 package com.glodblock.github.handler;
 
-import appeng.core.Api;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.*;
 import com.glodblock.github.client.container.*;
 import com.glodblock.github.client.model.FluidEncodedPatternModel;
 import com.glodblock.github.client.model.FluidPacketModel;
-import com.glodblock.github.common.part.PartDualInterface;
-import com.glodblock.github.common.part.PartFluidPatternTerminal;
 import com.glodblock.github.interfaces.HasCustomModel;
 import com.glodblock.github.loader.FCBlocks;
 import com.glodblock.github.util.Ae2ReflectClient;
+import com.glodblock.github.util.FluidRenderUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
+import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -50,10 +50,6 @@ public class ClientRegistryHandler extends RegistryHandler {
         for (Pair<String, Item> entry : items) {
             registerModel(entry.getLeft(), entry.getRight());
         }
-
-        Api.instance().registries().partModels().registerModels(PartDualInterface.MODELS);
-        Api.instance().registries().partModels().registerModels(PartFluidPatternTerminal.MODELS);
-        //AEApi.instance().registries().partModels().registerModels(PartExtendedFluidPatternTerminal.MODELS);
     }
 
     private static void registerModel(String key, Item item) {
@@ -61,6 +57,13 @@ public class ClientRegistryHandler extends RegistryHandler {
                 item instanceof HasCustomModel ?
                         ((HasCustomModel)item).getCustomModelPath() : FluidCraft.resource(key),
                 "inventory"));
+    }
+
+    @SubscribeEvent
+    public void onTextureMapStitch(TextureStitchEvent event) {
+        if (event.getMap().getTextureLocation().equals(PlayerContainer.LOCATION_BLOCKS_TEXTURE)) {
+            FluidRenderUtils.resetCache();
+        }
     }
 
 }

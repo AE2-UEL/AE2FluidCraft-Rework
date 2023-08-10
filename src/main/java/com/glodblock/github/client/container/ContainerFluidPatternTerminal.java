@@ -33,6 +33,9 @@ import com.glodblock.github.interfaces.PatternConsumer;
 import com.glodblock.github.loader.FCItems;
 import com.glodblock.github.util.ConfigSet;
 import com.glodblock.github.util.FCUtil;
+import com.glodblock.github.util.HashUtil;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -46,7 +49,9 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ICraftingRecipe;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.IRecipeType;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -68,6 +73,12 @@ public class ContainerFluidPatternTerminal extends ItemTerminalContainer impleme
     private final ICraftingHelper craftingHelper;
     private final ConfigSet config = new ConfigSet();
     private ICraftingRecipe currentRecipe;
+    // Fix lag from ae's dumb fuck code
+    private static final Cache<HashUtil.ItemHandlerHash, ICraftingRecipe> cache = CacheBuilder.newBuilder()
+            .initialCapacity(10)
+            .maximumSize(120)
+            .concurrencyLevel(10)
+            .build();
     private boolean currentRecipeCraftingMode;
     public static ContainerType<ContainerFluidPatternTerminal> TYPE = ContainerTypeBuilder
             .create(ContainerFluidPatternTerminal::new, ITerminalHost.class)
@@ -135,23 +146,36 @@ public class ContainerFluidPatternTerminal extends ItemTerminalContainer impleme
     @Override
     public void putStackInSlot(int slotID, @Nonnull ItemStack stack) {
         super.putStackInSlot(slotID, stack);
-        this.getAndUpdateOutput();
+        if (this.getSlot(slotID) instanceof FakeCraftingMatrixSlot) {
+            this.getAndUpdateOutput();
+        }
+    }
+
+    private ICraftingRecipe lookupRecipe(World world, CraftingInventory ic) {
+        HashUtil.ItemHandlerHash hash = HashUtil.hashItemHandler(this.craftingGridInv);
+        try {
+            ICraftingRecipe recipe = cache.get(hash, () -> world.getRecipeManager().getRecipe(IRecipeType.CRAFTING, ic, world).orElse(NullRecipe.NULL));
+            return recipe == NullRecipe.NULL ? null : recipe;
+        } catch (Exception ignored) {
+        }
+        return null;
     }
 
     private ItemStack getAndUpdateOutput() {
-        World world = this.getPlayerInventory().player.world;
-        CraftingInventory ic = new CraftingInventory(this, 3, 3);
+        final World world = this.getPlayerInventory().player.world;
+        final CraftingInventory ic = new CraftingInventory(this, 3, 3);
 
-        for(int x = 0; x < ic.getSizeInventory(); ++x) {
+        for (int x = 0; x < ic.getSizeInventory(); x++) {
             ic.setInventorySlotContents(x, this.craftingGridInv.getStackInSlot(x));
         }
 
         if (this.currentRecipe == null || !this.currentRecipe.matches(ic, world)) {
-            this.currentRecipe = world.getRecipeManager().getRecipe(IRecipeType.CRAFTING, ic, world).orElse(null);
+            this.currentRecipe = lookupRecipe(world, ic);
             this.currentRecipeCraftingMode = this.craftingMode;
         }
 
-        ItemStack is;
+        final ItemStack is;
+
         if (this.currentRecipe == null) {
             is = ItemStack.EMPTY;
         } else {
@@ -457,9 +481,15 @@ public class ContainerFluidPatternTerminal extends ItemTerminalContainer impleme
             if (this.isCraftingMode() != this.patternTerminal.isCraftingRecipe()) {
                 this.setCraftingMode(this.patternTerminal.isCraftingRecipe());
             }
-            this.substitute = this.patternTerminal.isSubstitution();
-            this.combine = this.patternTerminal.getCombineMode();
-            this.fluidFirst = this.patternTerminal.getFluidPlaceMode();
+            if (this.substitute != this.patternTerminal.isSubstitution()) {
+                this.substitute = this.patternTerminal.isSubstitution();
+            }
+            if (this.combine != this.patternTerminal.getCombineMode()) {
+                this.combine = this.patternTerminal.getCombineMode();
+            }
+            if (this.fluidFirst != this.patternTerminal.getFluidPlaceMode()) {
+                this.fluidFirst = this.patternTerminal.getFluidPlaceMode();
+            }
         }
     }
 
@@ -554,5 +584,41 @@ public class ContainerFluidPatternTerminal extends ItemTerminalContainer impleme
     @Override
     public Object get(String id) {
         return this.config.getConfig(id);
+    }
+
+    @SuppressWarnings("all")
+    private static final class NullRecipe implements ICraftingRecipe {
+
+        private static final NullRecipe NULL = new NullRecipe();
+
+        @Override
+        public boolean matches(CraftingInventory inv, World worldIn) {
+            return false;
+        }
+
+        @Override
+        public ItemStack getCraftingResult(CraftingInventory inv) {
+            return null;
+        }
+
+        @Override
+        public boolean canFit(int width, int height) {
+            return false;
+        }
+
+        @Override
+        public ItemStack getRecipeOutput() {
+            return null;
+        }
+
+        @Override
+        public ResourceLocation getId() {
+            return null;
+        }
+
+        @Override
+        public IRecipeSerializer<?> getSerializer() {
+            return null;
+        }
     }
 }
