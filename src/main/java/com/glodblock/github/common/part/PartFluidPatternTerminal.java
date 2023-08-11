@@ -172,8 +172,8 @@ public class PartFluidPatternTerminal extends PartPatternTerminal {
     public void onChangeCrafting(Int2ObjectMap<ItemStack[]> inputs, List<ItemStack> outputs, boolean combine) {
         IItemHandler crafting = this.getInventoryByName("crafting");
         IItemHandler output = this.getInventoryByName("output");
-        IItemList<IAEItemStack> storageList = this.getInventory(Util.ITEM) == null ?
-                null : this.getInventory(Util.ITEM).getStorageList();
+        IItemList<IAEItemStack> storageList = this.getInventory(Util.getItemChannel()) == null ?
+                null : this.getInventory(Util.getItemChannel()).getStorageList();
         if (crafting instanceof AppEngInternalInventory && output instanceof AppEngInternalInventory) {
             Util.clearItemInventory((IItemHandlerModifiable) crafting);
             Util.clearItemInventory((IItemHandlerModifiable) output);

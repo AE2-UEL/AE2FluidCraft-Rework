@@ -25,8 +25,8 @@ import java.util.List;
 public class TileFluidPatternEncoder extends AEBaseTile implements IAEAppEngInventory {
 
     private final AppEngInternalInventory patternInv = new AppEngInternalInventory(this, 2);
-    private final AeStackInventoryImpl<IAEItemStack> crafting = new AeStackInventoryImpl<>(Util.ITEM, 9, this);
-    private final AeStackInventoryImpl<IAEItemStack> output = new AeStackInventoryImpl<>(Util.ITEM, 3, this);
+    private final AeStackInventoryImpl<IAEItemStack> crafting = new AeStackInventoryImpl<>(Util.getItemChannel(), 9, this);
+    private final AeStackInventoryImpl<IAEItemStack> output = new AeStackInventoryImpl<>(Util.getItemChannel(), 3, this);
 
     public IItemHandlerModifiable getInventory() {
         return patternInv;

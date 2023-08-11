@@ -319,7 +319,7 @@ public class TileFluidAssembler extends AENetworkInvTile implements ICraftingPro
             if (!this.waitingToSend.isEmpty() && this.getProxy().isActive()) {
                 ObjectArrayList<ItemStack> rst = new ObjectArrayList<>();
                 try {
-                    IMEInventory<IAEItemStack> des = this.getProxy().getStorage().getInventory(Util.ITEM);
+                    IMEInventory<IAEItemStack> des = this.getProxy().getStorage().getInventory(Util.getItemChannel());
                     final IEnergySource src = this.getProxy().getEnergy();
                     for (ItemStack item : this.waitingToSend) {
                         if (item != null && !item.isEmpty()) {

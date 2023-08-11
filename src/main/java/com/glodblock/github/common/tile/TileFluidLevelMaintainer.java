@@ -101,7 +101,7 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements ICrafting
 
     @MENetworkEventSubscribe
     public void onStorageUpdate(MENetworkStorageEvent event) {
-        if (event.channel.equals(Util.FLUID)) {
+        if (event.channel.equals(Util.getFluidChannel())) {
             doWork();
         }
     }
@@ -189,7 +189,7 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements ICrafting
 
     private IMEMonitor<IAEFluidStack> getFluidMonitor() {
         return getProxy().getNode().getGrid().<IStorageGrid>getCache(IStorageGrid.class)
-                .getInventory(Util.FLUID);
+                .getInventory(Util.getFluidChannel());
     }
 
     @Override

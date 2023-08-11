@@ -8,6 +8,7 @@ import appeng.api.networking.IGridNode;
 import appeng.api.networking.IMachineSet;
 import appeng.api.networking.storage.IStorageGrid;
 import appeng.api.storage.IMEInventory;
+import appeng.api.storage.IMEInventoryHandler;
 import appeng.api.storage.channels.IFluidStorageChannel;
 import appeng.api.storage.channels.IItemStorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
@@ -20,6 +21,7 @@ import appeng.helpers.DualityInterface;
 import appeng.helpers.IInterfaceHost;
 import appeng.me.MachineSet;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
+import appeng.me.storage.NetworkInventoryHandler;
 import appeng.parts.misc.PartInterface;
 import appeng.tile.misc.TileInterface;
 import appeng.util.InventoryAdaptor;
@@ -268,6 +270,13 @@ public class CoreModHooks {
             }
         }
         return output;
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public static void safeMEInventoryCheck(NetworkInventoryHandler network, IMEInventoryHandler handler) {
+        if (network.getChannel() == handler.getChannel()) {
+            network.addNewStorage(handler);
+        }
     }
 
 }

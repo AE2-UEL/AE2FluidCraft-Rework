@@ -30,8 +30,13 @@ import java.util.Objects;
 
 public final class Util {
 
-    public static final IStorageChannel<IAEItemStack> ITEM = AEApi.instance().storage().getStorageChannel(IItemStorageChannel.class);
-    public static final IStorageChannel<IAEFluidStack> FLUID = AEApi.instance().storage().getStorageChannel(IFluidStorageChannel.class);
+    public static IStorageChannel<IAEFluidStack> getFluidChannel() {
+        return AEApi.instance().storage().getStorageChannel(IFluidStorageChannel.class);
+    }
+
+    public static IStorageChannel<IAEItemStack> getItemChannel() {
+        return AEApi.instance().storage().getStorageChannel(IItemStorageChannel.class);
+    }
 
     public static FluidStack getFluidFromItem(ItemStack stack) {
         if (!stack.isEmpty() && stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
