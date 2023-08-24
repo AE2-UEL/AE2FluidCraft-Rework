@@ -39,14 +39,13 @@ compileJava {
 }
 
 repositories {
-    maven { url 'https://dvs1.progwml6.com/files/maven/' }
     maven { url 'https://jitpack.io/' }
     maven { url 'https://cursemaven.com/' }
     maven { url 'https://minecraft.curseforge.com/api/maven/' }
 }
 
 dependencies {
-    deobfCompile 'mezz.jei:jei_1.12.2:4.15.0.293' //jei
+    deobfCompile 'curse.maven:jei-238222:4538010' //jei
     deobfCompile 'curse.maven:packagedauto-308380:2977147' // 1.0.3.14
     deobfCompile 'curse.maven:modular-machinery-270790:2761302' // 1.11.1
     deobfCompile 'curse.maven:codechicken-lib-1-8-242818:2779848' //ccl

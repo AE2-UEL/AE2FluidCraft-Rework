@@ -272,11 +272,4 @@ public class CoreModHooks {
         return output;
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public static void safeMEInventoryCheck(NetworkInventoryHandler network, IMEInventoryHandler handler) {
-        if (network.getChannel() == handler.getChannel()) {
-            network.addNewStorage(handler);
-        }
-    }
-
 }
