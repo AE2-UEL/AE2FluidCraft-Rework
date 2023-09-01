@@ -1,13 +1,19 @@
 package com.glodblock.github.integration.jei;
 
 import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.integration.gregtech.GregUtil;
+import com.glodblock.github.util.Ae2Reflect;
+import com.glodblock.github.util.ModAndClassUtil;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import mezz.jei.api.gui.IGuiIngredient;
 import mezz.jei.api.gui.IRecipeLayout;
+import mezz.jei.api.recipe.IRecipeWrapper;
+import mezz.jei.gui.recipes.RecipeLayout;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -17,6 +23,7 @@ public class RecipeTransferBuilder {
 
     private static ExtraExtractors extractor = null;
     private static final int MAX_ITEMS = 16;
+    private static Field fRecipeLayout_recipeWrapper;
 
     private final Int2ObjectArrayMap<ItemStack[]> in;
     private final List<ItemStack> out;
@@ -27,6 +34,14 @@ public class RecipeTransferBuilder {
     private List<FluidStack> fluidOut;
     private boolean noNull = true;
     private boolean fluidFirst = false;
+
+    static {
+        try {
+            fRecipeLayout_recipeWrapper = Ae2Reflect.reflectField(RecipeLayout.class, "recipeWrapper");
+        } catch (NoSuchFieldException ignore) {
+            // NO-OP
+        }
+    }
 
     public RecipeTransferBuilder(IRecipeLayout recipe) {
         this.in = new Int2ObjectArrayMap<>();
@@ -48,8 +63,14 @@ public class RecipeTransferBuilder {
     }
 
     private void split() {
-        for (IGuiIngredient<ItemStack> ing : this.recipe.getItemStacks().getGuiIngredients().values()) {
+        for (int index : this.recipe.getItemStacks().getGuiIngredients().keySet()) {
+            IGuiIngredient<ItemStack> ing = this.recipe.getItemStacks().getGuiIngredients().get(index);
             if (ing.isInput()) {
+                if (ModAndClassUtil.GT) {
+                    if (GregUtil.isNotConsume(this.getWrapper(this.recipe), index)) {
+                        continue;
+                    }
+                }
                 List<ItemStack> holder;
                 if (ing.getAllIngredients().size() < MAX_ITEMS - 1) {
                     holder = ing.getAllIngredients();
@@ -149,6 +170,13 @@ public class RecipeTransferBuilder {
 
     public Int2ObjectMap<ItemStack[]> getInput() {
         return this.in;
+    }
+
+    public IRecipeWrapper getWrapper(IRecipeLayout recipe) {
+        if (fRecipeLayout_recipeWrapper != null) {
+            return Ae2Reflect.readField(recipe, fRecipeLayout_recipeWrapper);
+        }
+        return null;
     }
 
 }
