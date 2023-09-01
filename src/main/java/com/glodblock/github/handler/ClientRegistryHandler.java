@@ -5,6 +5,7 @@ import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.model.DenseCraftEncodedPatternModel;
 import com.glodblock.github.client.model.DenseEncodedPatternModel;
 import com.glodblock.github.client.model.FluidPacketModel;
+import com.glodblock.github.client.model.LargeItemEncodedPatternModel;
 import com.glodblock.github.common.part.PartDualInterface;
 import com.glodblock.github.common.part.PartExtendedFluidPatternTerminal;
 import com.glodblock.github.common.part.PartFluidPatternTerminal;
@@ -24,6 +25,7 @@ public class ClientRegistryHandler extends RegistryHandler {
     public void onRegisterModels(ModelRegistryEvent event) {
         ModelLoaderRegistry.registerLoader(new DenseEncodedPatternModel.Loader());
         ModelLoaderRegistry.registerLoader(new DenseCraftEncodedPatternModel.Loader());
+        ModelLoaderRegistry.registerLoader(new LargeItemEncodedPatternModel.Loader());
         ModelLoaderRegistry.registerLoader(new FluidPacketModel.Loader());
         for (Pair<String, Block> entry : blocks) {
             registerModel(entry.getLeft(), Item.getItemFromBlock(entry.getRight()));

@@ -25,6 +25,8 @@ public class FCItems {
     public static ItemFluidEncodedPattern DENSE_ENCODED_PATTERN;
     @GameRegistry.ObjectHolder(FluidCraft.MODID + ":" + NameConst.ITEM_DENSE_CRAFT_ENCODED_PATTERN)
     public static ItemFluidCraftEncodedPattern DENSE_CRAFT_ENCODED_PATTERN;
+    @GameRegistry.ObjectHolder(FluidCraft.MODID + ":" + NameConst.ITEM_LARGE_ITEM_ENCODED_PATTERN)
+    public static ItemLargeEncodedPattern LARGE_ITEM_ENCODED_PATTERN;
     @GameRegistry.ObjectHolder(FluidCraft.MODID + ":" + NameConst.ITEM_PART_DUAL_INTERFACE)
     public static ItemPartDualInterface PART_DUAL_INTERFACE;
     @GameRegistry.ObjectHolder(FluidCraft.MODID + ":" + NameConst.ITEM_PART_FLUID_PATTERN_TERMINAL)
@@ -40,6 +42,7 @@ public class FCItems {
         regHandler.item(NameConst.ITEM_PART_DUAL_INTERFACE, new ItemPartDualInterface());
         regHandler.item(NameConst.ITEM_PART_FLUID_PATTERN_TERMINAL, new ItemPartFluidPatternTerminal());
         regHandler.item(NameConst.ITEM_PART_EXTENDED_FLUID_PATTERN_TERMINAL, new ItemPartExtendedFluidPatternTerminal());
+        regHandler.item(NameConst.ITEM_LARGE_ITEM_ENCODED_PATTERN, new ItemLargeEncodedPattern());
     }
 
 }

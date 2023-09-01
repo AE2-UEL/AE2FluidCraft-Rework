@@ -9,7 +9,9 @@ import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.container.ContainerItemAmountChange;
 import com.glodblock.github.common.part.PartExtendedFluidPatternTerminal;
 import com.glodblock.github.common.part.PartFluidPatternTerminal;
+import com.glodblock.github.common.tile.TileUltimateEncoder;
 import com.glodblock.github.inventory.GuiType;
+import com.glodblock.github.loader.FCBlocks;
 import com.glodblock.github.loader.FCItems;
 import com.glodblock.github.network.CPacketPatternValueSet;
 import com.glodblock.github.network.CPacketSwitchGuis;
@@ -56,6 +58,11 @@ public class GuiItemAmountChange extends GuiCraftAmount {
         if (target instanceof PartExtendedFluidPatternTerminal) {
             myIcon = new ItemStack(FCItems.PART_EXTENDED_FLUID_PATTERN_TERMINAL);
             this.originalGui = GuiType.FLUID_EXTENDED_PATTERN_TERMINAL;
+        }
+
+        if (target instanceof TileUltimateEncoder) {
+            myIcon = new ItemStack(FCBlocks.ULTIMATE_ENCODER);
+            this.originalGui = GuiType.ULTIMATE_ENCODER;
         }
 
         if (this.originalGui != null && myIcon != null) {

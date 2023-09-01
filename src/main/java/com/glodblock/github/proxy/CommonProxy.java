@@ -55,6 +55,7 @@ public class CommonProxy {
         GameRegistry.registerTileEntity(TileDualInterface.class, FluidCraft.resource(NameConst.BLOCK_DUAL_INTERFACE));
         GameRegistry.registerTileEntity(TileFluidLevelMaintainer.class, FluidCraft.resource(NameConst.BLOCK_FLUID_LEVEL_MAINTAINER));
         GameRegistry.registerTileEntity(TileFluidAssembler.class, FluidCraft.resource(NameConst.BLOCK_FLUID_ASSEMBLER));
+        GameRegistry.registerTileEntity(TileUltimateEncoder.class, FluidCraft.resource(NameConst.BLOCK_ULTIMATE_ENCODER));
         (new ChannelLoader()).run();
         if (ModAndClassUtil.AUTO_P) {
             initPackagedAutoIntegration();
@@ -77,6 +78,9 @@ public class CommonProxy {
                     AEApi.instance().definitions().materials().blankPattern());
             Ae2Reflect.getDisassemblyNonCellMap((DisassembleRecipe)disassembleRecipe).put(
                     createItemDefn(FCItems.DENSE_CRAFT_ENCODED_PATTERN),
+                    AEApi.instance().definitions().materials().blankPattern());
+            Ae2Reflect.getDisassemblyNonCellMap((DisassembleRecipe)disassembleRecipe).put(
+                    createItemDefn(FCItems.LARGE_ITEM_ENCODED_PATTERN),
                     AEApi.instance().definitions().materials().blankPattern());
         }
     }

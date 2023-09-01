@@ -1,6 +1,5 @@
 package com.glodblock.github.client.container;
 
-import appeng.api.config.SecurityPermissions;
 import appeng.api.storage.ITerminalHost;
 import appeng.container.AEBaseContainer;
 import appeng.container.guisync.GuiSync;
@@ -22,13 +21,6 @@ public class ContainerItemAmountChange extends AEBaseContainer {
         super( ip, te );
         this.patternValue = new SlotInaccessible( new AppEngInternalInventory( null, 1 ), 0, 34, 53 );
         this.addSlotToContainer( patternValue );
-    }
-
-    @Override
-    public void detectAndSendChanges()
-    {
-        super.detectAndSendChanges();
-        this.verifyPermissions( SecurityPermissions.CRAFT, false );
     }
 
     public Slot getPatternValue()

@@ -6,6 +6,7 @@ import appeng.items.misc.ItemEncodedPattern;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidEncodedPattern;
+import com.glodblock.github.common.item.ItemLargeEncodedPattern;
 import com.glodblock.github.integration.jei.CubicFluidRender;
 import com.glodblock.github.loader.FCBlocks;
 import com.glodblock.github.loader.FCItems;
@@ -99,7 +100,7 @@ public class FluidPatternCategory implements IRecipeCategory<SingletonRecipe> {
         stacks.init(14, true, WIDTH / 2 - 8, 29);
         stacks.set(14, this.interfaceStack);
 
-        if (patternStack.getItem() instanceof ItemFluidEncodedPattern) {
+        if (patternStack.getItem() instanceof ItemFluidEncodedPattern || patternStack.getItem() instanceof ItemLargeEncodedPattern) {
             final ItemEncodedPattern pattern = (ItemEncodedPattern) patternStack.getItem();
             final ICraftingPatternDetails details = pattern.getPatternForItem(patternStack, null);
             if (details == null) {

@@ -14,6 +14,7 @@ import appeng.util.item.AEItemStack;
 import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidEncodedPattern;
 import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.common.item.ItemLargeEncodedPattern;
 import com.glodblock.github.common.part.PartExtendedFluidPatternTerminal;
 import com.glodblock.github.interfaces.PatternConsumer;
 import com.glodblock.github.loader.FCItems;
@@ -75,6 +76,9 @@ public class ContainerExtendedFluidPatternTerminal extends ContainerExpandedProc
             return false;
         }
         if (output.getItem() instanceof ItemFluidEncodedPattern) {
+            return true;
+        }
+        if (output.getItem() instanceof ItemLargeEncodedPattern) {
             return true;
         }
         final IDefinitions defs = AEApi.instance().definitions();

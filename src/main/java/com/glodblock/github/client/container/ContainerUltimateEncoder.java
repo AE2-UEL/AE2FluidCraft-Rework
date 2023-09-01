@@ -2,61 +2,201 @@ package com.glodblock.github.client.container;
 
 import appeng.api.AEApi;
 import appeng.api.definitions.IDefinitions;
-import appeng.api.storage.ITerminalHost;
 import appeng.api.storage.data.IAEItemStack;
+import appeng.container.AEBaseContainer;
 import appeng.container.guisync.GuiSync;
-import appeng.container.implementations.ContainerPatternTerm;
+import appeng.container.slot.AppEngSlot;
+import appeng.container.slot.IOptionalSlotHost;
+import appeng.container.slot.OptionalSlotFake;
 import appeng.container.slot.SlotFakeCraftingMatrix;
 import appeng.container.slot.SlotPatternOutputs;
+import appeng.container.slot.SlotPlayerHotBar;
+import appeng.container.slot.SlotPlayerInv;
+import appeng.container.slot.SlotRestrictedInput;
 import appeng.helpers.InventoryAction;
 import appeng.util.Platform;
 import appeng.util.item.AEItemStack;
-import com.glodblock.github.common.item.ItemFluidCraftEncodedPattern;
 import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidEncodedPattern;
 import com.glodblock.github.common.item.ItemFluidPacket;
-import com.glodblock.github.common.item.ItemLargeEncodedPattern;
-import com.glodblock.github.common.part.PartFluidPatternTerminal;
+import com.glodblock.github.common.tile.TileUltimateEncoder;
 import com.glodblock.github.interfaces.PatternConsumer;
 import com.glodblock.github.loader.FCItems;
-import com.glodblock.github.util.Ae2Reflect;
-import com.glodblock.github.util.FluidCraftingPatternDetails;
 import com.glodblock.github.util.FluidPatternDetails;
 import com.glodblock.github.util.Util;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
-public class ContainerFluidPatternTerminal extends ContainerPatternTerm implements PatternConsumer {
+public class ContainerUltimateEncoder extends AEBaseContainer implements IOptionalSlotHost, PatternConsumer {
+
+    private final TileUltimateEncoder encoder;
+    protected final SlotRestrictedInput patternSlotIN;
+    protected final SlotRestrictedInput patternSlotOUT;
+    protected final SlotFakeCraftingMatrix[] craftingSlots = new SlotFakeCraftingMatrix[42];
+    protected final SlotPatternOutputs[] outputSlots = new SlotPatternOutputs[8];
     @GuiSync(105)
     public boolean combine = false;
     @GuiSync(106)
     public boolean fluidFirst = false;
 
-    public ContainerFluidPatternTerminal(InventoryPlayer ip, ITerminalHost monitorable) {
-        super(ip, monitorable);
+
+    public ContainerUltimateEncoder(InventoryPlayer ipl, TileUltimateEncoder encoder) {
+        super(ipl, encoder);
+        this.encoder = encoder;
+        this.patternSlotIN = new SlotRestrictedInput(SlotRestrictedInput.PlacableItemType.BLANK_PATTERN, this.encoder.getPattern(), 0, 137, 91, this.getInventoryPlayer());
+        this.patternSlotOUT = new SlotRestrictedInput(SlotRestrictedInput.PlacableItemType.ENCODED_PATTERN, this.encoder.getPattern(), 1, 137, 134, this.getInventoryPlayer());
+        for(int y = 0; y < 7; ++y) {
+            for(int x = 0; x < 6; ++x) {
+                this.addSlotToContainer(this.craftingSlots[x + y * 6] = new SlotFakeCraftingMatrix(this.encoder.getCraft(), x + y * 6, 8 + x * 18, 29 + y * 18));
+            }
+        }
+        for(int y = 0; y < 4; ++y) {
+            for(int x = 0; x < 2; ++x) {
+                this.addSlotToContainer(this.outputSlots[x + y * 2] = new SlotPatternOutputs(this.encoder.getOutput(), this, x + y * 2, 134 + x * 18, 12 + y * 18, 0, 0, 1));
+                this.outputSlots[x + y * 2].setRenderDisabled(false);
+                this.outputSlots[x + y * 2].setIIcon(-1);
+            }
+        }
+        this.addSlotToContainer(this.patternSlotIN);
+        this.addSlotToContainer(this.patternSlotOUT);
+        this.bindPlayerInventory(ipl, 0, 167);
+    }
+
+    public void setCombine(boolean val) {
+        this.combine = val;
+        this.encoder.combine = val;
+    }
+
+    public void setFluidFirst(boolean val) {
+        this.fluidFirst = val;
+        this.encoder.fluidFirst = val;
     }
 
     @Override
+    public void detectAndSendChanges() {
+        super.detectAndSendChanges();
+        if (Platform.isServer()) {
+            this.combine = this.encoder.combine;
+            this.fluidFirst = this.encoder.fluidFirst;
+        }
+    }
+
+    public TileUltimateEncoder getEncoder() {
+        return this.encoder;
+    }
+
+    @Override
+    public ItemStack transferStackInSlot(EntityPlayer p, int idx) {
+        if (Platform.isClient()) {
+            return ItemStack.EMPTY;
+        } else {
+            if (this.inventorySlots.get(idx) instanceof SlotPlayerInv || this.inventorySlots.get(idx) instanceof SlotPlayerHotBar) {
+                AppEngSlot clickSlot = (AppEngSlot)this.inventorySlots.get(idx);
+                ItemStack itemStack = clickSlot.getStack();
+                if (AEApi.instance().definitions().materials().blankPattern().isSameAs(itemStack)) {
+                    IItemHandler patternInv = this.encoder.getPattern();
+                    ItemStack remainder = patternInv.insertItem(0, itemStack, false);
+                    clickSlot.putStack(remainder);
+                }
+            }
+            return super.transferStackInSlot(p, idx);
+        }
+    }
+
+    @Override
+    public void onSlotChange(final Slot s) {
+        if (s == this.patternSlotOUT && Platform.isServer()) {
+            for (final IContainerListener listener : this.listeners) {
+                for (final Slot slot : this.inventorySlots) {
+                    if (slot instanceof OptionalSlotFake || slot instanceof SlotFakeCraftingMatrix) {
+                        listener.sendSlotContents(this, slot.slotNumber, slot.getStack());
+                    }
+                }
+                if (listener instanceof EntityPlayerMP) {
+                    ((EntityPlayerMP) listener).isChangingQuantityOnly = false;
+                }
+            }
+            this.detectAndSendChanges();
+        }
+    }
+
+    @Override
+    public void doAction(EntityPlayerMP player, InventoryAction action, int slotId, long id) {
+        if (slotId < 0 || slotId >= this.inventorySlots.size()) {
+            super.doAction(player, action, slotId, id);
+            return;
+        }
+        Slot slot = getSlot(slotId);
+        ItemStack stack = player.inventory.getItemStack();
+        if ((slot instanceof SlotFakeCraftingMatrix || slot instanceof SlotPatternOutputs) && !stack.isEmpty()
+                && stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null) && Util.getFluidFromItem(stack) != null) {
+            FluidStack fluid = null;
+            switch (action) {
+                case PICKUP_OR_SET_DOWN:
+                    fluid = Util.getFluidFromItem(stack);
+                    slot.putStack(ItemFluidPacket.newStack(fluid));
+                    break;
+                case SPLIT_OR_PLACE_SINGLE:
+                    fluid = Util.getFluidFromItem(ItemHandlerHelper.copyStackWithSize(stack, 1));
+                    FluidStack origin = ItemFluidPacket.getFluidStack(slot.getStack());
+                    if (fluid != null && fluid.equals(origin)) {
+                        fluid.amount += origin.amount;
+                        if (fluid.amount <= 0) fluid = null;
+                    }
+                    slot.putStack(ItemFluidPacket.newStack(fluid));
+                    break;
+            }
+            if (fluid == null) {
+                super.doAction(player, action, slotId, id);
+                return;
+            }
+            return;
+        }
+        if (action == InventoryAction.SPLIT_OR_PLACE_SINGLE) {
+            if (stack.isEmpty() && !slot.getStack().isEmpty() && slot.getStack().getItem() instanceof ItemFluidPacket) {
+                FluidStack fluid = ItemFluidPacket.getFluidStack(slot.getStack());
+                if (fluid != null && fluid.amount - 1000 >= 1) {
+                    fluid.amount -= 1000;
+                    slot.putStack(ItemFluidPacket.newStack(fluid));
+                }
+            }
+        }
+        super.doAction(player, action, slotId, id);
+    }
+
+    public void encodeAndMoveToInventory() {
+        encode();
+        ItemStack output = this.patternSlotOUT.getStack();
+        if (!output.isEmpty()) {
+            if (!getPlayerInv().addItemStackToInventory(output)) {
+                getPlayerInv().player.dropItem(output, false);
+            }
+            this.patternSlotOUT.putStack(ItemStack.EMPTY);
+        }
+    }
+
     public void encode() {
         if (!checkHasFluidPattern()) {
-            super.encode();
+            encodeItem();
             return;
         }
         ItemStack stack = this.patternSlotOUT.getStack();
         if (stack.isEmpty()) {
             stack = this.patternSlotIN.getStack();
-            if (stack.isEmpty() || !isPattern(stack)) {
+            if (stack.isEmpty() || notPattern(stack)) {
                 return;
             }
             if (stack.getCount() == 1) {
@@ -65,82 +205,20 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
                 stack.shrink(1);
             }
             encodeFluidPattern();
-        } else if (isPattern(stack)) {
+        } else if (!notPattern(stack)) {
             encodeFluidPattern();
         }
     }
 
-    public void encodeFluidCraftPattern() {
-        ItemStack output = this.patternSlotOUT.getStack();
-
-        final ItemStack[] in = this.getInputs();
-        final ItemStack[] out = this.getOutputs();
-        if (in == null || out == null) {
-            return;
-        }
-
-        if (!output.isEmpty() && !isPattern(output)) {
-            return;
-        }
-        else if (output.isEmpty()) {
-            output = this.patternSlotIN.getStack();
-            if (output.isEmpty() || !isPattern(output)) {
-                return;
-            }
-            output.setCount(output.getCount() - 1);
-            if (output.getCount() == 0) {
-                this.patternSlotIN.putStack(ItemStack.EMPTY);
-            }
-            Optional<ItemStack> maybePattern = AEApi.instance().definitions().items().encodedPattern().maybeStack(1);
-            if (maybePattern.isPresent()) {
-                output = maybePattern.get();
-                this.patternSlotOUT.putStack(output);
-            }
-        }
-        final NBTTagCompound encodedValue = new NBTTagCompound();
-
-        final NBTTagList tagIn = new NBTTagList();
-        final NBTTagList tagOut = new NBTTagList();
-
-        for (final ItemStack i : in) {
-            tagIn.appendTag(this.createItemTag(i));
-        }
-
-        for (final ItemStack i : out) {
-            tagOut.appendTag(this.createItemTag(i));
-        }
-
-        encodedValue.setTag("in", tagIn);
-        encodedValue.setTag("out", tagOut);
-        encodedValue.setBoolean("crafting", this.isCraftingMode());
-        encodedValue.setBoolean("substitute", this.substitute);
-        ItemStack patternStack = new ItemStack(FCItems.DENSE_CRAFT_ENCODED_PATTERN);
-        patternStack.setTagCompound(encodedValue);
-        FluidCraftingPatternDetails details = FluidCraftingPatternDetails.GetFluidPattern(patternStack, getNetworkNode().getWorld());
-        if (details == null || !details.isNecessary()) {
-            encode();
-            return;
-        }
-        patternSlotOUT.putStack(patternStack);
-    }
-
-    private static boolean isPattern(final ItemStack output) {
-        if (output.isEmpty()) {
-            return false;
-        }
-        if (output.getItem() instanceof ItemFluidEncodedPattern
-                || output.getItem() instanceof ItemFluidCraftEncodedPattern
-                || output.getItem() instanceof ItemLargeEncodedPattern) {
-            return true;
-        }
-        final IDefinitions defs = AEApi.instance().definitions();
-        return defs.items().encodedPattern().isSameAs(output) || defs.materials().blankPattern().isSameAs(output);
+    public void encodeItem() {
+        ItemStack patternStack = new ItemStack(FCItems.LARGE_ITEM_ENCODED_PATTERN);
+        FluidPatternDetails pattern = new FluidPatternDetails(patternStack);
+        pattern.setInputs(collectInventory(craftingSlots));
+        pattern.setOutputs(collectInventory(outputSlots));
+        patternSlotOUT.putStack(pattern.writeToStack());
     }
 
     private boolean checkHasFluidPattern() {
-        if (this.craftingMode) {
-            return false;
-        }
         boolean hasFluid = false, search = false;
         for (Slot craftingSlot : this.craftingSlots) {
             final ItemStack crafting = craftingSlot.getStack();
@@ -205,62 +283,17 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
         return acc.toArray(new IAEItemStack[0]);
     }
 
-    @Override
-    public void acceptPattern(Int2ObjectMap<ItemStack[]> inputs, List<ItemStack> outputs, boolean combine) {
-        if (Ae2Reflect.getPart(this) instanceof PartFluidPatternTerminal) {
-            ((PartFluidPatternTerminal) Ae2Reflect.getPart(this)).onChangeCrafting(inputs, outputs, combine);
+    private boolean notPattern(final ItemStack output) {
+        if (output.isEmpty()) {
+            return true;
         }
+        if (output.getItem() instanceof ItemFluidEncodedPattern) {
+            return false;
+        }
+        final IDefinitions defs = AEApi.instance().definitions();
+        return !defs.items().encodedPattern().isSameAs(output) && !defs.materials().blankPattern().isSameAs(output);
     }
 
-    @Override
-    public void doAction(EntityPlayerMP player, InventoryAction action, int slotId, long id) {
-        if (this.isCraftingMode()) {
-            super.doAction(player, action, slotId, id);
-            return;
-        }
-        if (slotId < 0 || slotId >= this.inventorySlots.size()) {
-            super.doAction(player, action, slotId, id);
-            return;
-        }
-        Slot slot = getSlot(slotId);
-        ItemStack stack = player.inventory.getItemStack();
-        if ((slot instanceof SlotFakeCraftingMatrix || slot instanceof SlotPatternOutputs) && !stack.isEmpty()
-                && stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null) && Util.getFluidFromItem(stack) != null) {
-            FluidStack fluid = null;
-            switch (action) {
-                case PICKUP_OR_SET_DOWN:
-                    fluid = Util.getFluidFromItem(stack);
-                    slot.putStack(ItemFluidPacket.newStack(fluid));
-                    break;
-                case SPLIT_OR_PLACE_SINGLE:
-                    fluid = Util.getFluidFromItem(ItemHandlerHelper.copyStackWithSize(stack, 1));
-                    FluidStack origin = ItemFluidPacket.getFluidStack(slot.getStack());
-                    if (fluid != null && fluid.equals(origin)) {
-                        fluid.amount += origin.amount;
-                        if (fluid.amount <= 0) fluid = null;
-                    }
-                    slot.putStack(ItemFluidPacket.newStack(fluid));
-                    break;
-            }
-            if (fluid == null) {
-                super.doAction(player, action, slotId, id);
-                return;
-            }
-            return;
-        }
-        if (action == InventoryAction.SPLIT_OR_PLACE_SINGLE) {
-            if (stack.isEmpty() && !slot.getStack().isEmpty() && slot.getStack().getItem() instanceof ItemFluidPacket) {
-                FluidStack fluid = ItemFluidPacket.getFluidStack(slot.getStack());
-                if (fluid != null && fluid.amount - 1000 >= 1) {
-                    fluid.amount -= 1000;
-                    slot.putStack(ItemFluidPacket.newStack(fluid));
-                }
-            }
-        }
-        super.doAction(player, action, slotId, id);
-    }
-
-    @Override
     public void multiply(int multiple) {
         for (Slot slot : this.craftingSlots) {
             if (ItemFluidPacket.isFluidPacket(slot.getStack()) && ItemFluidPacket.getFluidStack(slot.getStack()) != null) {
@@ -319,7 +352,15 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
         }
     }
 
-    @Override
+    public void clear() {
+        for (Slot slot : this.craftingSlots) {
+            slot.putStack(ItemStack.EMPTY);
+        }
+        for (Slot slot : this.outputSlots) {
+            slot.putStack(ItemStack.EMPTY);
+        }
+    }
+
     public void divide(int divide) {
         for (Slot slot : this.craftingSlots) {
             if (ItemFluidPacket.isFluidPacket(slot.getStack()) && ItemFluidPacket.getFluidStack(slot.getStack()) != null) {
@@ -378,7 +419,6 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
         }
     }
 
-    @Override
     public void increase(int increase) {
         for (Slot slot : this.craftingSlots) {
             if (ItemFluidPacket.isFluidPacket(slot.getStack()) && ItemFluidPacket.getFluidStack(slot.getStack()) != null) {
@@ -437,7 +477,6 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
         }
     }
 
-    @Override
     public void decrease(int decrease) {
         for (Slot slot : this.craftingSlots) {
             if (ItemFluidPacket.isFluidPacket(slot.getStack()) && ItemFluidPacket.getFluidStack(slot.getStack()) != null) {
@@ -497,23 +536,12 @@ public class ContainerFluidPatternTerminal extends ContainerPatternTerm implemen
     }
 
     @Override
-    public void detectAndSendChanges() {
-        super.detectAndSendChanges();
-        if (Platform.isServer()) {
-            this.combine = ((PartFluidPatternTerminal) Ae2Reflect.getPart(this)).getCombineMode();
-            this.fluidFirst = ((PartFluidPatternTerminal) Ae2Reflect.getPart(this)).getFluidPlaceMode();
-        }
+    public boolean isSlotEnabled(int i) {
+        return true;
     }
 
-    NBTBase createItemTag(ItemStack i) {
-        NBTTagCompound c = new NBTTagCompound();
-        if (!i.isEmpty()) {
-            i.writeToNBT(c);
-            if (i.getCount() > i.getMaxStackSize()) {
-                c.setInteger("stackSize", i.getCount());
-            }
-        }
-        return c;
+    @Override
+    public void acceptPattern(Int2ObjectMap<ItemStack[]> inputs, List<ItemStack> outputs, boolean combine) {
+        this.encoder.onChangeCrafting(inputs, outputs, combine);
     }
-
 }

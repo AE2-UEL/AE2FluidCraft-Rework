@@ -33,7 +33,7 @@ public class FluidPatternPlugin implements IRecipeRegistryPlugin {
     public <V> List<String> getRecipeCategoryUids(IFocus<V> focus) {
         if(focus.getValue() instanceof ItemStack) {
             ItemStack stack = (ItemStack) focus.getValue();
-            if(stack.getItem() == FCItems.DENSE_ENCODED_PATTERN && stack.hasTagCompound()) {
+            if((stack.getItem() == FCItems.DENSE_ENCODED_PATTERN || stack.getItem() == FCItems.LARGE_ITEM_ENCODED_PATTERN) && stack.hasTagCompound()) {
                 return Collections.singletonList(FluidPatternCategory.UID);
             }
         }
@@ -42,7 +42,9 @@ public class FluidPatternPlugin implements IRecipeRegistryPlugin {
 
     @Override
     public <T extends IRecipeWrapper, V> List<T> getRecipeWrappers(IRecipeCategory<T> recipeCategory, IFocus<V> focus) {
-        if(recipeCategory instanceof FluidPatternCategory && ((ItemStack) focus.getValue()).getItem() == FCItems.DENSE_ENCODED_PATTERN) {
+        if(recipeCategory instanceof FluidPatternCategory &&
+                (((ItemStack) focus.getValue()).getItem() == FCItems.DENSE_ENCODED_PATTERN
+                        || ((ItemStack) focus.getValue()).getItem() == FCItems.LARGE_ITEM_ENCODED_PATTERN)) {
             return Collections.singletonList(new SingletonRecipe((ItemStack) focus.getValue(), focus.getMode() == IFocus.Mode.INPUT).cast());
         }
         return Collections.emptyList();

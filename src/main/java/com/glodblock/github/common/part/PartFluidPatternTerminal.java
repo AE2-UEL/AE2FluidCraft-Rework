@@ -17,6 +17,7 @@ import com.glodblock.github.common.item.ItemFluidCraftEncodedPattern;
 import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidEncodedPattern;
 import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.common.item.ItemLargeEncodedPattern;
 import com.glodblock.github.inventory.ExAppEngInternalInventory;
 import com.glodblock.github.inventory.GuiType;
 import com.glodblock.github.inventory.InventoryHandler;
@@ -118,9 +119,9 @@ public class PartFluidPatternTerminal extends PartPatternTerminal {
                                   ItemStack newStack) {
         if (slot == 1) {
             final ItemStack is = inv.getStackInSlot(1);
-            if (!is.isEmpty() && (is.getItem() instanceof ItemFluidEncodedPattern || is.getItem() instanceof ItemFluidCraftEncodedPattern)) {
+            if (!is.isEmpty() && (is.getItem() instanceof ItemFluidEncodedPattern || is.getItem() instanceof ItemFluidCraftEncodedPattern || is.getItem() instanceof ItemLargeEncodedPattern)) {
                 final ItemEncodedPattern pattern = (ItemEncodedPattern) is.getItem();
-                final ICraftingPatternDetails details = pattern.getPatternForItem( is, this.getHost().getTile().getWorld() );
+                final ICraftingPatternDetails details = pattern.getPatternForItem(is, this.getHost().getTile().getWorld());
                 if( details != null )
                 {
                     this.setCraftingRecipe( details.isCraftable() );

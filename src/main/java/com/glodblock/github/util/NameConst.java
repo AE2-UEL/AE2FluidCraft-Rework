@@ -14,11 +14,13 @@ public final class NameConst {
     public static final String BLOCK_DUAL_INTERFACE = "dual_interface";
     public static final String BLOCK_FLUID_LEVEL_MAINTAINER = "fluid_level_maintainer";
     public static final String BLOCK_FLUID_ASSEMBLER = "fluid_assembler";
+    public static final String BLOCK_ULTIMATE_ENCODER = "ultimate_encoder";
 
     public static final String ITEM_FLUID_DROP = "fluid_drop";
     public static final String ITEM_FLUID_PACKET = "fluid_packet";
     public static final String ITEM_DENSE_ENCODED_PATTERN = "dense_encoded_pattern";
     public static final String ITEM_DENSE_CRAFT_ENCODED_PATTERN = "dense_craft_encoded_pattern";
+    public static final String ITEM_LARGE_ITEM_ENCODED_PATTERN = "large_item_encoded_pattern";
     public static final String ITEM_PART_DUAL_INTERFACE = "part_dual_interface";
     public static final String ITEM_PART_FLUID_PATTERN_TERMINAL = "part_fluid_pattern_terminal";
     public static final String ITEM_PART_EXTENDED_FLUID_PATTERN_TERMINAL = "part_fluid_pattern_ex_terminal";
@@ -42,6 +44,7 @@ public final class NameConst {
     public static final String GUI_BURETTE = GUI_KEY + BLOCK_BURETTE;
     public static final String GUI_FLUID_LEVEL_MAINTAINER = GUI_KEY + BLOCK_FLUID_LEVEL_MAINTAINER;
     public static final String GUI_FLUID_ASSEMBLER = GUI_KEY + BLOCK_FLUID_ASSEMBLER;
+    public static final String GUI_ULTIMATE_ENCODER = GUI_KEY + BLOCK_ULTIMATE_ENCODER;
     public static final String GUI_ITEM_AMOUNT_SET = GUI_KEY + "item_amount_set";
     public static final String GUI_ITEM_AMOUNT_SET_CONFIRM = GUI_KEY + "set";
 
@@ -51,6 +54,7 @@ public final class NameConst {
 
     public static final ResourceLocation MODEL_DENSE_ENCODED_PATTERN = FluidCraft.resource("builtin/dense_encoded_pattern");
     public static final ResourceLocation MODEL_DENSE_CRAFT_ENCODED_PATTERN = FluidCraft.resource("builtin/dense_craft_encoded_pattern");
+    public static final ResourceLocation MODEL_LARGE_ITEM_ENCODED_PATTERN = FluidCraft.resource("builtin/large_item_encoded_pattern");
     public static final ResourceLocation MODEL_FLUID_PACKET = FluidCraft.resource("builtin/fluid_packet");
 
 }

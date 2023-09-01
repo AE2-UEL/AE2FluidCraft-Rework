@@ -30,6 +30,18 @@ import java.util.List;
 
 public enum GuiType {
 
+    ULTIMATE_ENCODER(new TileGuiFactory<TileUltimateEncoder>(TileUltimateEncoder.class) {
+        @Override
+        protected Object createServerGui(EntityPlayer player, TileUltimateEncoder inv) {
+            return new ContainerUltimateEncoder(player.inventory, inv);
+        }
+
+        @Override
+        protected Object createClientGui(EntityPlayer player, TileUltimateEncoder inv) {
+            return new GuiUltimateEncoder(player.inventory, inv);
+        }
+    }),
+
     FLUID_ASSEMBLER(new TileGuiFactory<TileFluidAssembler>(TileFluidAssembler.class) {
         @Override
         protected Object createServerGui(EntityPlayer player, TileFluidAssembler inv) {

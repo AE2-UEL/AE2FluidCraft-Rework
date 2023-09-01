@@ -5,6 +5,7 @@ import appeng.api.parts.IPartModel;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IItemList;
 import appeng.core.sync.GuiBridge;
+import appeng.items.misc.ItemEncodedPattern;
 import appeng.items.parts.PartModels;
 import appeng.parts.PartModel;
 import appeng.parts.reporting.PartExpandedProcessingPatternTerminal;
@@ -15,6 +16,7 @@ import com.glodblock.github.FluidCraft;
 import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidEncodedPattern;
 import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.common.item.ItemLargeEncodedPattern;
 import com.glodblock.github.inventory.ExAppEngInternalInventory;
 import com.glodblock.github.inventory.GuiType;
 import com.glodblock.github.inventory.InventoryHandler;
@@ -85,8 +87,8 @@ public class PartExtendedFluidPatternTerminal extends PartExpandedProcessingPatt
                                   ItemStack newStack) {
         if (slot == 1) {
             final ItemStack is = inv.getStackInSlot(1);
-            if (!is.isEmpty() && is.getItem() instanceof ItemFluidEncodedPattern) {
-                final ItemFluidEncodedPattern pattern = (ItemFluidEncodedPattern) is.getItem();
+            if (!is.isEmpty() && (is.getItem() instanceof ItemFluidEncodedPattern || is.getItem() instanceof ItemLargeEncodedPattern)) {
+                final ItemEncodedPattern pattern = (ItemEncodedPattern) is.getItem();
                 final ICraftingPatternDetails details = pattern.getPatternForItem( is, this.getHost().getTile().getWorld() );
                 if( details != null )
                 {

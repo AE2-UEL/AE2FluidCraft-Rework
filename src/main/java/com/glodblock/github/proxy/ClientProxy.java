@@ -62,6 +62,7 @@ public class ClientProxy extends CommonProxy {
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler((s, i) -> AEColor.TRANSPARENT.getVariantByTintIndex(i), FCItems.PART_EXTENDED_FLUID_PATTERN_TERMINAL);
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler(DenseEncodedPatternModel.PATTERN_ITEM_COLOR_HANDLER, FCItems.DENSE_ENCODED_PATTERN);
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler(DenseEncodedPatternModel.PATTERN_ITEM_COLOR_HANDLER, FCItems.DENSE_CRAFT_ENCODED_PATTERN);
+        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(DenseEncodedPatternModel.PATTERN_ITEM_COLOR_HANDLER, FCItems.LARGE_ITEM_ENCODED_PATTERN);
     }
 
     @Override

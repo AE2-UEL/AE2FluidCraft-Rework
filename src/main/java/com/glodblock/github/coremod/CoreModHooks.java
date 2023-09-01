@@ -31,6 +31,7 @@ import com.glodblock.github.common.item.ItemFluidCraftEncodedPattern;
 import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidEncodedPattern;
 import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.common.item.ItemLargeEncodedPattern;
 import com.glodblock.github.common.part.PartDualInterface;
 import com.glodblock.github.common.tile.TileDualInterface;
 import com.glodblock.github.handler.FluidConvertingItemHandler;
@@ -263,7 +264,7 @@ public class CoreModHooks {
     }
 
     public static ItemStack transformPattern(ContainerPatternEncoder container, ItemStack output) {
-        if (output.getItem() instanceof ItemFluidEncodedPattern || output.getItem() instanceof ItemFluidCraftEncodedPattern) {
+        if (output.getItem() instanceof ItemFluidEncodedPattern || output.getItem() instanceof ItemFluidCraftEncodedPattern || output.getItem() instanceof ItemLargeEncodedPattern) {
             Optional<ItemStack> maybePattern = AEApi.instance().definitions().items().encodedPattern().maybeStack(1);
             if (maybePattern.isPresent()) {
                 return maybePattern.get();

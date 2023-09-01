@@ -6,6 +6,7 @@ import appeng.container.slot.SlotFake;
 import com.glodblock.github.client.container.ContainerExtendedFluidPatternTerminal;
 import com.glodblock.github.client.container.ContainerFluidPatternTerminal;
 import com.glodblock.github.client.container.ContainerItemAmountChange;
+import com.glodblock.github.client.container.ContainerUltimateEncoder;
 import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.inventory.GuiType;
 import com.glodblock.github.inventory.InventoryHandler;
@@ -57,27 +58,26 @@ public class CPacketPatternValueSet implements IMessage {
             player.getServerWorld().addScheduledTask(() -> {
                 if (player.openContainer instanceof ContainerItemAmountChange) {
                     ContainerItemAmountChange cpv = (ContainerItemAmountChange) player.openContainer;
-                    final Object target = cpv.getTarget();
-                    if (target instanceof IGridHost) {
-                        final ContainerOpenContext context = cpv.getOpenContext();
-                        if (context != null) {
-                            final TileEntity te = context.getTile();
-                            InventoryHandler.openGui(player, player.world, te.getPos(), context.getSide().getFacing(), message.originGui);
-                            if (player.openContainer instanceof ContainerFluidPatternTerminal || player.openContainer instanceof ContainerExtendedFluidPatternTerminal) {
-                                Slot slot = player.openContainer.getSlot(message.valueIndex);
-                                if (slot instanceof SlotFake) {
-                                    if (slot.getHasStack()) {
-                                        ItemStack stack = slot.getStack().copy();
-                                        if (stack.getItem() instanceof ItemFluidPacket) {
-                                            FluidStack fluidStack = ItemFluidPacket.getFluidStack(stack);
-                                            if (fluidStack != null) {
-                                                fluidStack.amount = message.amount;
-                                            }
-                                            slot.putStack(ItemFluidPacket.newStack(fluidStack));
-                                        } else {
-                                            stack.setCount(message.amount);
-                                            slot.putStack(stack);
+                    final ContainerOpenContext context = cpv.getOpenContext();
+                    if (context != null) {
+                        final TileEntity te = context.getTile();
+                        InventoryHandler.openGui(player, player.world, te.getPos(), context.getSide().getFacing(), message.originGui);
+                        if (player.openContainer instanceof ContainerFluidPatternTerminal
+                                || player.openContainer instanceof ContainerExtendedFluidPatternTerminal
+                                || player.openContainer instanceof ContainerUltimateEncoder) {
+                            Slot slot = player.openContainer.getSlot(message.valueIndex);
+                            if (slot instanceof SlotFake) {
+                                if (slot.getHasStack()) {
+                                    ItemStack stack = slot.getStack().copy();
+                                    if (stack.getItem() instanceof ItemFluidPacket) {
+                                        FluidStack fluidStack = ItemFluidPacket.getFluidStack(stack);
+                                        if (fluidStack != null) {
+                                            fluidStack.amount = message.amount;
                                         }
+                                        slot.putStack(ItemFluidPacket.newStack(fluidStack));
+                                    } else {
+                                        stack.setCount(message.amount);
+                                        slot.putStack(stack);
                                     }
                                 }
                             }
