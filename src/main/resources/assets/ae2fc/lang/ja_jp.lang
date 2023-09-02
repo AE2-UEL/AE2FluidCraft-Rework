@@ -11,11 +11,13 @@ tile.ae2fc:dual_interface.name=ME混合インターフェース
 tile.ae2fc:part_dual_interface.name=ME混合インターフェース
 tile.ae2fc:fluid_level_maintainer.name=ME液体レベルメンテナ
 tile.ae2fc:fluid_assembler.name=ME液体組立機
+tile.ae2fc:ultimate_encoder.name=ME究極エンコーダー
 
 item.ae2fc:fluid_drop.name=%sの雫
 item.ae2fc:fluid_packet.name=ME液体パケット
 item.ae2fc:dense_encoded_pattern.name=エンコード済みパターン
 item.ae2fc:dense_craft_encoded_pattern.name=エンコード済みパターン
+item.ae2fc:large_item_encoded_pattern.name=エンコード済みパターン
 item.ae2fc:part_dual_interface.name=ME混合インターフェース
 item.ae2fc:part_fluid_pattern_terminal.name=ME液体パターンターミナル
 item.ae2fc:part_fluid_pattern_ex_terminal.name=ME液体拡張加工パターンターミナル
@@ -27,6 +29,7 @@ ae2fc.gui.large_ingredient_buffer=ME大型材料バッファ
 ae2fc.gui.burette=ME精密ビュレット
 ae2fc.gui.fluid_level_maintainer=ME液体レベルメンテナ
 ae2fc.gui.fluid_assembler=ME液体組立機
+ae2fc.gui.ultimate_encoder=ME究極エンコーダー
 ae2fc.gui.item_amount_set=数を設定
 ae2fc.gui.set=設定
 
@@ -55,7 +58,20 @@ ae2fc.tooltip.fluid_first.hint=有効化
 ae2fc.tooltip.origin_order=液体を最前列に追加
 ae2fc.tooltip.origin_order.hint=無効化
 ae2fc.tooltip.craft_fluid=パターンエンコーダー
-ae2fc.tooltip.craft_fluid.hint=ME液体組立機用の特別なパターンです。\nバケツなどではなく、クラフトレシピで直接液体を使用することができます。
+ae2fc.tooltip.craft_fluid.hint=ME液体組立機用の特別なパターンです。バケツなどではなく、クラフトレシピで直接液体を使用することができます。
+ae2fc.tooltip.allow_splitting=アイテムや流体の分割を許可
+ae2fc.tooltip.allow_splitting.hint=インターフェースがどの方向にも向いていない場合、アイテムや液体は異なる方向に分離される可能性があります。
+ae2fc.tooltip.prevent_splitting=アイテムや液体の分割を防ぐ
+ae2fc.tooltip.prevent_splitting.hint=アイテムや液体は、インターフェイスの同じ方向からのみ一緒に搬出することができます。
+ae2fc.tooltip.block_all=全てをブロック
+ae2fc.tooltip.block_all.hint=アイテムと液体の両方をチェックする。
+ae2fc.tooltip.block_item=アイテムをブロック
+ae2fc.tooltip.block_item.hint=アイテムのみををチェックする。
+ae2fc.tooltip.block_fluid=液体をブロック
+ae2fc.tooltip.block_fluid.hint=液体のみををチェックする。
 
-ae2fc.pauto.fluid_processing.name=クラフト中の液体
+ae2fc.pauto.fluid_processing.name=液体処理
 ae2fc.pauto.fluid_processing.name_short=液体
+
+ae2fc.dynamistics.category.title.pattern=液体処理パターン
+ae2fc.dynamistics.category.title.craft_pattern=液体クラフトパターン
