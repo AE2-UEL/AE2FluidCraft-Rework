@@ -21,7 +21,7 @@ public class CPacketLoadPattern implements IMessage {
     private List<ItemStack> output;
     private Int2ObjectMap<ItemStack[]> crafting;
     private boolean compress;
-    private static final int SLOT_SIZE = 16;
+    private static final int SLOT_SIZE = 80;
 
     public CPacketLoadPattern(Int2ObjectMap<ItemStack[]> crafting, List<ItemStack> output, boolean compress) {
         this.crafting = crafting;

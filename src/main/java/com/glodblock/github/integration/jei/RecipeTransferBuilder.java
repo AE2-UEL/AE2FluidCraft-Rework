@@ -172,7 +172,7 @@ public class RecipeTransferBuilder {
         return this.in;
     }
 
-    public IRecipeWrapper getWrapper(IRecipeLayout recipe) {
+    private IRecipeWrapper getWrapper(IRecipeLayout recipe) {
         if (fRecipeLayout_recipeWrapper != null) {
             return Ae2Reflect.readField(recipe, fRecipeLayout_recipeWrapper);
         }
