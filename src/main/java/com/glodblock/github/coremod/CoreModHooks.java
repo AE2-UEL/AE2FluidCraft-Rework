@@ -64,7 +64,8 @@ import java.util.Set;
 public class CoreModHooks {
 
     public static InventoryCrafting wrapCraftingBuffer(InventoryCrafting inv) {
-        return new FluidConvertingInventoryCrafting(Ae2Reflect.getCraftContainer(inv), inv.getWidth(), inv.getHeight());
+        int s = inv.getWidth() > 3 ? 10 : 3;
+        return new FluidConvertingInventoryCrafting(Ae2Reflect.getCraftContainer(inv), s, s);
     }
 
     public static IAEItemStack wrapFluidPacketStack(IAEItemStack stack) {
