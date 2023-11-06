@@ -1,17 +1,24 @@
 package com.glodblock.github.client.container;
 
+import appeng.api.AEApi;
 import appeng.api.config.SecurityPermissions;
 import appeng.container.AEBaseContainer;
 import appeng.container.guisync.GuiSync;
 import appeng.container.interfaces.IProgressProvider;
-import appeng.container.slot.*;
+import appeng.container.slot.AppEngSlot;
+import appeng.container.slot.IOptionalSlotHost;
+import appeng.container.slot.OptionalSlotRestrictedInput;
+import appeng.container.slot.SlotRestrictedInput;
 import appeng.util.Platform;
 import com.glodblock.github.common.item.ItemFluidCraftEncodedPattern;
 import com.glodblock.github.common.tile.TileFluidAssembler;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
+
+import javax.annotation.Nonnull;
 
 public class ContainerFluidAssembler extends AEBaseContainer implements IOptionalSlotHost, IProgressProvider {
 
@@ -32,12 +39,12 @@ public class ContainerFluidAssembler extends AEBaseContainer implements IOptiona
         }
         for (int i = 0; i < 3; i ++) {
             for (int j = 0; j < 3; j ++) {
-                this.addSlotToContainer(new SlotFake(tile.gridInv, j + i * 3, 29 + j * 18, 16 + i * 18));
+                this.addSlotToContainer(new FakeDisplaySlot(tile.gridInv, j + i * 3, 29 + j * 18, 16 + i * 18));
             }
         }
-        this.addSlotToContainer(new SlotFake(tile.output, 0, 126, 35));
-        this.addSlotToContainer(new AppEngSlot(tile.upgrade, 0, 134, 61));
-        this.addSlotToContainer(new AppEngSlot(tile.upgrade, 1, 152, 61));
+        this.addSlotToContainer(new FakeDisplaySlot(tile.output, 0, 126, 35));
+        this.addSlotToContainer(new FilterSlot(AEApi.instance().definitions().materials().cardSpeed().maybeStack(1).get(), tile.upgrade, 0, 134, 61));
+        this.addSlotToContainer(new FilterSlot(AEApi.instance().definitions().materials().cardPatternExpansion().maybeStack(1).get(), tile.upgrade, 1, 152, 61));
         bindPlayerInventory(ipl, 0, 167);
     }
 
@@ -96,5 +103,67 @@ public class ContainerFluidAssembler extends AEBaseContainer implements IOptiona
             return i.getItem() instanceof ItemFluidCraftEncodedPattern;
         }
     }
+
+    static class FilterSlot extends AppEngSlot {
+
+        final private ItemStack filter;
+
+        public FilterSlot(ItemStack filter, IItemHandler i, int slotIndex, int x, int y) {
+            super(i, slotIndex, x, y);
+            this.filter = filter;
+        }
+
+        @Override
+        public boolean isItemValid(@Nonnull ItemStack i) {
+            if (!this.getContainer().isValidForSlot(this, i)) {
+                return false;
+            } else if (i.isEmpty()) {
+                return false;
+            } else if (i.getItem() == Items.AIR) {
+                return false;
+            } else if (!super.isItemValid(i)) {
+                return false;
+            }
+            return this.filter.isItemEqual(i);
+        }
+    }
+
+    static class FakeDisplaySlot extends AppEngSlot {
+        public FakeDisplaySlot(IItemHandler inv, int idx, int x, int y) {
+            super(inv, idx, x, y);
+        }
+
+        @Nonnull
+        @Override
+        public ItemStack onTake(@Nonnull EntityPlayer par1EntityPlayer, @Nonnull ItemStack par2ItemStack) {
+            return par2ItemStack;
+        }
+
+        @Nonnull
+        @Override
+        public ItemStack decrStackSize(int par1) {
+            return ItemStack.EMPTY;
+        }
+
+        @Override
+        public boolean isItemValid(@Nonnull ItemStack par1ItemStack) {
+            return false;
+        }
+
+        @Override
+        public void putStack(ItemStack is) {
+            if (!is.isEmpty()) {
+                is = is.copy();
+            }
+
+            super.putStack(is);
+        }
+
+        @Override
+        public boolean canTakeStack(EntityPlayer par1EntityPlayer) {
+            return false;
+        }
+    }
+
 }
 

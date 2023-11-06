@@ -50,7 +50,7 @@ dependencies {
     deobfCompile 'curse.maven:modular-machinery-270790:2761302' // 1.11.1
     deobfCompile 'curse.maven:codechicken-lib-1-8-242818:2779848' //ccl
     deobfCompile 'curse.maven:gregtech-ce-unofficial-557242:3784798' // gt
-    deobfCompile 'curse.maven:ae2-extended-life-570458:4688138' //pae2
+    deobfCompile 'curse.maven:ae2-extended-life-570458:4812257' //pae2
     deobfCompile 'curse.maven:dynamistics-383632:3056455' // dy
     compileOnly 'curse.maven:opencomputers-223008:4630537' //oc
     runtime 'curse.maven:opencomputers-223008:4630537' //oc
