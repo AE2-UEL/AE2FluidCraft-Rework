@@ -6,10 +6,14 @@ import appeng.container.ContainerOpenContext;
 import appeng.util.item.AEItemStack;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.container.ContainerItemAmountChange;
-import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.common.item.fake.FakeItemRegister;
+import com.glodblock.github.integration.mek.FCGasItems;
 import com.glodblock.github.inventory.GuiType;
 import com.glodblock.github.inventory.InventoryHandler;
+import com.glodblock.github.loader.FCItems;
+import com.glodblock.github.util.ModAndClassUtil;
 import io.netty.buffer.ByteBuf;
+import mekanism.api.gas.GasStack;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fluids.FluidStack;
@@ -82,9 +86,12 @@ public class CPacketInventoryAction implements IMessage {
                             final TileEntity te = context.getTile();
                             InventoryHandler.openGui( sender, te.getWorld(), te.getPos(), baseContainer.getOpenContext().getSide().getFacing(), GuiType.ITEM_AMOUNT_SET );
                             int amt = (int) message.stack.getStackSize();
-                            if (message.stack.getItem() instanceof ItemFluidPacket) {
-                                FluidStack fluid = ItemFluidPacket.getFluidStack(message.stack);
+                            if (message.stack.getItem() == FCItems.FLUID_PACKET) {
+                                FluidStack fluid = FakeItemRegister.getStack(message.stack);
                                 amt = fluid == null ? 1 : fluid.amount;
+                            } else if (ModAndClassUtil.GAS && message.stack.getItem() == FCGasItems.GAS_PACKET) {
+                                GasStack gas = FakeItemRegister.getStack(message.stack);
+                                amt = gas == null ? 1 : gas.amount;
                             }
                             FluidCraft.proxy.netHandler.sendTo(new SPacketSetItemAmount(amt), sender);
                             if( sender.openContainer instanceof ContainerItemAmountChange)

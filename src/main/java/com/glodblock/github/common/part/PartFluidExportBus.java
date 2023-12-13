@@ -28,6 +28,7 @@ import appeng.util.InventoryAdaptor;
 import appeng.util.Platform;
 import appeng.util.item.AEItemStack;
 import com.glodblock.github.common.item.ItemFluidDrop;
+import com.glodblock.github.common.item.fake.FakeFluids;
 import com.glodblock.github.inventory.FluidConvertingInventoryAdaptor;
 import com.glodblock.github.inventory.GuiType;
 import com.glodblock.github.inventory.InventoryHandler;
@@ -153,7 +154,7 @@ public class PartFluidExportBus extends PartSharedFluidBus implements ICraftingR
 
                             if( this.craftOnly() )
                             {
-                                isAllowed = this.craftingTracker.handleCrafting( i, toExtract.getStackSize(), ItemFluidDrop.newAeStack(toExtract), destination, this.getTile().getWorld(), this.getProxy().getGrid(), cg, this.source );
+                                isAllowed = this.craftingTracker.handleCrafting( i, toExtract.getStackSize(), FakeFluids.packFluid2AEDrops(toExtract), destination, this.getTile().getWorld(), this.getProxy().getGrid(), cg, this.source );
                             }
 
                             final IAEFluidStack out = inv.extractItems( toExtract, Actionable.SIMULATE, this.source );
@@ -172,7 +173,7 @@ public class PartFluidExportBus extends PartSharedFluidBus implements ICraftingR
                             }
 
                             if( this.isCraftingEnabled() ) {
-                                this.craftingTracker.handleCrafting( i, toExtract.getStackSize(), ItemFluidDrop.newAeStack(toExtract), destination, this.getTile().getWorld(), this.getProxy().getGrid(), cg, this.source );
+                                this.craftingTracker.handleCrafting( i, toExtract.getStackSize(), FakeFluids.packFluid2AEDrops(toExtract), destination, this.getTile().getWorld(), this.getProxy().getGrid(), cg, this.source );
                             }
 
                         }

@@ -1,0 +1,43 @@
+{
+  "type": "forge:ore_shaped",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mekanism"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "aeadditions"
+    }
+  ],
+  "result": {
+    "item": "ae2fc:gas_discretizer",
+    "count": 1
+  },
+  "pattern": [
+    "ipi",
+    "smt",
+    "ipi"
+  ],
+  "key": {
+    "i": {
+      "type": "forge:ore_dict",
+      "ore": "ingotOsmium"
+    },
+    "p": {
+      "type": "appliedenergistics2:part",
+      "part": "material.engineering_processor"
+    },
+    "s": {
+      "item": "aeadditions:part.base",
+      "data": 7
+    },
+    "m": {
+      "item": "appliedenergistics2:condenser"
+    },
+    "t": {
+      "type": "appliedenergistics2:part",
+      "part": "part.storage_bus"
+    }
+  }
+}

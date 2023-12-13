@@ -5,8 +5,11 @@ import appeng.container.slot.SlotFake;
 import appeng.core.sync.network.NetworkHandler;
 import appeng.core.sync.packets.PacketInventoryAction;
 import appeng.helpers.InventoryAction;
-import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.common.item.fake.FakeFluids;
+import com.glodblock.github.integration.mek.FakeGases;
+import com.glodblock.github.util.ModAndClassUtil;
 import com.glodblock.github.util.Util;
+import mekanism.api.gas.GasStack;
 import mezz.jei.api.gui.IGhostIngredientHandler;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -37,10 +40,16 @@ public class FluidPacketTarget implements IGhostIngredientHandler.Target<Object>
     @Override
     public void accept(@Nonnull Object ingredient) {
         FluidStack fluid = covertFluid(ingredient);
-        if (fluid == null) {
+        Object gas = covertGas(ingredient);
+        if (fluid == null && gas == null) {
             return;
         }
-        IAEItemStack packet = ItemFluidPacket.newAeStack(fluid);
+        IAEItemStack packet;
+        if (fluid != null) {
+            packet = FakeFluids.packFluid2AEPacket(fluid);
+        } else {
+            packet = FakeGases.packGas2AEPacket((GasStack) gas);
+        }
         final PacketInventoryAction p;
         try {
             p = new PacketInventoryAction(InventoryAction.PLACE_JEI_GHOST_ITEM, (SlotFake) slot, packet);
@@ -51,12 +60,23 @@ public class FluidPacketTarget implements IGhostIngredientHandler.Target<Object>
     }
 
     public static FluidStack covertFluid(Object ingredient) {
-        FluidStack fluid = null;
         if (ingredient instanceof FluidStack) {
-            fluid = (FluidStack) ingredient;
+            return (FluidStack) ingredient;
         } else if (ingredient instanceof ItemStack) {
-            fluid = Util.getFluidFromItem((ItemStack) ingredient);
+            return Util.getFluidFromItem((ItemStack) ingredient);
         }
-        return fluid;
+        return null;
     }
+
+    public static Object covertGas(Object ingredient) {
+        if (ModAndClassUtil.GAS) {
+            if (ingredient instanceof GasStack) {
+                return ingredient;
+            } else if (ingredient instanceof ItemStack) {
+                return Util.getGasFromItem((ItemStack) ingredient);
+            }
+        }
+        return null;
+    }
+
 }

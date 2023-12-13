@@ -17,9 +17,15 @@ import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidEncodedPattern;
 import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.common.item.ItemLargeEncodedPattern;
+import com.glodblock.github.common.item.fake.FakeFluids;
+import com.glodblock.github.common.item.fake.FakeItemRegister;
+import com.glodblock.github.integration.mek.FCGasItems;
+import com.glodblock.github.integration.mek.FakeGases;
 import com.glodblock.github.inventory.ExAppEngInternalInventory;
 import com.glodblock.github.inventory.GuiType;
 import com.glodblock.github.inventory.InventoryHandler;
+import com.glodblock.github.loader.FCItems;
+import com.glodblock.github.util.ModAndClassUtil;
 import com.glodblock.github.util.Util;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.entity.player.EntityPlayer;
@@ -104,21 +110,25 @@ public class PartExtendedFluidPatternTerminal extends PartExpandedProcessingPatt
                     for( int x = 0; x < this.getInventoryByName("crafting").getSlots() && x < details.getInputs().length; x++ )
                     {
                         final IAEItemStack item = details.getInputs()[x];
-                        if (item != null && item.getItem() instanceof ItemFluidDrop) {
-                            ItemStack packet = ItemFluidPacket.newStack(ItemFluidDrop.getFluidStack(item.createItemStack()));
+                        if (item != null && item.getItem() == FCItems.FLUID_DROP) {
+                            ItemStack packet = FakeFluids.packFluid2Packet(FakeItemRegister.getStack(item.createItemStack()));
                             ((AppEngInternalInventory) this.getInventoryByName("crafting")).setStackInSlot(x, packet);
-                        }
-                        else ((AppEngInternalInventory) this.getInventoryByName("crafting")).setStackInSlot( x, item == null ? ItemStack.EMPTY : item.createItemStack() );
+                        } else if (ModAndClassUtil.GAS && item != null && item.getItem() == FCGasItems.GAS_DROP) {
+                            ItemStack packet = FakeGases.packGas2Packet(FakeItemRegister.getStack(item.createItemStack()));
+                            ((AppEngInternalInventory) this.getInventoryByName("crafting")).setStackInSlot(x, packet);
+                        } else ((AppEngInternalInventory) this.getInventoryByName("crafting")).setStackInSlot( x, item == null ? ItemStack.EMPTY : item.createItemStack() );
                     }
 
                     for( int x = 0; x < this.getInventoryByName("output").getSlots() && x < details.getOutputs().length; x++ )
                     {
                         final IAEItemStack item = details.getOutputs()[x];
                         if (item != null && item.getItem() instanceof ItemFluidDrop) {
-                            ItemStack packet = ItemFluidPacket.newStack(ItemFluidDrop.getFluidStack(item.createItemStack()));
+                            ItemStack packet = FakeFluids.packFluid2Packet(FakeItemRegister.getStack(item.createItemStack()));
                             ((AppEngInternalInventory) this.getInventoryByName("output")).setStackInSlot(x, packet);
-                        }
-                        else ((AppEngInternalInventory) this.getInventoryByName("output")).setStackInSlot( x, item == null ? ItemStack.EMPTY : item.createItemStack() );
+                        } else if (ModAndClassUtil.GAS && item != null && item.getItem() == FCGasItems.GAS_DROP) {
+                            ItemStack packet = FakeGases.packGas2Packet(FakeItemRegister.getStack(item.createItemStack()));
+                            ((AppEngInternalInventory) this.getInventoryByName("output")).setStackInSlot(x, packet);
+                        } else ((AppEngInternalInventory) this.getInventoryByName("output")).setStackInSlot( x, item == null ? ItemStack.EMPTY : item.createItemStack() );
                     }
                 }
                 this.getHost().markForSave();

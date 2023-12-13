@@ -7,8 +7,12 @@ import appeng.core.AppEng;
 import appeng.core.features.ItemDefinition;
 import appeng.recipes.game.DisassembleRecipe;
 import com.glodblock.github.FluidCraft;
+import com.glodblock.github.common.item.fake.FakeFluids;
 import com.glodblock.github.common.tile.*;
 import com.glodblock.github.handler.RegistryHandler;
+import com.glodblock.github.integration.mek.FCGasBlocks;
+import com.glodblock.github.integration.mek.FCGasItems;
+import com.glodblock.github.integration.mek.FakeGases;
 import com.glodblock.github.integration.opencomputer.OCInit;
 import com.glodblock.github.integration.pauto.PackagedFluidCrafting;
 import com.glodblock.github.inventory.InventoryHandler;
@@ -46,6 +50,12 @@ public class CommonProxy {
         MinecraftForge.EVENT_BUS.register(regHandler);
         FCBlocks.init(regHandler);
         FCItems.init(regHandler);
+        FakeFluids.init();
+        if (ModAndClassUtil.GAS) {
+            FCGasItems.init(regHandler);
+            FCGasBlocks.init(regHandler);
+            FakeGases.init();
+        }
         GameRegistry.registerTileEntity(TileFluidDiscretizer.class, FluidCraft.resource(NameConst.BLOCK_FLUID_DISCRETIZER));
         GameRegistry.registerTileEntity(TileFluidPatternEncoder.class, FluidCraft.resource(NameConst.BLOCK_FLUID_PATTERN_ENCODER));
         GameRegistry.registerTileEntity(TileFluidPacketDecoder.class, FluidCraft.resource(NameConst.BLOCK_FLUID_PACKET_DECODER));
@@ -56,6 +66,9 @@ public class CommonProxy {
         GameRegistry.registerTileEntity(TileFluidLevelMaintainer.class, FluidCraft.resource(NameConst.BLOCK_FLUID_LEVEL_MAINTAINER));
         GameRegistry.registerTileEntity(TileFluidAssembler.class, FluidCraft.resource(NameConst.BLOCK_FLUID_ASSEMBLER));
         GameRegistry.registerTileEntity(TileUltimateEncoder.class, FluidCraft.resource(NameConst.BLOCK_ULTIMATE_ENCODER));
+        if (ModAndClassUtil.GAS) {
+            GameRegistry.registerTileEntity(TileGasDiscretizer.class, FluidCraft.resource(NameConst.BLOCK_GAS_DISCRETIZER));
+        }
         (new ChannelLoader()).run();
         if (ModAndClassUtil.AUTO_P) {
             initPackagedAutoIntegration();

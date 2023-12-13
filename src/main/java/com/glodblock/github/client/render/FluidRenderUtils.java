@@ -3,8 +3,9 @@ package com.glodblock.github.client.render;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.client.render.StackSizeRenderer;
-import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.common.item.fake.FakeFluids;
+import com.glodblock.github.common.item.fake.FakeItemRegister;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -40,7 +41,7 @@ public class FluidRenderUtils {
         return sprite;
     }
 
-    private static void doRenderFluid(Tessellator tess, BufferBuilder buf, int x, int y, int width, int height,
+    public static void doRenderFluid(Tessellator tess, BufferBuilder buf, int x, int y, int width, int height,
                                       TextureAtlasSprite sprite, double fraction) {
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(
@@ -64,6 +65,7 @@ public class FluidRenderUtils {
             buf.pos(x2, y1, 0D).tex(u2, v1).endVertex();
             tess.draw();
         }
+        GlStateManager.disableBlend();
     }
 
     public static void renderFluidIntoGui(Tessellator tess, BufferBuilder buf, int x, int y, int width, int height,
@@ -108,20 +110,20 @@ public class FluidRenderUtils {
             return false;
         }
         renderFluidIntoGuiCleanly(slot.xPos, slot.yPos, 16, 16, fluid, fluid.amount);
-        stackSizeRenderer.renderStackSize(fontRenderer, ItemFluidDrop.newAeStack(fluid), slot.xPos, slot.yPos);
+        stackSizeRenderer.renderStackSize(fontRenderer, FakeFluids.packFluid2AEDrops(fluid), slot.xPos, slot.yPos);
         return true;
     }
 
     public static boolean renderFluidPacketIntoGuiSlot(Slot slot, @Nullable IAEItemStack stack,
                                                        StackSizeRenderer stackSizeRenderer, FontRenderer fontRenderer) {
         return stack != null && stack.getItem() instanceof ItemFluidPacket
-                && renderFluidIntoGuiSlot(slot, ItemFluidPacket.getFluidStack(stack), stackSizeRenderer, fontRenderer);
+                && renderFluidIntoGuiSlot(slot, FakeItemRegister.getStack(stack), stackSizeRenderer, fontRenderer);
     }
 
     public static boolean renderFluidPacketIntoGuiSlot(Slot slot, ItemStack stack,
                                                        StackSizeRenderer stackSizeRenderer, FontRenderer fontRenderer) {
         return !stack.isEmpty() && stack.getItem() instanceof ItemFluidPacket
-                && renderFluidIntoGuiSlot(slot, ItemFluidPacket.getFluidStack(stack), stackSizeRenderer, fontRenderer);
+                && renderFluidIntoGuiSlot(slot, FakeItemRegister.getStack(stack), stackSizeRenderer, fontRenderer);
     }
 
 }

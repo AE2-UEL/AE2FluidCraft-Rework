@@ -3,6 +3,7 @@ package com.glodblock.github.integration.dynamistics;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.util.item.AEItemStack;
 import com.glodblock.github.common.item.ItemFluidDrop;
+import com.glodblock.github.common.item.fake.FakeFluids;
 import com.glodblock.github.loader.FCItems;
 import com.glodblock.github.util.FluidPatternDetails;
 import eutros.dynamistics.jei.SingletonRecipe;
@@ -63,7 +64,7 @@ public class FluidPatternPlugin implements IRecipeRegistryPlugin {
             EXAMPLE_PATTERN = new ItemStack(FCItems.DENSE_ENCODED_PATTERN);
             FluidPatternDetails pattern = new FluidPatternDetails(EXAMPLE_PATTERN);
             pattern.setInputs(new IAEItemStack[] {
-                    ItemFluidDrop.newAeStack(FluidRegistry.getFluidStack("water", 1000)),
+                    FakeFluids.packFluid2AEDrops(FluidRegistry.getFluidStack("water", 1000)),
                     AEItemStack.fromItemStack(new ItemStack(Items.BUCKET))
             });
             pattern.setOutputs(new IAEItemStack[] {

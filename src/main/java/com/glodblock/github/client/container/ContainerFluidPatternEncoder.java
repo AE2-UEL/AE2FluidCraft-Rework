@@ -7,21 +7,28 @@ import appeng.container.slot.SlotFake;
 import appeng.container.slot.SlotRestrictedInput;
 import appeng.helpers.InventoryAction;
 import appeng.util.item.AEItemStack;
-import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidEncodedPattern;
-import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.common.item.fake.FakeFluids;
+import com.glodblock.github.common.item.fake.FakeItemRegister;
 import com.glodblock.github.common.tile.TileFluidPatternEncoder;
 import com.glodblock.github.handler.AeItemStackHandler;
+import com.glodblock.github.integration.mek.FCGasItems;
+import com.glodblock.github.integration.mek.FakeGases;
 import com.glodblock.github.interfaces.AeStackInventory;
 import com.glodblock.github.interfaces.PatternConsumer;
 import com.glodblock.github.interfaces.SlotFluid;
 import com.glodblock.github.loader.FCItems;
 import com.glodblock.github.util.FluidPatternDetails;
+import com.glodblock.github.util.ModAndClassUtil;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import mekanism.api.gas.GasStack;
+import mekanism.api.gas.GasTankInfo;
+import mekanism.common.capabilities.Capabilities;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -102,8 +109,15 @@ public class ContainerFluidPatternEncoder extends AEBaseContainer implements Pat
         List<IAEItemStack> acc = new ArrayList<>();
         for (IAEItemStack stack : inv) {
             if (stack != null) {
-                if (stack.getItem() instanceof ItemFluidPacket) {
-                    IAEItemStack dropStack = ItemFluidDrop.newAeStack(ItemFluidPacket.getFluidStack(stack));
+                if (stack.getItem() == FCItems.FLUID_PACKET) {
+                    IAEItemStack dropStack = FakeFluids.packFluid2AEDrops((FluidStack) FakeItemRegister.getStack(stack));
+                    if (dropStack != null) {
+                        acc.add(dropStack);
+                        continue;
+                    }
+                }
+                if (ModAndClassUtil.GAS && stack.getItem() == FCGasItems.GAS_PACKET) {
+                    IAEItemStack dropStack = FakeGases.packGas2AEDrops((GasStack) FakeItemRegister.getStack(stack));
                     if (dropStack != null) {
                         acc.add(dropStack);
                         continue;
@@ -199,7 +213,18 @@ public class ContainerFluidPatternEncoder extends AEBaseContainer implements Pat
                         stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null))
                         .getTankProperties();
                 for (IFluidTankProperties tank : tanks) {
-                    IAEItemStack aeStack = ItemFluidPacket.newAeStack(tank.getContents());
+                    IAEItemStack aeStack = FakeFluids.packFluid2AEPacket(tank.getContents());
+                    if (aeStack != null) {
+                        setAeStack(aeStack, false);
+                        return;
+                    }
+                }
+            } else if (ModAndClassUtil.GAS && stack.hasCapability(Capabilities.GAS_HANDLER_CAPABILITY, null)) {
+                GasTankInfo[] tanks = Objects.requireNonNull(
+                        stack.getCapability(Capabilities.GAS_HANDLER_CAPABILITY, null))
+                        .getTankInfo();
+                for (GasTankInfo tank : tanks) {
+                    IAEItemStack aeStack = FakeGases.packGas2AEPacket(tank.getGas());
                     if (aeStack != null) {
                         setAeStack(aeStack, false);
                         return;

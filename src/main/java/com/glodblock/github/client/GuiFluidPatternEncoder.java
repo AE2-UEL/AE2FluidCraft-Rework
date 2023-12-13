@@ -7,14 +7,19 @@ import appeng.core.localization.GuiText;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.container.ContainerFluidPatternEncoder;
 import com.glodblock.github.client.render.FluidRenderUtils;
-import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.common.item.fake.FakeItemRegister;
 import com.glodblock.github.common.tile.TileFluidPatternEncoder;
+import com.glodblock.github.integration.mek.FCGasItems;
+import com.glodblock.github.integration.mek.GasRenderUtil;
 import com.glodblock.github.interfaces.SlotFluid;
 import com.glodblock.github.inventory.slot.SlotSingleItem;
+import com.glodblock.github.loader.FCItems;
 import com.glodblock.github.network.CPacketEncodePattern;
 import com.glodblock.github.util.Ae2ReflectClient;
+import com.glodblock.github.util.ModAndClassUtil;
 import com.glodblock.github.util.MouseRegionManager;
 import com.glodblock.github.util.NameConst;
+import mekanism.api.gas.GasStack;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
@@ -86,6 +91,9 @@ public class GuiFluidPatternEncoder extends AEBaseGui {
             if (FluidRenderUtils.renderFluidPacketIntoGuiSlot(slot, stack, stackSizeRenderer, fontRenderer)) {
                 return;
             }
+            if (ModAndClassUtil.GAS && GasRenderUtil.renderGasPacketIntoGuiSlot(slot, stack, stackSizeRenderer, fontRenderer)) {
+                return;
+            }
             super.drawSlot(new SlotSingleItem(slot));
             stackSizeRenderer.renderStackSize(fontRenderer, stack, slot.xPos, slot.yPos);
         } else {
@@ -96,10 +104,16 @@ public class GuiFluidPatternEncoder extends AEBaseGui {
     @Override
     @Nonnull
     public List<String> getItemToolTip(ItemStack stack) {
-        if (stack.getItem() instanceof ItemFluidPacket) {
-            FluidStack fluid = ItemFluidPacket.getFluidStack(stack);
+        if (stack.getItem() == FCItems.FLUID_PACKET) {
+            FluidStack fluid = FakeItemRegister.getStack(stack);
             if (fluid != null) {
                 return Arrays.asList(fluid.getLocalizedName(), String.format(TextFormatting.GRAY + "%,d mB", fluid.amount));
+            }
+        }
+        if (ModAndClassUtil.GAS && stack.getItem() == FCGasItems.GAS_PACKET) {
+            GasStack gas = FakeItemRegister.getStack(stack);
+            if (gas != null && gas.getGas() != null) {
+                return Arrays.asList(gas.getGas().getLocalizedName(), String.format(TextFormatting.GRAY + "%,d mB", gas.amount));
             }
         }
         return super.getItemToolTip(stack);

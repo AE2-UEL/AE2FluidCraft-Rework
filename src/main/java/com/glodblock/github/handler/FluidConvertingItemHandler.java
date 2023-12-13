@@ -2,6 +2,8 @@ package com.glodblock.github.handler;
 
 import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.common.item.fake.FakeFluids;
+import com.glodblock.github.common.item.fake.FakeItemRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -55,7 +57,7 @@ public class FluidConvertingItemHandler  implements IItemHandler {
     @Nonnull
     public ItemStack getStackInSlot(int slot) {
         return slotOp(slot, IItemHandler::getStackInSlot,
-                (fh, i) -> ItemFluidDrop.newStack(fh.getTankProperties()[i].getContents()));
+                (fh, i) -> FakeFluids.packFluid2Drops(fh.getTankProperties()[i].getContents()));
     }
 
     @Override
@@ -66,16 +68,16 @@ public class FluidConvertingItemHandler  implements IItemHandler {
                         ? stack : ih.insertItem(i, stack, simulate),
                 (fh, i) -> {
                     if (stack.getItem() instanceof ItemFluidDrop) {
-                        FluidStack toInsert = ItemFluidDrop.getFluidStack(stack);
+                        FluidStack toInsert = FakeItemRegister.getStack(stack);
                         if (toInsert != null && toInsert.amount > 0) {
                             FluidStack contained = fh.getTankProperties()[i].getContents();
                             if (contained == null || contained.amount == 0 || contained.isFluidEqual(toInsert)) {
                                 toInsert.amount -= fh.fill(toInsert, !simulate);
-                                return ItemFluidDrop.newStack(toInsert);
+                                return FakeFluids.packFluid2Drops(toInsert);
                             }
                         }
                     } else if (stack.getItem() instanceof ItemFluidPacket) {
-                        FluidStack toInsert = ItemFluidPacket.getFluidStack(stack);
+                        FluidStack toInsert = FakeItemRegister.getStack(stack);
                         if (toInsert != null && toInsert.amount > 0) {
                             FluidStack contained = fh.getTankProperties()[i].getContents();
                             if (contained == null || contained.amount == 0 || contained.isFluidEqual(toInsert)) {
@@ -99,7 +101,7 @@ public class FluidConvertingItemHandler  implements IItemHandler {
         return slotOp(slot, (ih, i) -> ih.extractItem(i, slot, simulate), (fh, i) -> {
             FluidStack contained = fh.getTankProperties()[i].getContents();
             if (contained != null && contained.amount > 0) {
-                return ItemFluidDrop.newStack(fh.drain(contained, !simulate));
+                return FakeFluids.packFluid2Drops(fh.drain(contained, !simulate));
             }
             return ItemStack.EMPTY;
         });

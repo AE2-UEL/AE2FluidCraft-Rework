@@ -14,14 +14,17 @@ import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.button.GuiFCImgButton;
 import com.glodblock.github.client.container.ContainerExtendedFluidPatternTerminal;
 import com.glodblock.github.client.render.FluidRenderUtils;
-import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.integration.jei.FluidPacketTarget;
+import com.glodblock.github.integration.mek.FCGasItems;
+import com.glodblock.github.integration.mek.GasRenderUtil;
 import com.glodblock.github.inventory.GuiType;
 import com.glodblock.github.inventory.InventoryHandler;
 import com.glodblock.github.inventory.slot.SlotSingleItem;
+import com.glodblock.github.loader.FCItems;
 import com.glodblock.github.network.CPacketFluidPatternTermBtns;
 import com.glodblock.github.network.CPacketInventoryAction;
 import com.glodblock.github.util.Ae2ReflectClient;
+import com.glodblock.github.util.ModAndClassUtil;
 import mezz.jei.api.gui.IGhostIngredientHandler.Target;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -74,21 +77,27 @@ public class GuiExtendedFluidPatternTerminal extends GuiExpandedProcessingPatter
 
     @Override
     public void drawSlot(Slot slot) {
-        if (!(slot instanceof SlotFake && (FluidRenderUtils.renderFluidPacketIntoGuiSlot(
-                slot, slot.getStack(), stackSizeRenderer, fontRenderer) || renderMEStyleSlot(slot, slot.getStack())))) {
+        if (slot instanceof SlotFake) {
+            ItemStack stack = slot.getStack();
+            if (FluidRenderUtils.renderFluidPacketIntoGuiSlot(slot, stack, stackSizeRenderer, fontRenderer)) {
+                return;
+            }
+            if (ModAndClassUtil.GAS && GasRenderUtil.renderGasPacketIntoGuiSlot(slot, stack, stackSizeRenderer, fontRenderer)) {
+                return;
+            }
+            renderMEStyleSlot(slot, slot.getStack());
+        } else {
             super.drawSlot(slot);
         }
     }
 
-    private boolean renderMEStyleSlot(Slot slot, @Nonnull ItemStack stack) {
-        if (slot instanceof SlotFake && !stack.isEmpty() && !(stack.getItem() instanceof ItemFluidPacket)) {
+    private void renderMEStyleSlot(Slot slot, @Nonnull ItemStack stack) {
+        if (slot instanceof SlotFake && !stack.isEmpty() && !(stack.getItem() == FCItems.FLUID_PACKET || (ModAndClassUtil.GAS && stack.getItem() == FCGasItems.GAS_PACKET))) {
             super.drawSlot(new SlotSingleItem(slot));
             if (stack.getCount() > 1) {
                 this.stackSizeRenderer.renderStackSize(fontRenderer, AEItemStack.fromItemStack(stack), slot.xPos, slot.yPos);
             }
-            return true;
         }
-        return false;
     }
 
     @Override
@@ -152,7 +161,7 @@ public class GuiExtendedFluidPatternTerminal extends GuiExpandedProcessingPatter
 
     @Override
     public List<Target<?>> getPhantomTargets(Object ingredient) {
-        if (FluidPacketTarget.covertFluid(ingredient) != null) {
+        if (FluidPacketTarget.covertFluid(ingredient) != null || FluidPacketTarget.covertGas(ingredient) != null) {
             List<Target<?>> targets = new ArrayList<>();
             for (Slot slot : this.inventorySlots.inventorySlots) {
                 if (slot instanceof SlotFake) {

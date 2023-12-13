@@ -1,6 +1,7 @@
 package com.glodblock.github.integration.pauto;
 
 import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.common.item.fake.FakeItemRegister;
 import com.glodblock.github.loader.FCItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
@@ -20,7 +21,7 @@ public class RecipeEncoderFluidTooltipHandler {
         if (Minecraft.getMinecraft().currentScreen instanceof GuiEncoder) {
             ItemStack stack = event.getItemStack();
             if (stack.getItem() == FCItems.FLUID_PACKET) {
-                FluidStack fluid = ItemFluidPacket.getFluidStack(stack);
+                FluidStack fluid = FakeItemRegister.getStack(stack);
                 if (fluid != null) {
                     List<String> tooltip = event.getToolTip();
                     tooltip.clear();

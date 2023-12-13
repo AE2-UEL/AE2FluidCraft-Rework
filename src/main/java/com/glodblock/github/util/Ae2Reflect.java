@@ -2,6 +2,7 @@ package com.glodblock.github.util;
 
 import appeng.api.definitions.IItemDefinition;
 import appeng.api.networking.IGrid;
+import appeng.api.networking.IGridNode;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.container.implementations.ContainerPatternEncoder;
@@ -15,6 +16,7 @@ import appeng.recipes.game.DisassembleRecipe;
 import appeng.tile.inventory.AppEngInternalInventory;
 import appeng.util.inv.ItemSlot;
 import appeng.util.inv.filter.IAEItemFilter;
+import com.the9grounds.aeadditions.tileentity.TileEntityGasInterface;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
 
@@ -41,6 +43,7 @@ public class Ae2Reflect {
     private static final Field fDualInterface_gridProxy;
     private static final Field fDualityFluidInterface_gridProxy;
     private static final Field fAppEngInternalInventory_filter;
+    private static final Field fTileEntityGasInterface_node;
 
     static {
         try {
@@ -51,15 +54,20 @@ public class Ae2Reflect {
             mContain_getPart = reflectMethod(ContainerPatternEncoder.class, new String[]{"getPatternTerminal", "getPart"});
             fInventory_container = reflectField(InventoryCrafting.class, "eventHandler", "field_70465_c", "c");
             fDisassembleRecipe_nonCellMappings = reflectField(DisassembleRecipe.class, "nonCellMappings");
-            fCPU_inventory = Ae2Reflect.reflectField(CraftingCPUCluster.class, "inventory");
-            fCPU_machineSrc = Ae2Reflect.reflectField(CraftingCPUCluster.class, "machineSrc");
-            fCPU_isComplete = Ae2Reflect.reflectField(CraftingCPUCluster.class, "isComplete");
-            fDualInterface_fluidPacket = Ae2Reflect.reflectField(DualityInterface.class, "fluidPacket");
-            fDualInterface_allowSplitting = Ae2Reflect.reflectField(DualityInterface.class, "allowSplitting");
-            fDualInterface_blockModeEx = Ae2Reflect.reflectField(DualityInterface.class, "blockModeEx");
+            fCPU_inventory = reflectField(CraftingCPUCluster.class, "inventory");
+            fCPU_machineSrc = reflectField(CraftingCPUCluster.class, "machineSrc");
+            fCPU_isComplete = reflectField(CraftingCPUCluster.class, "isComplete");
+            fDualInterface_fluidPacket = reflectField(DualityInterface.class, "fluidPacket");
+            fDualInterface_allowSplitting = reflectField(DualityInterface.class, "allowSplitting");
+            fDualInterface_blockModeEx = reflectField(DualityInterface.class, "blockModeEx");
             fDualInterface_gridProxy = reflectField(DualityInterface.class, "gridProxy");
             fDualityFluidInterface_gridProxy = reflectField(DualityFluidInterface.class, "gridProxy");
-            fAppEngInternalInventory_filter = Ae2Reflect.reflectField(AppEngInternalInventory.class, "filter");
+            fAppEngInternalInventory_filter = reflectField(AppEngInternalInventory.class, "filter");
+            if (ModAndClassUtil.GAS) {
+                fTileEntityGasInterface_node = reflectField(TileEntityGasInterface.class, "node");
+            } else {
+                fTileEntityGasInterface_node = null;
+            }
         } catch (Exception e) {
             throw new IllegalStateException("Failed to initialize AE2 reflection hacks!", e);
         }
@@ -216,6 +224,10 @@ public class Ae2Reflect {
 
     public static IAEItemFilter getInventoryFilter(AppEngInternalInventory owner) {
         return readField(owner, fAppEngInternalInventory_filter);
+    }
+
+    public static IGridNode getGasInterfaceGrid(Object owner) {
+        return readField(owner, fTileEntityGasInterface_node);
     }
 
 }

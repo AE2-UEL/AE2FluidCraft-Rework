@@ -1,6 +1,7 @@
 package com.glodblock.github.client.model;
 
 import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.common.item.fake.FakeItemRegister;
 import com.glodblock.github.util.FluidKey;
 import com.glodblock.github.util.NameConst;
 import com.google.common.cache.Cache;
@@ -40,7 +41,7 @@ import java.util.function.Function;
 public class FluidPacketModel implements IModel {
 
     @SuppressWarnings("deprecation")
-    private static final ItemCameraTransforms CAMERA_TRANSFORMS = new ItemCameraTransforms(
+    protected static final ItemCameraTransforms CAMERA_TRANSFORMS = new ItemCameraTransforms(
             new ItemTransformVec3f(new Vector3f(0F, 0F, 0F), new Vector3f(0F, 0.1875F, 0.0625F), new Vector3f(0.55F, 0.55F, 0.55F)),
             new ItemTransformVec3f(new Vector3f(0F, 0F, 0F), new Vector3f(0F, 0.1875F, 0.0625F), new Vector3f(0.55F, 0.55F, 0.55F)),
             new ItemTransformVec3f(new Vector3f(0F, -90F, 25F), new Vector3f(0.070625F, 0.2F, 0.070625F), new Vector3f(0.68F, 0.68F, 0.68F)),
@@ -65,8 +66,6 @@ public class FluidPacketModel implements IModel {
 
         @Override
         public boolean accepts(ResourceLocation modelLocation) {
-            // modelLocation will probably be a ModelResourceLocation, so using compareTo lets us bypass the
-            // ModelResourceLocation equality behaviour and fall back to that of ResourceLocation
             return modelLocation.compareTo(NameConst.MODEL_FLUID_PACKET) == 0;
         }
 
@@ -78,19 +77,19 @@ public class FluidPacketModel implements IModel {
 
     }
 
-    private static class BakedFluidPacketModel implements IBakedModel {
+    protected static class BakedFluidPacketModel implements IBakedModel {
 
         @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-        private final Optional<TRSRTransformation> modelTransform;
-        private final VertexFormat vertexFormat;
-        private final OverrideCache overrides;
-        private final OverrideCache.OverrideModel defaultOverride;
+        protected final Optional<TRSRTransformation> modelTransform;
+        protected final VertexFormat vertexFormat;
+        protected final ItemOverrideList overrides;
+        private final IBakedModel defaultOverride;
 
         public BakedFluidPacketModel(IModelState modelState, VertexFormat vertexFormat) {
             this.modelTransform = modelState.apply(Optional.empty());
             this.vertexFormat = vertexFormat;
-            this.overrides = new OverrideCache();
-            this.defaultOverride = overrides.resolve(new FluidStack(FluidRegistry.WATER, Fluid.BUCKET_VOLUME));
+            this.overrides = this.genOverrides();
+            this.defaultOverride = this.genDefaultOverrides();
         }
 
         @Override
@@ -144,10 +143,18 @@ public class FluidPacketModel implements IModel {
             return overrides;
         }
 
+        protected ItemOverrideList genOverrides() {
+            return new OverrideCache();
+        }
+
+        protected IBakedModel genDefaultOverrides() {
+            return ((OverrideCache) this.overrides).resolve(new FluidStack(FluidRegistry.WATER, Fluid.BUCKET_VOLUME));
+        }
+
         private class OverrideCache extends ItemOverrideList {
 
             private final Cache<FluidKey, OverrideModel> cache = CacheBuilder.newBuilder()
-                    .maximumSize(1000) // cache params borrowed from Tinkers' Construct model system, which is under MIT
+                    .maximumSize(1000)
                     .expireAfterWrite(5, TimeUnit.MINUTES)
                     .build();
 
@@ -162,7 +169,7 @@ public class FluidPacketModel implements IModel {
                 if (!(stack.getItem() instanceof ItemFluidPacket)) {
                     return originalModel;
                 }
-                FluidStack fluid = ItemFluidPacket.getFluidStack(stack);
+                FluidStack fluid = FakeItemRegister.getStack(stack);
                 return fluid != null ? resolve(fluid) : originalModel;
             }
 

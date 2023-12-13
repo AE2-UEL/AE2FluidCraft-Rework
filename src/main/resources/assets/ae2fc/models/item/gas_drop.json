@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "ae2fc:items/fluid_packet"
+    "layer0": "ae2fc:items/gas_drop"
   }
 }

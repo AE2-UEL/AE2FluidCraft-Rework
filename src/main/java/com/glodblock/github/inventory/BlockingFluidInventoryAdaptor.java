@@ -6,8 +6,12 @@ import appeng.util.inv.BlockingInventoryAdaptor;
 import appeng.util.inv.ItemHandlerIterator;
 import appeng.util.inv.ItemSlot;
 import com.glodblock.github.util.Ae2Reflect;
+import com.glodblock.github.util.ModAndClassUtil;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import mekanism.api.gas.GasTankInfo;
+import mekanism.api.gas.IGasHandler;
+import mekanism.common.capabilities.Capabilities;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -31,13 +35,16 @@ public class BlockingFluidInventoryAdaptor extends BlockingInventoryAdaptor {
     @Nullable
     private final IFluidHandler invFluids;
     @Nullable
+    private final Object invGases;
+    @Nullable
     private final String domain;
     @Nullable
     private final DualityInterface dualInterface;
 
-    public BlockingFluidInventoryAdaptor(@Nullable IItemHandler invItems, @Nullable IFluidHandler invFluids, @Nullable String domain, @Nullable DualityInterface dualInterface) {
+    public BlockingFluidInventoryAdaptor(@Nullable IItemHandler invItems, @Nullable IFluidHandler invFluids, @Nullable Object invGases, @Nullable String domain, @Nullable DualityInterface dualInterface) {
         this.invItems = invItems;
         this.invFluids = invFluids;
+        this.invGases = invGases;
         this.domain = domain;
         this.dualInterface = dualInterface;
     }
@@ -45,6 +52,7 @@ public class BlockingFluidInventoryAdaptor extends BlockingInventoryAdaptor {
     public static BlockingInventoryAdaptor getAdaptor(TileEntity te, EnumFacing d) {
         IItemHandler itemHandler = null;
         IFluidHandler fluidHandler = null;
+        Object gasHandler = null;
         DualityInterface dualInterface = null;
         if (te != null) {
             TileEntity inter = te.getWorld().getTileEntity(te.getPos().add(d.getDirectionVec()));
@@ -64,7 +72,13 @@ public class BlockingFluidInventoryAdaptor extends BlockingInventoryAdaptor {
                 domain =  Objects.requireNonNull(te.getBlockType().getRegistryName()).getNamespace();
             }
         }
-        return new BlockingFluidInventoryAdaptor(itemHandler, fluidHandler, domain, dualInterface);
+        if (ModAndClassUtil.GAS && te != null && te.hasCapability(Capabilities.GAS_HANDLER_CAPABILITY, d)) {
+            gasHandler = te.getCapability(Capabilities.GAS_HANDLER_CAPABILITY, d);
+            if (gasHandler != null) {
+                domain =  Objects.requireNonNull(te.getBlockType().getRegistryName()).getNamespace();
+            }
+        }
+        return new BlockingFluidInventoryAdaptor(itemHandler, fluidHandler, gasHandler, domain, dualInterface);
     }
 
     @Override
@@ -87,6 +101,7 @@ public class BlockingFluidInventoryAdaptor extends BlockingInventoryAdaptor {
                 ItemStack is = this.invItems.getStackInSlot(slot);
                 if (!is.isEmpty() && this.isBlockableItem(is)) {
                     itemPass = false;
+                    break;
                 }
             }
         }
@@ -95,6 +110,16 @@ public class BlockingFluidInventoryAdaptor extends BlockingInventoryAdaptor {
             for (IFluidTankProperties tank : invFluids.getTankProperties()) {
                 if (tank != null && tank.getContents() != null && (tank.canFill() || tank.canDrain())) {
                     fluidPass = false;
+                    break;
+                }
+            }
+        }
+        if (invGases != null && checkFluid && fluidPass) {
+            IGasHandler gasHandler = (IGasHandler) invGases;
+            for (GasTankInfo tank : gasHandler.getTankInfo()) {
+                if (tank != null && tank.getGas() != null) {
+                    fluidPass = false;
+                    break;
                 }
             }
         }

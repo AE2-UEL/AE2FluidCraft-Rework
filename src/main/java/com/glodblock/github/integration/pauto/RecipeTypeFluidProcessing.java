@@ -2,6 +2,7 @@ package com.glodblock.github.integration.pauto;
 
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.common.item.fake.FakeFluids;
 import com.glodblock.github.integration.jei.RecipeTransferBuilder;
 import com.glodblock.github.integration.jei.WrappedIngredient;
 import com.glodblock.github.loader.FCBlocks;
@@ -123,11 +124,11 @@ public class RecipeTypeFluidProcessing implements IRecipeType {
         for (IGuiIngredient<FluidStack> ing : recipeLayout.getFluidStacks().getGuiIngredients().values()) {
             if (ing.isInput()) {
                 if (ndxCrafting < NUM_SLOTS_CRAFT) {
-                    tfrs.put(ndxCrafting++, ItemFluidPacket.newStack(ing.getDisplayedIngredient()));
+                    tfrs.put(ndxCrafting++, FakeFluids.packFluid2Packet(ing.getDisplayedIngredient()));
                 }
             } else {
                 if (ndxOutput < NUM_SLOTS_OUT) {
-                    tfrs.put(NUM_SLOTS_CRAFT + ndxOutput++, ItemFluidPacket.newStack(ing.getDisplayedIngredient()));
+                    tfrs.put(NUM_SLOTS_CRAFT + ndxOutput++, FakeFluids.packFluid2Packet(ing.getDisplayedIngredient()));
                 }
             }
         }
@@ -136,11 +137,11 @@ public class RecipeTypeFluidProcessing implements IRecipeType {
             WrappedIngredient<FluidStack> ing = iter.next();
             if (ing.isInput()) {
                 if (ndxCrafting < NUM_SLOTS_CRAFT) {
-                    tfrs.put(ndxCrafting++, ItemFluidPacket.newStack(ing.getIngredient()));
+                    tfrs.put(ndxCrafting++, FakeFluids.packFluid2Packet(ing.getIngredient()));
                 }
             } else {
                 if (ndxOutput < NUM_SLOTS_OUT) {
-                    tfrs.put(NUM_SLOTS_CRAFT + ndxOutput++, ItemFluidPacket.newStack(ing.getIngredient()));
+                    tfrs.put(NUM_SLOTS_CRAFT + ndxOutput++, FakeFluids.packFluid2Packet(ing.getIngredient()));
                 }
             }
         }

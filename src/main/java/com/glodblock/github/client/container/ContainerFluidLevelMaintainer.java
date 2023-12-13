@@ -6,6 +6,7 @@ import appeng.helpers.InventoryAction;
 import appeng.tile.inventory.AppEngInternalAEInventory;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.common.item.fake.FakeFluids;
 import com.glodblock.github.common.tile.TileFluidLevelMaintainer;
 import com.glodblock.github.network.SPacketSetFluidLevel;
 import com.glodblock.github.util.Util;
@@ -76,7 +77,7 @@ public class ContainerFluidLevelMaintainer extends AEBaseContainer {
                         is.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null))
                         .getTankProperties();
                 for (IFluidTankProperties tank : tanks) {
-                    ItemStack packet = ItemFluidPacket.newStack(tank.getContents());
+                    ItemStack packet = FakeFluids.packFluid2Packet(tank.getContents());
                     super.putStack(packet);
                     return;
                 }

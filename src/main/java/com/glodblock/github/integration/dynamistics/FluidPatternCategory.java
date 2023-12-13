@@ -7,11 +7,17 @@ import com.glodblock.github.FluidCraft;
 import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidEncodedPattern;
 import com.glodblock.github.common.item.ItemLargeEncodedPattern;
+import com.glodblock.github.common.item.fake.FakeItemRegister;
 import com.glodblock.github.integration.jei.CubicFluidRender;
+import com.glodblock.github.integration.jei.CubicGasRender;
+import com.glodblock.github.integration.mek.FCGasItems;
 import com.glodblock.github.loader.FCBlocks;
 import com.glodblock.github.loader.FCItems;
+import com.glodblock.github.util.ModAndClassUtil;
 import eutros.dynamistics.helper.JeiHelper;
 import eutros.dynamistics.jei.SingletonRecipe;
+import mekanism.api.gas.GasStack;
+import mekanism.client.jei.MekanismJEI;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.IJeiHelpers;
 import mezz.jei.api.gui.*;
@@ -115,8 +121,8 @@ public class FluidPatternCategory implements IRecipeCategory<SingletonRecipe> {
             int gridSize = 18;
             for(int i = 0; i < inputs.length; i++) {
                 if (inputs[i] != null) {
-                    if (inputs[i].getItem() instanceof ItemFluidDrop) {
-                        FluidStack fluidStack = ItemFluidDrop.getFluidStack(inputs[i].createItemStack());
+                    if (inputs[i].getItem() == FCItems.FLUID_DROP) {
+                        FluidStack fluidStack = FakeItemRegister.getStack(inputs[i]);
                         if (fluidStack != null) {
                             fluids.init(
                                     i, true,
@@ -131,6 +137,23 @@ public class FluidPatternCategory implements IRecipeCategory<SingletonRecipe> {
                             stacks.init(i, true, this.guiStartX + gridStartX + (gridSize * (i % 3)), this.guiStartY + gridStartY + (gridSize * (i / 3)));
                             stacks.set(i, inputs[i].createItemStack());
                         }
+                    } else if (ModAndClassUtil.GAS && inputs[i].getItem() == FCGasItems.GAS_DROP) {
+                        GasStack gasStack = FakeItemRegister.getStack(inputs[i]);
+                        IGuiIngredientGroup<GasStack> gases = recipeLayout.getIngredientsGroup(MekanismJEI.TYPE_GAS);
+                        if (gasStack != null) {
+                            gases.init(
+                                    i, true,
+                                    new CubicGasRender(gasStack.amount, false, 16, 16, null),
+                                    this.guiStartX + gridStartX + (gridSize * (i % 3)) + 1,
+                                    this.guiStartY + gridStartY + (gridSize * (i / 3)) + 1,
+                                    16, 16,
+                                    0, 0
+                            );
+                            gases.set(i, gasStack);
+                        } else {
+                            stacks.init(i, true, this.guiStartX + gridStartX + (gridSize * (i % 3)), this.guiStartY + gridStartY + (gridSize * (i / 3)));
+                            stacks.set(i, inputs[i].createItemStack());
+                        }
                     } else {
                         stacks.init(i, true, this.guiStartX + gridStartX + (gridSize * (i % 3)), this.guiStartY + gridStartY + (gridSize * (i / 3)));
                         stacks.set(i, inputs[i].createItemStack());
@@ -141,8 +164,8 @@ public class FluidPatternCategory implements IRecipeCategory<SingletonRecipe> {
             int outStartX = 100;
             for(int i = 0; i < outputs.length; i++) {
                 if (outputs[i] != null) {
-                    if (outputs[i].getItem() instanceof ItemFluidDrop) {
-                        FluidStack fluidStack = ItemFluidDrop.getFluidStack(inputs[i].createItemStack());
+                    if (outputs[i].getItem() == FCItems.FLUID_DROP) {
+                        FluidStack fluidStack = FakeItemRegister.getStack(outputs[i]);
                         if (fluidStack != null) {
                             fluids.init(
                                     9 + i, false,
@@ -153,6 +176,23 @@ public class FluidPatternCategory implements IRecipeCategory<SingletonRecipe> {
                                     0, 0
                             );
                             fluids.set(9 + i, fluidStack);
+                        } else {
+                            stacks.init(9 + i, false, this.guiStartX + outStartX, this.guiStartY + gridStartY + gridSize * i);
+                            stacks.set(9 + i, outputs[i].createItemStack());
+                        }
+                    } else if (ModAndClassUtil.GAS && outputs[i].getItem() == FCGasItems.GAS_DROP) {
+                        GasStack gasStack = FakeItemRegister.getStack(outputs[i]);
+                        IGuiIngredientGroup<GasStack> gases = recipeLayout.getIngredientsGroup(MekanismJEI.TYPE_GAS);
+                        if (gasStack != null) {
+                            gases.init(
+                                    9 + i, false,
+                                    new CubicGasRender(gasStack.amount, false, 16, 16, null),
+                                    this.guiStartX + outStartX + 1,
+                                    this.guiStartY + gridStartY + gridSize * i + 1,
+                                    16, 16,
+                                    0, 0
+                            );
+                            gases.set(9 + i, gasStack);
                         } else {
                             stacks.init(9 + i, false, this.guiStartX + outStartX, this.guiStartY + gridStartY + gridSize * i);
                             stacks.set(9 + i, outputs[i].createItemStack());

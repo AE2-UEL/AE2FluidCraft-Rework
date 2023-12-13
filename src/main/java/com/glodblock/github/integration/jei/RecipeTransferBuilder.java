@@ -1,11 +1,15 @@
 package com.glodblock.github.integration.jei;
 
 import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.common.item.fake.FakeFluids;
 import com.glodblock.github.integration.gregtech.GregUtil;
+import com.glodblock.github.integration.mek.FakeGases;
 import com.glodblock.github.util.Ae2Reflect;
 import com.glodblock.github.util.ModAndClassUtil;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import mekanism.api.gas.GasStack;
+import mekanism.client.jei.MekanismJEI;
 import mezz.jei.api.gui.IGuiIngredient;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.IRecipeWrapper;
@@ -30,8 +34,10 @@ public class RecipeTransferBuilder {
     private final IRecipeLayout recipe;
     private List<ItemStack[]> itemsIn;
     private List<FluidStack> fluidIn;
+    private List<Object> gasIn;
     private List<ItemStack> itemOut;
     private List<FluidStack> fluidOut;
+    private List<Object> gasOut;
     private boolean noNull = true;
     private boolean fluidFirst = false;
 
@@ -51,6 +57,8 @@ public class RecipeTransferBuilder {
         this.itemOut = new ArrayList<>();
         this.fluidIn = new ArrayList<>();
         this.fluidOut = new ArrayList<>();
+        this.gasIn = new ArrayList<>();
+        this.gasOut = new ArrayList<>();
         this.split();
     }
 
@@ -93,6 +101,15 @@ public class RecipeTransferBuilder {
                 this.fluidOut.add(ing.getDisplayedIngredient());
             }
         }
+        if (ModAndClassUtil.GAS) {
+            for (IGuiIngredient<GasStack> ing : this.recipe.getIngredientsGroup(MekanismJEI.TYPE_GAS).getGuiIngredients().values()) {
+                if (ing.isInput()) {
+                    this.gasIn.add(ing.getDisplayedIngredient());
+                } else {
+                    this.gasOut.add(ing.getDisplayedIngredient());
+                }
+            }
+        }
         if (extractor != null) {
             extractor.extractFluids(this.recipe).forEach(
                     ing -> {
@@ -117,21 +134,30 @@ public class RecipeTransferBuilder {
     }
 
     private void setFluidIn(int offset) {
-        int bound = this.fluidIn.size() + offset;
+        int bound = this.fluidIn.size() + this.gasIn.size() + offset;
         for (int index = offset; index < bound; index ++) {
             int i = index - offset;
-            if (this.fluidIn.get(i) != null) {
-                this.in.put(index, new ItemStack[] {ItemFluidPacket.newStack(this.fluidIn.get(i))});
+            if (i < this.fluidIn.size()) {
+                if (this.fluidIn.get(i) != null) {
+                    this.in.put(index, new ItemStack[] {FakeFluids.packFluid2Packet(this.fluidIn.get(i))});
+                }
+            } else {
+                i -= this.fluidIn.size();
+                if (this.gasIn.get(i) != null) {
+                    this.in.put(index, new ItemStack[] {FakeGases.packGas2Packet((GasStack) this.gasIn.get(i))});
+                }
             }
         }
     }
 
     private void setOutputs() {
-        for (int index = 0; index < this.itemOut.size() + this.fluidOut.size(); index ++) {
+        for (int index = 0; index < this.itemOut.size() + this.fluidOut.size() + this.gasOut.size(); index ++) {
             if (index < this.itemOut.size()) {
                 this.out.add(this.itemOut.get(index));
             } else if (index - this.itemOut.size() < this.fluidOut.size()) {
-                this.out.add(ItemFluidPacket.newStack(this.fluidOut.get(index - this.itemOut.size())));
+                this.out.add(FakeFluids.packFluid2Packet(this.fluidOut.get(index - this.itemOut.size())));
+            } else if (index - this.itemOut.size() - this.fluidOut.size() < this.gasOut.size()) {
+                this.out.add(FakeGases.packGas2Packet((GasStack) this.gasOut.get(index - this.itemOut.size() - this.fluidOut.size())));
             }
         }
     }
@@ -152,10 +178,12 @@ public class RecipeTransferBuilder {
             this.itemOut = this.itemOut.stream().filter(Objects::nonNull).collect(Collectors.toList());
             this.fluidIn = this.fluidIn.stream().filter(Objects::nonNull).collect(Collectors.toList());
             this.fluidOut = this.fluidOut.stream().filter(Objects::nonNull).collect(Collectors.toList());
+            this.gasIn = this.gasIn.stream().filter(Objects::nonNull).collect(Collectors.toList());
+            this.gasOut = this.gasOut.stream().filter(Objects::nonNull).collect(Collectors.toList());
         }
         if (this.fluidFirst) {
             this.setFluidIn(0);
-            this.setItemIn(this.fluidIn.size());
+            this.setItemIn(this.fluidIn.size() + this.gasIn.size());
         } else {
             this.setItemIn(0);
             this.setFluidIn(this.itemsIn.size());

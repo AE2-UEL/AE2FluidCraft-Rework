@@ -1,7 +1,12 @@
 package com.glodblock.github.inventory;
 
-import com.glodblock.github.common.item.ItemFluidDrop;
-import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.common.item.fake.FakeFluids;
+import com.glodblock.github.common.item.fake.FakeItemRegister;
+import com.glodblock.github.integration.mek.FCGasItems;
+import com.glodblock.github.integration.mek.FakeGases;
+import com.glodblock.github.loader.FCItems;
+import com.glodblock.github.util.ModAndClassUtil;
+import mekanism.api.gas.GasStack;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
@@ -16,15 +21,23 @@ public class FluidConvertingInventoryCrafting extends InventoryCrafting {
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
-        if (stack.getItem() instanceof ItemFluidDrop) {
-            FluidStack fluid = ItemFluidDrop.getFluidStack(stack);
+        if (stack.getItem() == FCItems.FLUID_DROP) {
+            FluidStack fluid = FakeItemRegister.getStack(stack);
             if (fluid != null) {
-                super.setInventorySlotContents(index, ItemFluidPacket.newStack(new FluidStack(fluid, stack.getCount())));
+                super.setInventorySlotContents(index, FakeFluids.packFluid2Packet(new FluidStack(fluid, stack.getCount())));
             } else {
                 // wtf?
-                super.setInventorySlotContents(index, ItemFluidPacket.newStack(new FluidStack(FluidRegistry.WATER, 1000)));
+                super.setInventorySlotContents(index, FakeFluids.packFluid2Packet(new FluidStack(FluidRegistry.WATER, 1000)));
             }
-        } else {
+        } else if (ModAndClassUtil.GAS && stack.getItem() == FCGasItems.GAS_DROP) {
+            GasStack gas = FakeItemRegister.getStack(stack);
+            if (gas != null && gas.getGas() != null) {
+                super.setInventorySlotContents(index, FakeGases.packGas2Packet(new GasStack(gas.getGas(), stack.getCount())));
+            } else {
+                // wtf?
+                super.setInventorySlotContents(index, FakeFluids.packFluid2Packet(new FluidStack(FluidRegistry.WATER, 1000)));
+            }
+        }  else {
             super.setInventorySlotContents(index, stack);
         }
     }

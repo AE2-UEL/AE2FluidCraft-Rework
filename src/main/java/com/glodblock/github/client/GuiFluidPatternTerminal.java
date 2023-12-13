@@ -169,7 +169,7 @@ public class GuiFluidPatternTerminal extends GuiPatternTerm {
 
     @Override
     public List<Target<?>> getPhantomTargets(Object ingredient) {
-        if (!this.container.isCraftingMode() && FluidPacketTarget.covertFluid(ingredient) != null) {
+        if (!this.container.isCraftingMode() && (FluidPacketTarget.covertFluid(ingredient) != null || FluidPacketTarget.covertGas(ingredient) != null)) {
             List<Target<?>> targets = new ArrayList<>();
             for (Slot slot : this.inventorySlots.inventorySlots) {
                 if (slot instanceof SlotFake) {

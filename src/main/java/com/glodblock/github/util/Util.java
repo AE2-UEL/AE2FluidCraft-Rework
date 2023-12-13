@@ -10,8 +10,17 @@ import appeng.api.storage.data.IItemList;
 import appeng.fluids.util.AEFluidInventory;
 import appeng.fluids.util.AEFluidStack;
 import appeng.util.item.AEItemStack;
+import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.common.item.ItemGasPacket;
+import com.glodblock.github.common.item.fake.FakeFluids;
+import com.glodblock.github.common.item.fake.FakeItemRegister;
+import com.glodblock.github.integration.mek.FakeGases;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.EncoderException;
+import mekanism.api.gas.GasStack;
+import mekanism.api.gas.GasTankInfo;
+import mekanism.common.capabilities.Capabilities;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -45,6 +54,20 @@ public final class Util {
                 for (IFluidTankProperties tank : tanks) {
                     if (tank != null && tank.getContents() != null) {
                         return tank.getContents().copy();
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public static Object getGasFromItem(ItemStack stack) {
+        if (!stack.isEmpty() && stack.hasCapability(Capabilities.GAS_HANDLER_CAPABILITY, null)) {
+            if (stack.getCapability(Capabilities.GAS_HANDLER_CAPABILITY, null) != null) {
+                GasTankInfo[] tanks = Objects.requireNonNull(stack.getCapability(Capabilities.GAS_HANDLER_CAPABILITY, null)).getTankInfo();
+                for (GasTankInfo tank : tanks) {
+                    if (tank != null && tank.getGas() != null && tank.getGas().amount > 0) {
+                        return tank.getGas().copy();
                     }
                 }
             }
@@ -175,5 +198,168 @@ public final class Util {
         }
     }
 
+    public static boolean multiplySlotCheck(Slot[] slots, int multiple) {
+        for (Slot slot : slots) {
+            if (ItemFluidPacket.isFluidPacket(slot.getStack()) && FakeItemRegister.getStack(slot.getStack()) != null) {
+                long amt = Objects.requireNonNull((FluidStack) FakeItemRegister.getStack(slot.getStack())).amount;
+                if (amt * multiple > Integer.MAX_VALUE) {
+                    return false;
+                }
+            } else if (ModAndClassUtil.GAS && ItemGasPacket.isGasPacket(slot.getStack()) && FakeItemRegister.getStack(slot.getStack()) != null) {
+                long amt = Objects.requireNonNull((GasStack) FakeItemRegister.getStack(slot.getStack())).amount;
+                if (amt * multiple > Integer.MAX_VALUE) {
+                    return false;
+                }
+            } else if (!slot.getStack().isEmpty()) {
+                long amt = slot.getStack().getCount();
+                if (amt * multiple > Integer.MAX_VALUE) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public static void multiplySlot(Slot[] slots, int multiple) {
+        for (Slot slot : slots) {
+            if (ItemFluidPacket.isFluidPacket(slot.getStack()) && FakeItemRegister.getStack(slot.getStack()) != null) {
+                FluidStack fluid = Objects.requireNonNull(FakeItemRegister.getStack(slot.getStack()));
+                fluid.amount *= multiple;
+                ItemStack packet = FakeFluids.packFluid2Packet(fluid);
+                slot.putStack(packet);
+            } else if (ModAndClassUtil.GAS && ItemGasPacket.isGasPacket(slot.getStack()) && FakeItemRegister.getStack(slot.getStack()) != null) {
+                GasStack gas = Objects.requireNonNull(FakeItemRegister.getStack(slot.getStack()));
+                gas.amount *= multiple;
+                ItemStack packet = FakeGases.packGas2Packet(gas);
+                slot.putStack(packet);
+            } else if (!slot.getStack().isEmpty()) {
+                ItemStack stack = slot.getStack();
+                stack.setCount(stack.getCount() * multiple);
+            }
+        }
+    }
+
+    public static boolean divideSlotCheck(Slot[] slots, int divide) {
+        for (Slot slot : slots) {
+            if (ItemFluidPacket.isFluidPacket(slot.getStack()) && FakeItemRegister.getStack(slot.getStack()) != null) {
+                long amt = Objects.requireNonNull((FluidStack) FakeItemRegister.getStack(slot.getStack())).amount;
+                if (amt % divide != 0) {
+                    return false;
+                }
+            } else if (ModAndClassUtil.GAS && ItemGasPacket.isGasPacket(slot.getStack()) && FakeItemRegister.getStack(slot.getStack()) != null) {
+                long amt = Objects.requireNonNull((GasStack) FakeItemRegister.getStack(slot.getStack())).amount;
+                if (amt % divide != 0) {
+                    return false;
+                }
+            } else if (!slot.getStack().isEmpty()) {
+                long amt = slot.getStack().getCount();
+                if (amt % divide != 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public static void divideSlot(Slot[] slots, int divide) {
+        for (Slot slot : slots) {
+            if (ItemFluidPacket.isFluidPacket(slot.getStack()) && FakeItemRegister.getStack(slot.getStack()) != null) {
+                FluidStack fluid = Objects.requireNonNull(FakeItemRegister.getStack(slot.getStack()));
+                fluid.amount /= divide;
+                ItemStack packet = FakeFluids.packFluid2Packet(fluid);
+                slot.putStack(packet);
+            } else if (ModAndClassUtil.GAS && ItemGasPacket.isGasPacket(slot.getStack()) && FakeItemRegister.getStack(slot.getStack()) != null) {
+                GasStack gas = Objects.requireNonNull(FakeItemRegister.getStack(slot.getStack()));
+                gas.amount /= divide;
+                ItemStack packet = FakeGases.packGas2Packet(gas);
+                slot.putStack(packet);
+            } else if (!slot.getStack().isEmpty()) {
+                ItemStack stack = slot.getStack();
+                stack.setCount(stack.getCount() / divide);
+            }
+        }
+    }
+
+    public static boolean increaseSlotCheck(Slot[] slots, int increase) {
+        for (Slot slot : slots) {
+            if (ItemFluidPacket.isFluidPacket(slot.getStack()) && FakeItemRegister.getStack(slot.getStack()) != null) {
+                long amt = Objects.requireNonNull((FluidStack) FakeItemRegister.getStack(slot.getStack())).amount;
+                if (amt + increase * 1000L > Integer.MAX_VALUE) {
+                    return false;
+                }
+            } else if (ModAndClassUtil.GAS && ItemGasPacket.isGasPacket(slot.getStack()) && FakeItemRegister.getStack(slot.getStack()) != null) {
+                long amt = Objects.requireNonNull((GasStack) FakeItemRegister.getStack(slot.getStack())).amount;
+                if (amt + increase * 1000L > Integer.MAX_VALUE) {
+                    return false;
+                }
+            } else if (!slot.getStack().isEmpty()) {
+                long amt = slot.getStack().getCount();
+                if (amt + increase > Integer.MAX_VALUE) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public static void increaseSlot(Slot[] slots, int increase) {
+        for (Slot slot : slots) {
+            if (ItemFluidPacket.isFluidPacket(slot.getStack()) && FakeItemRegister.getStack(slot.getStack()) != null) {
+                FluidStack fluid = Objects.requireNonNull(FakeItemRegister.getStack(slot.getStack()));
+                fluid.amount += increase * 1000;
+                ItemStack packet = FakeFluids.packFluid2Packet(fluid);
+                slot.putStack(packet);
+            } else if (ModAndClassUtil.GAS && ItemGasPacket.isGasPacket(slot.getStack()) && FakeItemRegister.getStack(slot.getStack()) != null) {
+                GasStack gas = Objects.requireNonNull(FakeItemRegister.getStack(slot.getStack()));
+                gas.amount += increase * 1000;
+                ItemStack packet = FakeGases.packGas2Packet(gas);
+                slot.putStack(packet);
+            } else if (!slot.getStack().isEmpty()) {
+                ItemStack stack = slot.getStack();
+                stack.setCount(stack.getCount() + increase);
+            }
+        }
+    }
+
+    public static boolean decreaseSlotCheck(Slot[] slots, int decrease) {
+        for (Slot slot : slots) {
+            if (ItemFluidPacket.isFluidPacket(slot.getStack()) && FakeItemRegister.getStack(slot.getStack()) != null) {
+                long amt = Objects.requireNonNull((FluidStack) FakeItemRegister.getStack(slot.getStack())).amount;
+                if (amt - decrease * 1000L < 1) {
+                    return false;
+                }
+            } else if (ModAndClassUtil.GAS && ItemGasPacket.isGasPacket(slot.getStack()) && FakeItemRegister.getStack(slot.getStack()) != null) {
+                long amt = Objects.requireNonNull((GasStack) FakeItemRegister.getStack(slot.getStack())).amount;
+                if (amt - decrease * 1000L < 1) {
+                    return false;
+                }
+            } else if (!slot.getStack().isEmpty()) {
+                long amt = slot.getStack().getCount();
+                if (amt - decrease < 1) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public static void decreaseSlot(Slot[] slots, int decrease) {
+        for (Slot slot : slots) {
+            if (ItemFluidPacket.isFluidPacket(slot.getStack()) && FakeItemRegister.getStack(slot.getStack()) != null) {
+                FluidStack fluid = Objects.requireNonNull(FakeItemRegister.getStack(slot.getStack()));
+                fluid.amount -= decrease * 1000;
+                ItemStack packet = FakeFluids.packFluid2Packet(fluid);
+                slot.putStack(packet);
+            } else if (ModAndClassUtil.GAS && ItemGasPacket.isGasPacket(slot.getStack()) && FakeItemRegister.getStack(slot.getStack()) != null) {
+                GasStack gas = Objects.requireNonNull(FakeItemRegister.getStack(slot.getStack()));
+                gas.amount -= decrease * 1000;
+                ItemStack packet = FakeGases.packGas2Packet(gas);
+                slot.putStack(packet);
+            } else if (!slot.getStack().isEmpty()) {
+                ItemStack stack = slot.getStack();
+                stack.setCount(stack.getCount() - decrease);
+            }
+        }
+    }
 
 }

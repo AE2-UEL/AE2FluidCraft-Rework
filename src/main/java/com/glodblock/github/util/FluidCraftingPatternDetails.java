@@ -5,6 +5,7 @@ import appeng.api.storage.data.IAEItemStack;
 import appeng.container.ContainerNull;
 import appeng.util.item.AEItemStack;
 import com.glodblock.github.common.item.ItemFluidDrop;
+import com.glodblock.github.common.item.fake.FakeFluids;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
@@ -75,7 +76,7 @@ public class FluidCraftingPatternDetails implements ICraftingPatternDetails, Com
             if (filledContainer != null && emptyContainer != null && Util.getFluidFromItem(filledContainer.getDefinition()) != null) {
                 ItemStack drained = Util.getEmptiedContainer(filledContainer.getDefinition());
                 if (emptyContainer.equals(drained)) {
-                    this.fluidInputs[x] = ItemFluidDrop.newAeStack(Util.getFluidFromItem(filledContainer.getDefinition()));
+                    this.fluidInputs[x] = FakeFluids.packFluid2AEDrops(Util.getFluidFromItem(filledContainer.getDefinition()));
                     continue;
                 }
             }

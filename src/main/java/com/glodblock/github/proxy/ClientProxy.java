@@ -5,14 +5,16 @@ import com.glodblock.github.client.model.DenseEncodedPatternModel;
 import com.glodblock.github.client.render.DropColourHandler;
 import com.glodblock.github.client.render.RenderIngredientBuffer;
 import com.glodblock.github.client.render.RenderLargeIngredientBuffer;
-import com.glodblock.github.common.item.ItemFluidDrop;
-import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.common.item.fake.FakeItemRegister;
 import com.glodblock.github.common.tile.TileIngredientBuffer;
 import com.glodblock.github.common.tile.TileLargeIngredientBuffer;
 import com.glodblock.github.handler.ClientRegistryHandler;
 import com.glodblock.github.handler.RegistryHandler;
+import com.glodblock.github.integration.mek.FCGasItems;
 import com.glodblock.github.integration.pauto.PackagedFluidCrafting;
 import com.glodblock.github.loader.FCItems;
+import com.glodblock.github.util.ModAndClassUtil;
+import mekanism.api.gas.GasStack;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidStack;
@@ -48,16 +50,29 @@ public class ClientProxy extends CommonProxy {
     public void init(FMLInitializationEvent event) {
         super.init(event);
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler((s, i) -> {
-            FluidStack fluid = ItemFluidDrop.getFluidStack(s);
+            FluidStack fluid = FakeItemRegister.getStack(s);
             return fluid != null ? dropColourHandler.getColour(fluid) : 0xFFFFFFFF;
         }, FCItems.FLUID_DROP);
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler((s, i) -> {
             if (i == 0) {
                 return 0xFFFFFFFF;
             }
-            FluidStack fluid = ItemFluidPacket.getFluidStack(s);
+            FluidStack fluid = FakeItemRegister.getStack(s);
             return fluid != null ? fluid.getFluid().getColor(fluid) : 0xFFFFFFFF;
         }, FCItems.FLUID_PACKET);
+        if (ModAndClassUtil.GAS) {
+            Minecraft.getMinecraft().getItemColors().registerItemColorHandler((s, i) -> {
+                GasStack gas = FakeItemRegister.getStack(s);
+                return gas != null ? gas.getGas().getTint() | 0xFF000000 : 0xFFFFFFFF;
+            }, FCGasItems.GAS_DROP);
+            Minecraft.getMinecraft().getItemColors().registerItemColorHandler((s, i) -> {
+                if (i == 0) {
+                    return 0xFFFFFFFF;
+                }
+                GasStack gas = FakeItemRegister.getStack(s);
+                return gas != null ? gas.getGas().getTint() | 0xFF000000 : 0xFFFFFFFF;
+            }, FCGasItems.GAS_PACKET);
+        }
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler((s, i) -> AEColor.TRANSPARENT.getVariantByTintIndex(i), FCItems.PART_FLUID_PATTERN_TERMINAL);
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler((s, i) -> AEColor.TRANSPARENT.getVariantByTintIndex(i), FCItems.PART_EXTENDED_FLUID_PATTERN_TERMINAL);
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler(DenseEncodedPatternModel.PATTERN_ITEM_COLOR_HANDLER, FCItems.DENSE_ENCODED_PATTERN);

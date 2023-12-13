@@ -26,6 +26,8 @@ import appeng.util.inv.IAEAppEngInventory;
 import appeng.util.inv.InvOperation;
 import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.common.item.fake.FakeFluids;
+import com.glodblock.github.common.item.fake.FakeItemRegister;
 import com.glodblock.github.util.DummyInvAdaptor;
 import com.glodblock.github.util.MultiCraftingTracker;
 import com.glodblock.github.util.Util;
@@ -75,10 +77,10 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements ICrafting
             return;
         }
         ItemStack packet = this.config.getStackInSlot(id);
-        FluidStack copy = ItemFluidPacket.getFluidStack(packet);
+        FluidStack copy = FakeItemRegister.getStack(packet);
         if (copy != null)
             copy.amount = size;
-        this.config.setStackInSlot(id, ItemFluidPacket.newStack(copy));
+        this.config.setStackInSlot(id, FakeFluids.packFluid2Packet(copy));
         doWork();
     }
 
@@ -124,13 +126,13 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements ICrafting
         try {
             for (int i = 0; i < MAX_FLUID; i ++) {
                 IAEItemStack packet = this.config.getAEStackInSlot(i);
-                FluidStack fluid = ItemFluidPacket.getFluidStack(packet);
+                FluidStack fluid = FakeItemRegister.getStack(packet);
                 if (fluid != null && fluid.amount > 0) {
                     IAEFluidStack remain = storage.extractItems(AEFluidStack.fromFluidStack(fluid), Actionable.SIMULATE, this.source);
                     if (remain == null || remain.getStackSize() < fluid.amount) {
                         FluidStack copy = fluid.copy();
                         copy.amount = (int) request[i];
-                        this.craftingTracker.handleCrafting(i, request[i], ItemFluidDrop.newAeStack(copy), DummyInvAdaptor.INSTANCE, getWorld(), getProxy().getGrid(), getProxy().getCrafting(), this.source);
+                        this.craftingTracker.handleCrafting(i, request[i], FakeFluids.packFluid2AEDrops(copy), DummyInvAdaptor.INSTANCE, getWorld(), getProxy().getGrid(), getProxy().getCrafting(), this.source);
                     }
                 }
             }
@@ -210,7 +212,7 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements ICrafting
                 if( energy.extractAEPower( power, mode, PowerMultiplier.CONFIG ) > power - 0.01 ) {
                     ItemStack inputStack = items.getCachedItemStack( items.getStackSize() );
 
-                    FluidStack inputFluid = ItemFluidDrop.getFluidStack(inputStack);
+                    FluidStack inputFluid = FakeItemRegister.getStack(inputStack);
                     IAEFluidStack remaining;
 
                     if( mode == Actionable.SIMULATE )
@@ -223,17 +225,17 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements ICrafting
                         remaining = fluidGrid.injectItems(AEFluidStack.fromFluidStack(inputFluid), Actionable.MODULATE, source );
                         if( remaining == null || remaining.getStackSize() <= 0 )
                         {
-                            ItemStack tmp = ItemFluidDrop.newAeStack(remaining) != null ? ItemFluidDrop.newAeStack(remaining).getDefinition() : null;
+                            ItemStack tmp = FakeFluids.packFluid2AEDrops(remaining) != null ? FakeFluids.packFluid2AEDrops(remaining).getDefinition() : null;
                             items.setCachedItemStack( tmp );
                         }
                     }
 
-                    if( ItemFluidDrop.newStack(remaining != null ? remaining.getFluidStack() : null) == inputStack )
+                    if( FakeFluids.packFluid2Drops(remaining != null ? remaining.getFluidStack() : null) == inputStack )
                     {
                         return items;
                     }
 
-                    return ItemFluidDrop.newAeStack(remaining);
+                    return FakeFluids.packFluid2AEDrops(remaining);
                 }
             }
 

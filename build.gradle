@@ -53,7 +53,8 @@ dependencies {
     deobfCompile 'curse.maven:ae2-extended-life-570458:4812257' //pae2
     deobfCompile 'curse.maven:dynamistics-383632:3056455' // dy
     compileOnly 'curse.maven:opencomputers-223008:4630537' //oc
-    runtime 'curse.maven:opencomputers-223008:4630537' //oc
+    compileOnly "curse.maven:mekanism-ce-399904:4804509" //mek-ce
+    compileOnly "curse.maven:ae-additions-extra-cells-2-fork-493962:3814371" //aeadditions
 }
 
 minecraft {

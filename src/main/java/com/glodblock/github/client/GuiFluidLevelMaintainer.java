@@ -6,6 +6,8 @@ import appeng.core.localization.GuiText;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.container.ContainerFluidLevelMaintainer;
 import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.common.item.fake.FakeFluids;
+import com.glodblock.github.common.item.fake.FakeItemRegister;
 import com.glodblock.github.common.tile.TileFluidLevelMaintainer;
 import com.glodblock.github.network.CPacketUpdateFluidLevel;
 import com.glodblock.github.util.NameConst;
@@ -44,8 +46,8 @@ public class GuiFluidLevelMaintainer extends AEBaseGui {
                 && this.getSlotUnderMouse().getHasStack() && this.getSlotUnderMouse() instanceof ContainerFluidLevelMaintainer.DisplayFluidSlot)
         {
             ItemStack packet = this.getSlotUnderMouse().getStack();
-            FluidStack fluid = ItemFluidPacket.getFluidStack(packet);
-            this.renderToolTip(ItemFluidPacket.newDisplayStack(fluid), x, y);
+            FluidStack fluid = FakeItemRegister.getStack(packet);
+            this.renderToolTip(FakeFluids.displayFluid(fluid), x, y);
         }
         else {
             super.renderHoveredToolTip(x, y);
@@ -54,7 +56,6 @@ public class GuiFluidLevelMaintainer extends AEBaseGui {
 
     @Override
     protected void keyTyped(char character, int key) throws IOException {
-
         if (!this.checkHotbarKeys(key)) {
             GuiNumberBox focus = null;
             int id = 0;
@@ -128,7 +129,7 @@ public class GuiFluidLevelMaintainer extends AEBaseGui {
         IItemHandler inv = tile.getInventoryHandler();
         for (int i = 0; i < inv.getSlots(); i ++) {
             if (!inv.getStackInSlot(i).isEmpty()) {
-                FluidStack fluid = ItemFluidPacket.getFluidStack(inv.getStackInSlot(i));
+                FluidStack fluid = FakeItemRegister.getStack(inv.getStackInSlot(i));
                 this.maintain[i].setText(String.valueOf(fluid == null ? "0" : fluid.amount));
             }
             else {

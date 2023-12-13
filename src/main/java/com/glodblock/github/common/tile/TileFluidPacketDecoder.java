@@ -1,5 +1,6 @@
 package com.glodblock.github.common.tile;
 
+import appeng.api.AEApi;
 import appeng.api.networking.GridFlags;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.energy.IEnergyGrid;
@@ -10,6 +11,7 @@ import appeng.api.networking.ticking.TickRateModulation;
 import appeng.api.networking.ticking.TickingRequest;
 import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.data.IAEFluidStack;
+import appeng.api.storage.data.IAEStack;
 import appeng.fluids.util.AEFluidStack;
 import appeng.helpers.Reflected;
 import appeng.me.GridAccessException;
@@ -19,8 +21,17 @@ import appeng.tile.inventory.AppEngInternalInventory;
 import appeng.util.Platform;
 import appeng.util.inv.IAEAppEngInventory;
 import appeng.util.inv.InvOperation;
-import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.common.item.fake.FakeFluids;
+import com.glodblock.github.common.item.fake.FakeItemRegister;
+import com.glodblock.github.integration.mek.FCGasItems;
+import com.glodblock.github.integration.mek.FakeGases;
+import com.glodblock.github.loader.FCItems;
+import com.glodblock.github.util.ModAndClassUtil;
 import com.glodblock.github.util.Util;
+import com.the9grounds.aeadditions.api.gas.IAEGasStack;
+import com.the9grounds.aeadditions.api.gas.IGasStorageChannel;
+import com.the9grounds.aeadditions.integration.mekanism.gas.AEGasStack;
+import mekanism.api.gas.GasStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -77,31 +88,53 @@ public class TileFluidPacketDecoder extends AENetworkTile implements IGridTickab
 
     @Override
     @Nonnull
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public TickRateModulation tickingRequest(@Nonnull IGridNode node, int ticksSinceLastCall) {
         ItemStack stack = inventory.getStackInSlot(0);
-        if (stack.isEmpty() || !(stack.getItem() instanceof ItemFluidPacket)) {
-            return TickRateModulation.SLEEP;
-        }
-        FluidStack fluid = ItemFluidPacket.getFluidStack(stack);
-        if (fluid == null || fluid.amount <= 0) {
-            inventory.setStackInSlot(0, ItemStack.EMPTY);
-            return TickRateModulation.SLEEP;
-        }
-        IAEFluidStack aeFluid = AEFluidStack.fromFluidStack(fluid);
-        IEnergyGrid energyGrid = node.getGrid().getCache(IEnergyGrid.class);
-        IMEMonitor<IAEFluidStack> fluidGrid = node.getGrid().<IStorageGrid>getCache(IStorageGrid.class)
-                .getInventory(Util.getFluidChannel());
-        IAEFluidStack remaining = Platform.poweredInsert(energyGrid, fluidGrid, aeFluid, ownActionSource);
-        if (remaining != null) {
-            if (remaining.getStackSize() == aeFluid.getStackSize()) {
-                return TickRateModulation.SLOWER;
+        if (stack.getItem() == FCItems.FLUID_PACKET) {
+            FluidStack fluid = FakeItemRegister.getStack(stack);
+            if (fluid == null || fluid.amount <= 0) {
+                inventory.setStackInSlot(0, ItemStack.EMPTY);
+                return TickRateModulation.SLEEP;
             }
-            inventory.setStackInSlot(0, ItemFluidPacket.newStack(remaining.getFluidStack()));
-            return TickRateModulation.FASTER;
-        } else {
-            inventory.setStackInSlot(0, ItemStack.EMPTY);
-            return TickRateModulation.SLEEP;
+            IAEFluidStack aeFluid = AEFluidStack.fromFluidStack(fluid);
+            IEnergyGrid energyGrid = node.getGrid().getCache(IEnergyGrid.class);
+            IMEMonitor<IAEFluidStack> fluidGrid = node.getGrid().<IStorageGrid>getCache(IStorageGrid.class)
+                    .getInventory(Util.getFluidChannel());
+            IAEFluidStack remaining = Platform.poweredInsert(energyGrid, fluidGrid, aeFluid, ownActionSource);
+            if (remaining != null) {
+                if (remaining.getStackSize() == aeFluid.getStackSize()) {
+                    return TickRateModulation.SLOWER;
+                }
+                inventory.setStackInSlot(0, FakeFluids.packFluid2Packet(remaining.getFluidStack()));
+                return TickRateModulation.FASTER;
+            } else {
+                inventory.setStackInSlot(0, ItemStack.EMPTY);
+                return TickRateModulation.SLEEP;
+            }
+        } else if (ModAndClassUtil.GAS && stack.getItem() == FCGasItems.GAS_PACKET) {
+            GasStack gas = FakeItemRegister.getStack(stack);
+            if (gas == null || gas.getGas() == null || gas.amount <= 0) {
+                inventory.setStackInSlot(0, ItemStack.EMPTY);
+                return TickRateModulation.SLEEP;
+            }
+            IAEStack aeGas = new AEGasStack(gas);
+            IEnergyGrid energyGrid = node.getGrid().getCache(IEnergyGrid.class);
+            IMEMonitor gasGrid = node.getGrid().<IStorageGrid>getCache(IStorageGrid.class)
+                    .getInventory(AEApi.instance().storage().getStorageChannel(IGasStorageChannel.class));
+            IAEStack remaining = Platform.poweredInsert(energyGrid, gasGrid, aeGas, ownActionSource);
+            if (remaining != null) {
+                if (remaining.getStackSize() == aeGas.getStackSize()) {
+                    return TickRateModulation.SLOWER;
+                }
+                inventory.setStackInSlot(0, FakeGases.packGas2Packet((GasStack) ((IAEGasStack) remaining).getGasStack()));
+                return TickRateModulation.FASTER;
+            } else {
+                inventory.setStackInSlot(0, ItemStack.EMPTY);
+                return TickRateModulation.SLEEP;
+            }
         }
+        return TickRateModulation.SLEEP;
     }
 
     @Override

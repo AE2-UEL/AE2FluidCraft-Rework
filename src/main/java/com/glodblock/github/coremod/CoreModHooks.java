@@ -8,7 +8,6 @@ import appeng.api.networking.IGridNode;
 import appeng.api.networking.IMachineSet;
 import appeng.api.networking.storage.IStorageGrid;
 import appeng.api.storage.IMEInventory;
-import appeng.api.storage.IMEInventoryHandler;
 import appeng.api.storage.channels.IFluidStorageChannel;
 import appeng.api.storage.channels.IItemStorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
@@ -21,28 +20,34 @@ import appeng.helpers.DualityInterface;
 import appeng.helpers.IInterfaceHost;
 import appeng.me.MachineSet;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
-import appeng.me.storage.NetworkInventoryHandler;
 import appeng.parts.misc.PartInterface;
 import appeng.tile.misc.TileInterface;
 import appeng.util.InventoryAdaptor;
 import appeng.util.inv.BlockingInventoryAdaptor;
 import appeng.util.item.AEItemStack;
 import com.glodblock.github.common.item.ItemFluidCraftEncodedPattern;
-import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidEncodedPattern;
 import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.common.item.ItemLargeEncodedPattern;
+import com.glodblock.github.common.item.fake.FakeFluids;
+import com.glodblock.github.common.item.fake.FakeItemRegister;
 import com.glodblock.github.common.part.PartDualInterface;
 import com.glodblock.github.common.tile.TileDualInterface;
 import com.glodblock.github.handler.FluidConvertingItemHandler;
+import com.glodblock.github.integration.mek.FCGasItems;
+import com.glodblock.github.integration.mek.FakeGases;
 import com.glodblock.github.inventory.BlockingFluidInventoryAdaptor;
 import com.glodblock.github.inventory.FluidConvertingInventoryAdaptor;
 import com.glodblock.github.inventory.FluidConvertingInventoryCrafting;
 import com.glodblock.github.loader.FCItems;
 import com.glodblock.github.util.Ae2Reflect;
+import com.glodblock.github.util.ModAndClassUtil;
 import com.glodblock.github.util.SetBackedMachineSet;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
+import com.the9grounds.aeadditions.api.gas.IAEGasStack;
+import com.the9grounds.aeadditions.api.gas.IGasStorageChannel;
+import mekanism.api.gas.GasStack;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -70,7 +75,13 @@ public class CoreModHooks {
 
     public static IAEItemStack wrapFluidPacketStack(IAEItemStack stack) {
         if (stack.getItem() == FCItems.FLUID_PACKET) {
-            IAEItemStack dropStack = ItemFluidDrop.newAeStack(ItemFluidPacket.getFluidStack(stack.getDefinition()));
+            IAEItemStack dropStack = FakeFluids.packFluid2AEDrops((FluidStack) FakeItemRegister.getStack(stack));
+            if (dropStack != null) {
+                return dropStack;
+            }
+        }
+        if (ModAndClassUtil.GAS && stack.getItem() == FCGasItems.GAS_PACKET) {
+            IAEItemStack dropStack = FakeGases.packGas2AEDrops((GasStack) FakeItemRegister.getStack(stack));
             if (dropStack != null) {
                 return dropStack;
             }
@@ -102,9 +113,13 @@ public class CoreModHooks {
 
     public static ItemStack removeFluidPackets(InventoryCrafting inv, int index) {
         ItemStack stack = inv.getStackInSlot(index);
-        if (stack != ItemStack.EMPTY && stack.getItem() instanceof ItemFluidPacket) {
-            FluidStack fluid = ItemFluidPacket.getFluidStack(stack);
-            return ItemFluidDrop.newStack(fluid);
+        if (stack != ItemStack.EMPTY && stack.getItem() == FCItems.FLUID_PACKET) {
+            FluidStack fluid = FakeItemRegister.getStack(stack);
+            return FakeFluids.packFluid2Drops(fluid);
+        }
+        if (ModAndClassUtil.GAS && stack != ItemStack.EMPTY && stack.getItem() == FCGasItems.GAS_PACKET) {
+            GasStack gas = FakeItemRegister.getStack(stack);
+            return FakeGases.packGas2Drops(gas);
         }
         else {
             return stack;
@@ -112,13 +127,23 @@ public class CoreModHooks {
     }
 
     public static long getCraftingByteCost(IAEItemStack stack) {
-        return stack.getItem() instanceof ItemFluidDrop
-                ? (long)Math.ceil(stack.getStackSize() / 1000D) : stack.getStackSize();
+        if (stack.getItem() == FCItems.FLUID_DROP) {
+            return (long) Math.ceil(stack.getStackSize() / 1000D);
+        }
+        if (ModAndClassUtil.GAS && stack.getItem() == FCGasItems.GAS_DROP) {
+            return (long) Math.ceil(stack.getStackSize() / 4000D);
+        }
+        return stack.getStackSize();
     }
 
     public static long getCraftingByteCost(long originBytes, long missingBytes, IAEItemStack stack) {
-        return stack != null && stack.getItem() instanceof ItemFluidDrop
-                ? (long) Math.ceil(missingBytes / 1000D) + originBytes : missingBytes + originBytes;
+        if (stack != null && stack.getItem() == FCItems.FLUID_DROP) {
+            return (long) Math.ceil(missingBytes / 1000D) + originBytes;
+        }
+        if (ModAndClassUtil.GAS && stack != null && stack.getItem() == FCGasItems.GAS_DROP) {
+            return (long) Math.ceil(missingBytes / 4000D) + originBytes;
+        }
+        return missingBytes + originBytes;
     }
 
     public static boolean checkForItemHandler(ICapabilityProvider capProvider, Capability<?> capability, EnumFacing side) {
@@ -133,7 +158,7 @@ public class CoreModHooks {
     public static IAEItemStack[] flattenFluidPackets(IAEItemStack[] stacks) {
         for (int i = 0; i < stacks.length; i++) {
             if (stacks[i].getItem() instanceof ItemFluidPacket) {
-                stacks[i] = ItemFluidDrop.newAeStack(ItemFluidPacket.getFluidStack(stacks[i]));
+                stacks[i] = FakeFluids.packFluid2AEDrops((FluidStack) FakeItemRegister.getStack(stacks[i]));
             }
         }
         return stacks;
@@ -150,10 +175,11 @@ public class CoreModHooks {
     }
 
     public static Object wrapFluidPacket(ItemStack stack) {
-        if (stack.getItem() instanceof ItemFluidPacket) {
-            return ItemFluidPacket.getFluidStack(stack);
-        } else if (stack.getItem() instanceof ItemFluidDrop) {
-            return ItemFluidDrop.getFluidStack(stack);
+        if (FakeFluids.isFluidFakeItem(stack)) {
+            return FakeItemRegister.getStack(stack);
+        }
+        if (ModAndClassUtil.GAS && FakeGases.isGasFakeItem(stack)) {
+            return FakeItemRegister.getStack(stack);
         }
         return stack;
     }
@@ -174,34 +200,54 @@ public class CoreModHooks {
     }
 
     public static ItemStack displayFluid(ItemStack drop) {
-        if (!drop.isEmpty() && drop.getItem() instanceof ItemFluidDrop) {
-            FluidStack fluid = ItemFluidDrop.getFluidStack(drop);
-            return ItemFluidPacket.newDisplayStack(fluid);
+        if (!drop.isEmpty() && drop.getItem() == FCItems.FLUID_DROP) {
+            FluidStack fluid = FakeItemRegister.getStack(drop);
+            return FakeFluids.displayFluid(fluid);
+        } else if (!drop.isEmpty() && ModAndClassUtil.GAS && drop.getItem() == FCGasItems.GAS_DROP) {
+            GasStack gas = FakeItemRegister.getStack(drop);
+            return FakeGases.displayGas(gas);
         } else return drop;
     }
 
     public static IAEItemStack displayAEFluid(IAEItemStack drop) {
-        if (!drop.getDefinition().isEmpty() && drop.getItem() instanceof ItemFluidDrop) {
-            FluidStack fluid = ItemFluidDrop.getFluidStack(drop.getDefinition());
-            return AEItemStack.fromItemStack(ItemFluidPacket.newDisplayStack(fluid));
+        if (!drop.getDefinition().isEmpty() && drop.getItem() == FCItems.FLUID_DROP) {
+            FluidStack fluid = FakeItemRegister.getStack(drop);
+            return AEItemStack.fromItemStack(FakeFluids.displayFluid(fluid));
+        } else if (!drop.getDefinition().isEmpty() && ModAndClassUtil.GAS && drop.getItem() == FCGasItems.GAS_DROP) {
+            GasStack gas = FakeItemRegister.getStack(drop);
+            return AEItemStack.fromItemStack(FakeGases.displayGas(gas));
         } else return drop;
     }
 
     public static IAEItemStack displayAEFluidAmount(IAEItemStack drop) {
-        if (drop != null && !drop.getDefinition().isEmpty() && drop.getItem() instanceof ItemFluidDrop) {
-            FluidStack fluid = ItemFluidDrop.getFluidStack(drop.getDefinition());
-            AEItemStack stack = AEItemStack.fromItemStack(ItemFluidPacket.newDisplayStack(fluid));
-            return stack == null ? null : stack.setStackSize(drop.getStackSize());
-        } else return drop;
+        if (drop != null && !drop.getDefinition().isEmpty()) {
+            if (drop.getItem() == FCItems.FLUID_DROP) {
+                FluidStack fluid = FakeItemRegister.getStack(drop);
+                AEItemStack stack = AEItemStack.fromItemStack(FakeFluids.displayFluid(fluid));
+                return stack == null ? null : stack.setStackSize(drop.getStackSize());
+            }
+            if (ModAndClassUtil.GAS && drop.getItem() == FCGasItems.GAS_DROP) {
+                GasStack gas = FakeItemRegister.getStack(drop);
+                AEItemStack stack = AEItemStack.fromItemStack(FakeGases.displayGas(gas));
+                return stack == null ? null : stack.setStackSize(drop.getStackSize());
+            }
+        }
+        return drop;
     }
 
     public static long getFluidSize(IAEItemStack aeStack) {
-        if (aeStack.getDefinition() != null && !aeStack.getDefinition().isEmpty() && aeStack.getDefinition().getItem() instanceof ItemFluidDrop) {
-            return (long) Math.max(aeStack.getStackSize() / 1000D, 1);
+        if (aeStack.getDefinition() != null && !aeStack.getDefinition().isEmpty()) {
+            if (aeStack.getDefinition().getItem() == FCItems.FLUID_DROP) {
+                return (long) Math.max(aeStack.getStackSize() / 1000D, 1);
+            }
+            if (ModAndClassUtil.GAS && aeStack.getDefinition().getItem() == FCGasItems.GAS_DROP) {
+                return (long) Math.max(aeStack.getStackSize() / 4000D, 1);
+            }
         }
-        else return aeStack.getStackSize();
+        return aeStack.getStackSize();
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public static void storeFluidItem(CraftingCPUCluster instance) {
         Preconditions.checkState(Ae2Reflect.getCPUComplete(instance), "CPU should be complete to prevent re-insertion when dumping items");
         final IGrid g = Ae2Reflect.getGrid(instance);
@@ -213,16 +259,30 @@ public class CoreModHooks {
         final IStorageGrid sg = g.getCache( IStorageGrid.class );
         final IMEInventory<IAEItemStack> ii = sg.getInventory(AEApi.instance().storage().getStorageChannel(IItemStorageChannel.class));
         final IMEInventory<IAEFluidStack> jj = sg.getInventory(AEApi.instance().storage().getStorageChannel(IFluidStorageChannel.class));
+        final IMEInventory kk;
         final MECraftingInventory inventory = Ae2Reflect.getCPUInventory(instance);
+        if (ModAndClassUtil.GAS) {
+            kk = sg.getInventory(AEApi.instance().storage().getStorageChannel(IGasStorageChannel.class));
+        } else {
+            kk = null;
+        }
 
         for (IAEItemStack is : inventory.getItemList()) {
             Ae2Reflect.postCPUChange(instance, is, Ae2Reflect.getCPUSource(instance));
 
-            if (is.getItem() instanceof ItemFluidDrop ) {
-                IAEFluidStack drop = ItemFluidDrop.getAeFluidStack(is);
+            if (is.getItem() == FCItems.FLUID_DROP) {
+                IAEFluidStack drop = FakeItemRegister.getAEStack(is);
                 IAEFluidStack fluidRemainder = jj.injectItems(drop, Actionable.MODULATE, Ae2Reflect.getCPUSource(instance));
                 if (fluidRemainder != null) {
                     is.setStackSize(fluidRemainder.getStackSize());
+                } else {
+                    is.reset();
+                }
+            } else if (ModAndClassUtil.GAS && is.getItem() == FCGasItems.GAS_DROP && kk != null) {
+                IAEGasStack drop = FakeItemRegister.getAEStack(is);
+                IAEGasStack gasRemainder = (IAEGasStack) kk.injectItems(drop, Actionable.MODULATE, Ae2Reflect.getCPUSource(instance));
+                if (gasRemainder != null) {
+                    is.setStackSize(gasRemainder.getStackSize());
                 } else {
                     is.reset();
                 }
