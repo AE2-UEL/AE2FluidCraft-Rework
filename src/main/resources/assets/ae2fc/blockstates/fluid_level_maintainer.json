@@ -1,7 +1,12 @@
 {
   "variants": {
-    "normal": {
-      "model": "ae2fc:fluid_level_maintainer"
-    }
+    "facing=north": { "model": "ae2fc:fluid_level_maintainer" },
+    "facing=south": { "model": "ae2fc:fluid_level_maintainer", "y": 180 },
+    "facing=west":  { "model": "ae2fc:fluid_level_maintainer", "y": 270 },
+    "facing=east":  { "model": "ae2fc:fluid_level_maintainer", "y": 90 }
   }
 }
+
+
+
+

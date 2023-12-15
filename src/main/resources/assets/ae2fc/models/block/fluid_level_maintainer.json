@@ -1,12 +1,10 @@
 {
   "parent": "block/orientable",
   "textures": {
-    "particle": "ae2fc:blocks/fluid_level_maintainer",
-    "down": "ae2fc:blocks/fluid_level_maintainer_side",
-    "up": "ae2fc:blocks/fluid_level_maintainer",
-    "north": "ae2fc:blocks/fluid_level_maintainer_side",
-    "south": "ae2fc:blocks/fluid_level_maintainer_side",
-    "east": "ae2fc:blocks/fluid_level_maintainer_side",
-    "west": "ae2fc:blocks/fluid_level_maintainer_side"
+    "top": "ae2fc:blocks/fluid_level_maintainer_side",
+    "bottom": "ae2fc:blocks/fluid_level_maintainer_side",
+    "front": "ae2fc:blocks/fluid_level_maintainer",
+    "side": "ae2fc:blocks/fluid_level_maintainer_side",
+    "back": "ae2fc:blocks/fluid_level_maintainer_side"
   }
 }

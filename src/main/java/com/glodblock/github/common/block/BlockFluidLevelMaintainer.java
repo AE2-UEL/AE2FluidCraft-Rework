@@ -1,21 +1,34 @@
 package com.glodblock.github.common.block;
 
 import appeng.block.AEBaseTileBlock;
+import com.glodblock.github.FluidCraft;
 import com.glodblock.github.common.tile.TileFluidLevelMaintainer;
 import com.glodblock.github.inventory.GuiType;
 import com.glodblock.github.inventory.InventoryHandler;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
+import org.apache.logging.log4j.Level;
 
 public class BlockFluidLevelMaintainer extends AEBaseTileBlock {
 
+    public static final PropertyDirection facingProperty = PropertyDirection.create("facing",EnumFacing.Plane.HORIZONTAL);
+
     public BlockFluidLevelMaintainer() {
         super(Material.IRON);
+        setDefaultState(blockState.getBaseState().withProperty(facingProperty,EnumFacing.NORTH));
         setTileEntity(TileFluidLevelMaintainer.class);
     }
 
@@ -36,4 +49,16 @@ public class BlockFluidLevelMaintainer extends AEBaseTileBlock {
         return super.onBlockActivated(world, pos, state, player, hand, facing, hitX, hitY, hitZ);
     }
 
+    /**
+     * @return
+     */
+    @Override
+    protected BlockStateContainer createBlockState() {
+        return new ExtendedBlockState(this, new IProperty[]{facingProperty},new IUnlistedProperty[]{});
+    }
+
+    @Override
+    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float p_getStateForPlacement_4_, float p_getStateForPlacement_5_, float p_getStateForPlacement_6_, int p_getStateForPlacement_7_, EntityLivingBase entityLivingBase) {
+        return this.getDefaultState().withProperty(facingProperty,entityLivingBase.getHorizontalFacing().getOpposite());
+    }
 }
