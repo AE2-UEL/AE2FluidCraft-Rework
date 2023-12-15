@@ -3,9 +3,14 @@ package com.glodblock.github.util;
 import appeng.api.definitions.IItemDefinition;
 import appeng.api.networking.IGrid;
 import appeng.api.networking.IGridNode;
+import appeng.api.networking.crafting.ICraftingCPU;
+import appeng.api.networking.crafting.ICraftingJob;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.storage.data.IAEItemStack;
+import appeng.container.ContainerOpenContext;
+import appeng.container.implementations.ContainerCraftConfirm;
 import appeng.container.implementations.ContainerPatternEncoder;
+import appeng.container.implementations.CraftingCPURecord;
 import appeng.crafting.MECraftingInventory;
 import appeng.fluids.helper.DualityFluidInterface;
 import appeng.helpers.DualityInterface;
@@ -19,9 +24,11 @@ import appeng.util.inv.filter.IAEItemFilter;
 import com.the9grounds.aeadditions.tileentity.TileEntityGasInterface;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.world.World;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -43,6 +50,14 @@ public class Ae2Reflect {
     private static final Field fDualInterface_gridProxy;
     private static final Field fDualityFluidInterface_gridProxy;
     private static final Field fAppEngInternalInventory_filter;
+    private static final Field fContainerOpenContext_w;
+    private static final Field fContainerOpenContext_x;
+    private static final Field fContainerOpenContext_y;
+    private static final Field fContainerOpenContext_z;
+    private static final Field fContainerCraftConfirm_result;
+    private static final Field fContainerCraftConfirm_cpus;
+    private static final Field fCraftingCPURecord_cpu;
+    private static final Field fContainerPatternEncoder_cOut;
     private static final Field fTileEntityGasInterface_node;
 
     static {
@@ -63,6 +78,14 @@ public class Ae2Reflect {
             fDualInterface_gridProxy = reflectField(DualityInterface.class, "gridProxy");
             fDualityFluidInterface_gridProxy = reflectField(DualityFluidInterface.class, "gridProxy");
             fAppEngInternalInventory_filter = reflectField(AppEngInternalInventory.class, "filter");
+            fContainerOpenContext_w = reflectField(ContainerOpenContext.class, "w");
+            fContainerOpenContext_x = reflectField(ContainerOpenContext.class, "x");
+            fContainerOpenContext_y = reflectField(ContainerOpenContext.class, "y");
+            fContainerOpenContext_z = reflectField(ContainerOpenContext.class, "z");
+            fContainerCraftConfirm_result = reflectField(ContainerCraftConfirm.class, "result");
+            fContainerCraftConfirm_cpus = reflectField(ContainerCraftConfirm.class, "cpus");
+            fCraftingCPURecord_cpu = reflectField(CraftingCPURecord.class, "cpu");
+            fContainerPatternEncoder_cOut = reflectField(ContainerPatternEncoder.class, "cOut");
             if (ModAndClassUtil.GAS) {
                 fTileEntityGasInterface_node = reflectField(TileEntityGasInterface.class, "node");
             } else {
@@ -224,6 +247,38 @@ public class Ae2Reflect {
 
     public static IAEItemFilter getInventoryFilter(AppEngInternalInventory owner) {
         return readField(owner, fAppEngInternalInventory_filter);
+    }
+
+    public static World getContextWorld(ContainerOpenContext owner) {
+        return readField(owner, fContainerOpenContext_w);
+    }
+
+    public static int getContextX(ContainerOpenContext owner) {
+        return readField(owner, fContainerOpenContext_x);
+    }
+
+    public static int getContextY(ContainerOpenContext owner) {
+        return readField(owner, fContainerOpenContext_y);
+    }
+
+    public static int getContextZ(ContainerOpenContext owner) {
+        return readField(owner, fContainerOpenContext_z);
+    }
+
+    public static ICraftingJob getCraftJob(ContainerCraftConfirm owner) {
+        return readField(owner, fContainerCraftConfirm_result);
+    }
+
+    public static ArrayList<CraftingCPURecord> getCPUs(ContainerCraftConfirm owner) {
+        return readField(owner, fContainerCraftConfirm_cpus);
+    }
+
+    public static ICraftingCPU getCraftingCPU(CraftingCPURecord owner) {
+        return readField(owner, fCraftingCPURecord_cpu);
+    }
+
+    public static AppEngInternalInventory getCraftingResult(ContainerPatternEncoder owner) {
+        return readField(owner, fContainerPatternEncoder_cOut);
     }
 
     public static IGridNode getGasInterfaceGrid(Object owner) {

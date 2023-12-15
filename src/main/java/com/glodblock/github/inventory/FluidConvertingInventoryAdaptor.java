@@ -60,15 +60,7 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
 
         if (dualInterface == null || !Ae2Reflect.getFluidPacketMode(dualInterface)) {
             return new FluidConvertingInventoryAdaptor(
-                    capProvider.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face)
-                            ? Objects.requireNonNull(capProvider.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face))
-                            : null,
-                    capProvider.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, face)
-                            ? Objects.requireNonNull(capProvider.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, face))
-                            : null,
-                    ModAndClassUtil.GAS && capProvider.hasCapability(Capabilities.GAS_HANDLER_CAPABILITY, face)
-                            ? Objects.requireNonNull(capProvider.getCapability(Capabilities.GAS_HANDLER_CAPABILITY, face))
-                            : null,
+                    capProvider,
                     inter,
                     onmi,
                     dualInterface,
@@ -84,6 +76,7 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
     @Nullable
     /*mek my beloved*/
     private final Object invGases;
+    private final ICapabilityProvider facingTE;
     private final boolean onmi;
     private final EnumFacing facing;
     @Nullable
@@ -91,11 +84,17 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
     @Nullable
     private final DualityInterface self;
 
-    public FluidConvertingInventoryAdaptor(@Nullable IItemHandler invItems, @Nullable IFluidHandler invFluids, @Nullable Object invGases,
-                                           @Nullable TileEntity pos, boolean isOnmi, @Nullable DualityInterface interSelf, EnumFacing facing) {
-        this.invItems = invItems != null ? new AdaptorItemHandler(invItems) : null;
-        this.invFluids = invFluids;
-        this.invGases = invGases;
+    public FluidConvertingInventoryAdaptor(ICapabilityProvider facingTE, @Nullable TileEntity pos, boolean isOnmi, @Nullable DualityInterface interSelf, EnumFacing facing) {
+        this.invItems = facingTE.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite())
+                ? new AdaptorItemHandler(Objects.requireNonNull(facingTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite())))
+                : null;
+        this.invFluids = facingTE.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing.getOpposite())
+                ? Objects.requireNonNull(facingTE.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing.getOpposite()))
+                : null;
+        this.invGases = ModAndClassUtil.GAS && facingTE.hasCapability(Capabilities.GAS_HANDLER_CAPABILITY, facing.getOpposite())
+                ? Objects.requireNonNull(facingTE.getCapability(Capabilities.GAS_HANDLER_CAPABILITY, facing.getOpposite()))
+                : null;
+        this.facingTE = facingTE;
         this.posInterface = pos;
         this.onmi = isOnmi;
         this.self = interSelf;
@@ -155,7 +154,7 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
             if (onmi) {
                 GasStack gas = FakeItemRegister.getStack(toBeAdded);
                 if (invGases != null && posInterface != null) {
-                    TileEntity te = posInterface.getWorld().getTileEntity(posInterface.getPos().add(facing.getDirectionVec()));
+                    TileEntity te = (TileEntity) facingTE;
                     IGridNode node = getGasInterfaceGrid(te, facing);
                     IGasHandler gasHandler = (IGasHandler) invGases;
                     if (!isSameGrid(node)) {
@@ -192,7 +191,7 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
             }
             if (invGases != null && posInterface != null) {
                 GasStack gas = FakeItemRegister.getStack(toBeAdded);
-                TileEntity te = posInterface.getWorld().getTileEntity(posInterface.getPos().add(facing.getDirectionVec()));
+                TileEntity te = (TileEntity) facingTE;
                 IGridNode node = getGasInterfaceGrid(te, facing);
                 IGasHandler gasHandler = (IGasHandler) invGases;
                 if (!isSameGrid(node)) {
@@ -274,7 +273,7 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
                 boolean sus = false;
                 GasStack gas = FakeItemRegister.getStack(toBeSimulated);
                 if (invGases != null && posInterface != null) {
-                    TileEntity te = posInterface.getWorld().getTileEntity(posInterface.getPos().add(facing.getDirectionVec()));
+                    TileEntity te = (TileEntity) facingTE;
                     IGridNode node = getGasInterfaceGrid(te, facing);
                     IGasHandler gasHandler = (IGasHandler) invGases;
                     if (!isSameGrid(node)) {
@@ -323,7 +322,7 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
             }
             if (invGases != null && posInterface != null) {
                 GasStack gas = FakeItemRegister.getStack(toBeSimulated);
-                TileEntity te = posInterface.getWorld().getTileEntity(posInterface.getPos().add(facing.getDirectionVec()));
+                TileEntity te = (TileEntity) facingTE;;
                 IGridNode node = getGasInterfaceGrid(te, facing);
                 IGasHandler gasHandler = (IGasHandler) invGases;
                 if (!isSameGrid(node)) {

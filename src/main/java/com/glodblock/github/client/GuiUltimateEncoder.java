@@ -181,7 +181,7 @@ public class GuiUltimateEncoder extends AEBaseGui implements IJEIGhostIngredient
                     this.container.setTargetStack(stack);
                     for (int i = 0; i < this.inventorySlots.inventorySlots.size(); i ++) {
                         if (this.inventorySlots.inventorySlots.get(i).equals(slot)) {
-                            FluidCraft.proxy.netHandler.sendToServer(new CPacketInventoryAction(1, i, 0, stack));
+                            FluidCraft.proxy.netHandler.sendToServer(new CPacketInventoryAction(CPacketInventoryAction.Action.CHANGE_AMOUNT, i, 0, stack));
                             break;
                         }
                     }

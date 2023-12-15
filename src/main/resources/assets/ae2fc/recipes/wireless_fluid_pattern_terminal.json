@@ -1,0 +1,24 @@
+{
+  "type": "forge:ore_shaped",
+  "result": {
+    "item": "ae2fc:wireless_fluid_pattern_terminal",
+    "count": 1
+  },
+  "pattern": [
+    "a",
+    "b",
+    "c"
+  ],
+  "key": {
+    "b": {
+      "item": "ae2fc:part_fluid_pattern_terminal"
+    },
+    "c": {
+      "item": "appliedenergistics2:dense_energy_cell"
+    },
+    "a": {
+      "type": "appliedenergistics2:part",
+      "part": "material.wireless"
+    }
+  }
+}

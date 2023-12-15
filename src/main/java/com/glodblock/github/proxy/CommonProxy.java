@@ -84,6 +84,7 @@ public class CommonProxy {
 
     public void init(FMLInitializationEvent event) {
         regHandler.onInit();
+        AEApi.instance().registries().wireless().registerWirelessHandler(FCItems.WIRELESS_FLUID_PATTERN_TERMINAL);
         IRecipe disassembleRecipe = ForgeRegistries.RECIPES.getValue(new ResourceLocation(AppEng.MOD_ID, "disassemble"));
         if (disassembleRecipe instanceof DisassembleRecipe) {
             Ae2Reflect.getDisassemblyNonCellMap((DisassembleRecipe)disassembleRecipe).put(
@@ -106,6 +107,7 @@ public class CommonProxy {
         Upgrades.CRAFTING.registerItem(new ItemStack(FCItems.PART_DUAL_INTERFACE), 1);
         Upgrades.CRAFTING.registerItem(new ItemStack(FCItems.PART_DUAL_INTERFACE), 2);
         Upgrades.CRAFTING.registerItem(AEApi.instance().definitions().parts().fluidExportBus(), 1);
+        Upgrades.MAGNET.registerItem(new ItemStack(FCItems.WIRELESS_FLUID_PATTERN_TERMINAL), 1);
         NetworkRegistry.INSTANCE.registerGuiHandler(FluidCraft.INSTANCE, new InventoryHandler());
     }
 

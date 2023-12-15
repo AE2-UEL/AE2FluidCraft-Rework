@@ -6,6 +6,7 @@ import com.glodblock.github.client.container.ContainerExtendedFluidPatternTermin
 import com.glodblock.github.client.container.ContainerFluidPatternTerminal;
 import com.glodblock.github.client.container.ContainerItemAmountChange;
 import com.glodblock.github.client.container.ContainerUltimateEncoder;
+import com.glodblock.github.client.container.ContainerWirelessFluidPatternTerminal;
 import com.glodblock.github.common.item.fake.FakeFluids;
 import com.glodblock.github.common.item.fake.FakeItemRegister;
 import com.glodblock.github.integration.mek.FCGasItems;
@@ -13,6 +14,7 @@ import com.glodblock.github.integration.mek.FakeGases;
 import com.glodblock.github.inventory.GuiType;
 import com.glodblock.github.inventory.InventoryHandler;
 import com.glodblock.github.loader.FCItems;
+import com.glodblock.github.util.Ae2Reflect;
 import com.glodblock.github.util.ModAndClassUtil;
 import io.netty.buffer.ByteBuf;
 import mekanism.api.gas.GasStack;
@@ -20,6 +22,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -65,11 +68,17 @@ public class CPacketPatternValueSet implements IMessage {
                     ContainerItemAmountChange cpv = (ContainerItemAmountChange) player.openContainer;
                     final ContainerOpenContext context = cpv.getOpenContext();
                     if (context != null) {
-                        final TileEntity te = context.getTile();
-                        InventoryHandler.openGui(player, player.world, te.getPos(), context.getSide().getFacing(), message.originGui);
+                        InventoryHandler.openGui(
+                                player,
+                                player.world,
+                                new BlockPos(Ae2Reflect.getContextX(context), Ae2Reflect.getContextY(context), Ae2Reflect.getContextZ(context)),
+                                context.getSide().getFacing(),
+                                message.originGui
+                        );
                         if (player.openContainer instanceof ContainerFluidPatternTerminal
                                 || player.openContainer instanceof ContainerExtendedFluidPatternTerminal
-                                || player.openContainer instanceof ContainerUltimateEncoder) {
+                                || player.openContainer instanceof ContainerUltimateEncoder
+                                || player.openContainer instanceof ContainerWirelessFluidPatternTerminal) {
                             Slot slot = player.openContainer.getSlot(message.valueIndex);
                             if (slot instanceof SlotFake) {
                                 if (slot.getHasStack()) {

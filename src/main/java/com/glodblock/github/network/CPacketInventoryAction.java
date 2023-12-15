@@ -1,21 +1,35 @@
 package com.glodblock.github.network;
 
+import appeng.api.networking.IGrid;
+import appeng.api.networking.IGridNode;
+import appeng.api.networking.crafting.ICraftingGrid;
+import appeng.api.networking.crafting.ICraftingJob;
+import appeng.api.networking.security.IActionHost;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.container.AEBaseContainer;
 import appeng.container.ContainerOpenContext;
+import appeng.container.implementations.ContainerCraftAmount;
+import appeng.container.implementations.ContainerCraftConfirm;
+import appeng.container.interfaces.IInventorySlotAware;
+import appeng.core.AELog;
+import appeng.core.sync.GuiBridge;
+import appeng.util.Platform;
 import appeng.util.item.AEItemStack;
 import com.glodblock.github.FluidCraft;
+import com.glodblock.github.client.container.ContainerFCCraftConfirm;
 import com.glodblock.github.client.container.ContainerItemAmountChange;
 import com.glodblock.github.common.item.fake.FakeItemRegister;
 import com.glodblock.github.integration.mek.FCGasItems;
 import com.glodblock.github.inventory.GuiType;
 import com.glodblock.github.inventory.InventoryHandler;
 import com.glodblock.github.loader.FCItems;
+import com.glodblock.github.util.Ae2Reflect;
 import com.glodblock.github.util.ModAndClassUtil;
 import io.netty.buffer.ByteBuf;
 import mekanism.api.gas.GasStack;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -23,10 +37,11 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.concurrent.Future;
 
 public class CPacketInventoryAction implements IMessage {
 
-    private int action;
+    private Action action;
     private int slot;
     private long id;
     private IAEItemStack stack;
@@ -36,7 +51,7 @@ public class CPacketInventoryAction implements IMessage {
         //NO-OP
     }
 
-    public CPacketInventoryAction( final int action, final int slot, final int id, IAEItemStack stack ) {
+    public CPacketInventoryAction( final Action action, final int slot, final int id, IAEItemStack stack ) {
         this.action = action;
         this.slot = slot;
         this.id = id;
@@ -46,7 +61,7 @@ public class CPacketInventoryAction implements IMessage {
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(action);
+        buf.writeInt(action.ordinal());
         buf.writeInt(slot);
         buf.writeLong(id);
         buf.writeBoolean(isEmpty);
@@ -61,7 +76,7 @@ public class CPacketInventoryAction implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        action = buf.readInt();
+        action = Action.values()[buf.readInt()];
         slot = buf.readInt();
         id = buf.readLong();
         isEmpty = buf.readBoolean();
@@ -78,13 +93,17 @@ public class CPacketInventoryAction implements IMessage {
             sender.getServerWorld().addScheduledTask(() -> {
                 if( sender.openContainer instanceof AEBaseContainer) {
                     final AEBaseContainer baseContainer = (AEBaseContainer) sender.openContainer;
-                    if (message.action == 1)
+                    final ContainerOpenContext context = baseContainer.getOpenContext();
+                    if (message.action == Action.CHANGE_AMOUNT)
                     {
-                        final ContainerOpenContext context = baseContainer.getOpenContext();
                         if( context != null )
                         {
-                            final TileEntity te = context.getTile();
-                            InventoryHandler.openGui( sender, te.getWorld(), te.getPos(), baseContainer.getOpenContext().getSide().getFacing(), GuiType.ITEM_AMOUNT_SET );
+                            InventoryHandler.openGui(
+                                    sender,
+                                    Ae2Reflect.getContextWorld(context),
+                                    new BlockPos(Ae2Reflect.getContextX(context), Ae2Reflect.getContextY(context), Ae2Reflect.getContextZ(context)),
+                                    context.getSide().getFacing(),
+                                    GuiType.ITEM_AMOUNT_SET );
                             int amt = (int) message.stack.getStackSize();
                             if (message.stack.getItem() == FCItems.FLUID_PACKET) {
                                 FluidStack fluid = FakeItemRegister.getStack(message.stack);
@@ -107,10 +126,73 @@ public class CPacketInventoryAction implements IMessage {
                             }
                         }
                     }
+                    if (message.action == Action.AUTO_CRAFT) {
+                        if( context != null ) {
+                            InventoryHandler.openGui(
+                                    sender,
+                                    Ae2Reflect.getContextWorld(context),
+                                    new BlockPos(Ae2Reflect.getContextX(context), Ae2Reflect.getContextY(context), Ae2Reflect.getContextZ(context)),
+                                    context.getSide().getFacing(),
+                                    GuiType.FLUID_CRAFT_AMOUNT
+                            );
+                            if (sender.openContainer instanceof ContainerCraftAmount) {
+                                final ContainerCraftAmount cca = (ContainerCraftAmount) sender.openContainer;
+                                if (message.stack != null) {
+                                    cca.getCraftingItem().putStack(message.stack.getDefinition());
+                                    cca.setItemToCraft(message.stack);
+                                }
+                                cca.detectAndSendChanges();
+                            }
+                        }
+                    }
+                    if (message.action == Action.REQUEST_JOB) {
+                        Object target = baseContainer.getTarget();
+                        if (context != null && target instanceof IActionHost && baseContainer instanceof ContainerCraftAmount) {
+                            final IActionHost ah = (IActionHost) target;
+                            final IGridNode gn = ah.getActionableNode();
+                            final IGrid g = gn.getGrid();
+                            final ContainerCraftAmount cca = (ContainerCraftAmount) baseContainer;
+                            if (cca.getItemToCraft() == null) {
+                                return;
+                            }
+                            cca.getItemToCraft().setStackSize(message.id);
+                            Future<ICraftingJob> futureJob = null;
+                            try {
+                                final ICraftingGrid cg = g.getCache(ICraftingGrid.class);
+                                futureJob = cg.beginCraftingJob(cca.getWorld(), cca.getGrid(), cca.getActionSrc(), cca.getItemToCraft(), null);
+                                InventoryHandler.openGui(
+                                        sender,
+                                        Ae2Reflect.getContextWorld(context),
+                                        new BlockPos(Ae2Reflect.getContextX(context), Ae2Reflect.getContextY(context), Ae2Reflect.getContextZ(context)),
+                                        context.getSide().getFacing(),
+                                        GuiType.FLUID_CRAFT_CONFIRM
+                                );
+                                if (sender.openContainer instanceof ContainerFCCraftConfirm) {
+                                    final ContainerFCCraftConfirm ccc = (ContainerFCCraftConfirm) sender.openContainer;
+                                    ccc.setAutoStart(message.slot == 1);
+                                    ccc.setJob(futureJob);
+                                    cca.detectAndSendChanges();
+                                }
+                            } catch (final Throwable e) {
+                                if (futureJob != null) {
+                                    futureJob.cancel(true);
+                                }
+                                AELog.debug(e);
+                            }
+                        }
+                    }
                 }
             });
             return null;
         }
+    }
+
+    public enum Action {
+
+        CHANGE_AMOUNT,
+        AUTO_CRAFT,
+        REQUEST_JOB
+
     }
 
 }

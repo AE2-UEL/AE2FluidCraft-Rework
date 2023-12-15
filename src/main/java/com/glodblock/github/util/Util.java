@@ -1,29 +1,42 @@
 package com.glodblock.github.util;
 
 import appeng.api.AEApi;
+import appeng.api.features.ILocatable;
+import appeng.api.features.IWirelessTermHandler;
+import appeng.api.features.IWirelessTermRegistry;
 import appeng.api.storage.IStorageChannel;
 import appeng.api.storage.channels.IFluidStorageChannel;
 import appeng.api.storage.channels.IItemStorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IItemList;
+import appeng.container.interfaces.IInventorySlotAware;
+import appeng.core.localization.PlayerMessages;
 import appeng.fluids.util.AEFluidInventory;
 import appeng.fluids.util.AEFluidStack;
+import appeng.util.Platform;
 import appeng.util.item.AEItemStack;
 import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.common.item.ItemGasPacket;
 import com.glodblock.github.common.item.fake.FakeFluids;
 import com.glodblock.github.common.item.fake.FakeItemRegister;
 import com.glodblock.github.integration.mek.FakeGases;
+import com.glodblock.github.inventory.GuiType;
+import com.glodblock.github.inventory.InventoryHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.EncoderException;
 import mekanism.api.gas.GasStack;
 import mekanism.api.gas.GasTankInfo;
 import mekanism.common.capabilities.Capabilities;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
@@ -359,6 +372,42 @@ public final class Util {
                 ItemStack stack = slot.getStack();
                 stack.setCount(stack.getCount() - decrease);
             }
+        }
+    }
+
+    public static void openWirelessTerminal(ItemStack item, EnumHand hand, World w, EntityPlayer player, GuiType gui) {
+        IWirelessTermRegistry registry = AEApi.instance().registries().wireless();
+        if (Platform.isClient()) {
+            return;
+        }
+        if (!registry.isWirelessTerminal(item)) {
+            player.sendMessage(PlayerMessages.DeviceNotWirelessTerminal.get());
+            return;
+        }
+        final IWirelessTermHandler handler = registry.getWirelessTerminalHandler(item);
+        final String unparsedKey = handler.getEncryptionKey(item);
+        if (unparsedKey.isEmpty()) {
+            player.sendMessage(PlayerMessages.DeviceNotLinked.get());
+            return;
+        }
+        final long parsedKey = Long.parseLong(unparsedKey);
+        final ILocatable securityStation = AEApi.instance().registries().locatable().getLocatableBy(parsedKey);
+        if (securityStation == null) {
+            player.sendMessage(PlayerMessages.StationCanNotBeLocated.get());
+            return;
+        }
+        if (handler.hasPower(player, 0.5, item)) {
+            int x, y;
+            if (player.openContainer instanceof IInventorySlotAware) {
+                x = ((IInventorySlotAware) player.openContainer).getInventorySlot();
+                y = ((IInventorySlotAware) player.openContainer).isBaubleSlot() ? 1 : 0;
+            } else {
+                x = player.inventory.currentItem;
+                y = 0;
+            }
+            InventoryHandler.openGui(player, w, new BlockPos(x, y, Integer.MIN_VALUE), EnumFacing.values()[hand.ordinal()], gui);
+        } else {
+            player.sendMessage(PlayerMessages.DeviceNotPowered.get());
         }
     }
 

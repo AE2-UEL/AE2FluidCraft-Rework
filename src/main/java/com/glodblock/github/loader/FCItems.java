@@ -1,7 +1,15 @@
 package com.glodblock.github.loader;
 
 import com.glodblock.github.FluidCraft;
-import com.glodblock.github.common.item.*;
+import com.glodblock.github.common.item.ItemFluidCraftEncodedPattern;
+import com.glodblock.github.common.item.ItemFluidDrop;
+import com.glodblock.github.common.item.ItemFluidEncodedPattern;
+import com.glodblock.github.common.item.ItemFluidPacket;
+import com.glodblock.github.common.item.ItemLargeEncodedPattern;
+import com.glodblock.github.common.item.ItemPartDualInterface;
+import com.glodblock.github.common.item.ItemPartExtendedFluidPatternTerminal;
+import com.glodblock.github.common.item.ItemPartFluidPatternTerminal;
+import com.glodblock.github.common.item.ItemWirelessFluidPatternTerminal;
 import com.glodblock.github.handler.RegistryHandler;
 import com.glodblock.github.util.NameConst;
 import net.minecraft.creativetab.CreativeTabs;
@@ -36,6 +44,8 @@ public class FCItems {
     public static ItemPartFluidPatternTerminal PART_FLUID_PATTERN_TERMINAL;
     @GameRegistry.ObjectHolder(FluidCraft.MODID + ":" + NameConst.ITEM_PART_EXTENDED_FLUID_PATTERN_TERMINAL)
     public static ItemPartExtendedFluidPatternTerminal PART_EXTENDED_FLUID_PATTERN_TERMINAL;
+    @GameRegistry.ObjectHolder(FluidCraft.MODID + ":" + NameConst.ITEM_WIRELESS_FLUID_PATTERN_TERMINAL)
+    public static ItemWirelessFluidPatternTerminal WIRELESS_FLUID_PATTERN_TERMINAL;
 
     public static void init(RegistryHandler regHandler) {
         regHandler.item(NameConst.ITEM_FLUID_DROP, new ItemFluidDrop());
@@ -46,6 +56,7 @@ public class FCItems {
         regHandler.item(NameConst.ITEM_PART_FLUID_PATTERN_TERMINAL, new ItemPartFluidPatternTerminal());
         regHandler.item(NameConst.ITEM_PART_EXTENDED_FLUID_PATTERN_TERMINAL, new ItemPartExtendedFluidPatternTerminal());
         regHandler.item(NameConst.ITEM_LARGE_ITEM_ENCODED_PATTERN, new ItemLargeEncodedPattern());
+        regHandler.item(NameConst.ITEM_WIRELESS_FLUID_PATTERN_TERMINAL, new ItemWirelessFluidPatternTerminal());
     }
 
 }

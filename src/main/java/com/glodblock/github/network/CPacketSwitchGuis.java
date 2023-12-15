@@ -4,10 +4,11 @@ import appeng.container.AEBaseContainer;
 import appeng.container.ContainerOpenContext;
 import com.glodblock.github.inventory.GuiType;
 import com.glodblock.github.inventory.InventoryHandler;
+import com.glodblock.github.util.Ae2Reflect;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -48,16 +49,18 @@ public class CPacketSwitchGuis implements IMessage {
             if (!(cont instanceof AEBaseContainer)) {
                 return null;
             }
-            ContainerOpenContext context = ((AEBaseContainer)cont).getOpenContext();
+            ContainerOpenContext context = ((AEBaseContainer) cont).getOpenContext();
             if (context == null) {
                 return null;
             }
-            TileEntity te = context.getTile();
-            if (te == null) {
-                return null;
-            }
             player.getServerWorld().addScheduledTask(
-                    () -> InventoryHandler.openGui(player, player.world, te.getPos(), context.getSide().getFacing(), message.guiType)
+                    () -> InventoryHandler.openGui(
+                            player,
+                            player.world,
+                            new BlockPos(Ae2Reflect.getContextX(context), Ae2Reflect.getContextY(context), Ae2Reflect.getContextZ(context)),
+                            context.getSide().getFacing(),
+                            message.guiType
+                    )
             );
             return null;
         }

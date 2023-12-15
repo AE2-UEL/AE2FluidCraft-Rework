@@ -25,6 +25,7 @@ import com.glodblock.github.network.CPacketFluidPatternTermBtns;
 import com.glodblock.github.network.CPacketInventoryAction;
 import com.glodblock.github.util.Ae2ReflectClient;
 import com.glodblock.github.util.ModAndClassUtil;
+import com.glodblock.github.util.UtilClient;
 import mezz.jei.api.gui.IGhostIngredientHandler.Target;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -148,13 +149,19 @@ public class GuiExtendedFluidPatternTerminal extends GuiExpandedProcessingPatter
                     ((AEBaseContainer) this.inventorySlots).setTargetStack(stack);
                     for (int i = 0; i < this.inventorySlots.inventorySlots.size(); i ++) {
                         if (this.inventorySlots.inventorySlots.get(i).equals(slot)) {
-                            FluidCraft.proxy.netHandler.sendToServer(new CPacketInventoryAction(1, i, 0, stack));
+                            FluidCraft.proxy.netHandler.sendToServer(new CPacketInventoryAction(CPacketInventoryAction.Action.CHANGE_AMOUNT, i, 0, stack));
                             break;
                         }
                     }
                     return;
                 }
             }
+        }
+        if (UtilClient.shouldAutoCraft(slot, mouseButton, clickType)) {
+            IAEItemStack stack = AEItemStack.fromItemStack(slot.getStack());
+            ((AEBaseContainer) this.inventorySlots).setTargetStack(stack);
+            FluidCraft.proxy.netHandler.sendToServer(new CPacketInventoryAction(CPacketInventoryAction.Action.AUTO_CRAFT, 0, 0, stack));
+            return;
         }
         super.handleMouseClick(slot, slotIdx, mouseButton, clickType);
     }

@@ -4,6 +4,7 @@ import com.glodblock.github.client.container.ContainerExtendedFluidPatternTermin
 import com.glodblock.github.client.container.ContainerFluidPatternTerminal;
 import com.glodblock.github.client.container.ContainerItemDualInterface;
 import com.glodblock.github.client.container.ContainerUltimateEncoder;
+import com.glodblock.github.client.container.ContainerWirelessFluidPatternTerminal;
 import com.glodblock.github.client.container.ContainerWrapInterface;
 import com.glodblock.github.common.part.PartExtendedFluidPatternTerminal;
 import com.glodblock.github.common.part.PartFluidPatternTerminal;
@@ -74,6 +75,19 @@ public class CPacketFluidPatternTermBtns implements IMessage {
                             break;
                         case "PatternTerminal.Fluid":
                             ((PartFluidPatternTerminal) Ae2Reflect.getPart(cpt)).setFluidPlaceMode(Value.equals("1"));
+                            break;
+                        case "PatternTerminal.Craft":
+                            cpt.encodeFluidCraftPattern();
+                            break;
+                    }
+                } else if (c instanceof ContainerWirelessFluidPatternTerminal) {
+                    final ContainerWirelessFluidPatternTerminal cpt = (ContainerWirelessFluidPatternTerminal) c;
+                    switch (Name) {
+                        case "PatternTerminal.Combine":
+                            cpt.setCombineMode(Value.equals("1"));
+                            break;
+                        case "PatternTerminal.Fluid":
+                            cpt.setFluidPlaceMode(Value.equals("1"));
                             break;
                         case "PatternTerminal.Craft":
                             cpt.encodeFluidCraftPattern();

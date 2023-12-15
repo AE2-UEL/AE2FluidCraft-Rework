@@ -5,6 +5,7 @@ import appeng.client.gui.implementations.GuiCraftAmount;
 import appeng.client.gui.widgets.GuiNumberBox;
 import appeng.client.gui.widgets.GuiTabButton;
 import appeng.container.AEBaseContainer;
+import appeng.helpers.WirelessTerminalGuiObject;
 import com.glodblock.github.FluidCraft;
 import com.glodblock.github.client.container.ContainerItemAmountChange;
 import com.glodblock.github.common.part.PartExtendedFluidPatternTerminal;
@@ -49,6 +50,14 @@ public class GuiItemAmountChange extends GuiCraftAmount {
         Object target = ((AEBaseContainer)this.inventorySlots).getTarget();
         this.originalGuiBtn = Ae2ReflectClient.getGuiCraftAmountBackButton(this);
         this.buttonList.remove(this.originalGuiBtn);
+
+        if (target instanceof WirelessTerminalGuiObject) {
+            ItemStack tool = ((WirelessTerminalGuiObject) target).getItemStack();
+            if (tool.getItem() == FCItems.WIRELESS_FLUID_PATTERN_TERMINAL) {
+                myIcon = new ItemStack(FCItems.WIRELESS_FLUID_PATTERN_TERMINAL);
+                this.originalGui = GuiType.WIRELESS_FLUID_PATTERN_TERMINAL;
+            }
+        }
 
         if (target instanceof PartFluidPatternTerminal) {
             myIcon = new ItemStack(FCItems.PART_FLUID_PATTERN_TERMINAL);
