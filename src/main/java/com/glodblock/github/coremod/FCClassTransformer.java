@@ -62,6 +62,9 @@ public class FCClassTransformer implements IClassTransformer {
             case "appeng.container.implementations.ContainerPatternEncoder":
                 tform = ContainerPatternEncoderTransformer.INSTANCE;
                 break;
+            case "appeng.container.implementations.ContainerCraftConfirm":
+                tform = ContainerCraftConfirmTransformer.INSTANCE;
+                break;
             default:
                 return code;
         }

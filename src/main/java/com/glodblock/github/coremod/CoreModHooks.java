@@ -6,18 +6,26 @@ import appeng.api.networking.IGrid;
 import appeng.api.networking.IGridHost;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.IMachineSet;
+import appeng.api.networking.crafting.ICraftingGrid;
+import appeng.api.networking.crafting.ICraftingJob;
+import appeng.api.networking.crafting.ICraftingLink;
+import appeng.api.networking.security.IActionHost;
 import appeng.api.networking.storage.IStorageGrid;
 import appeng.api.storage.IMEInventory;
 import appeng.api.storage.channels.IFluidStorageChannel;
 import appeng.api.storage.channels.IItemStorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
+import appeng.container.ContainerOpenContext;
+import appeng.container.implementations.ContainerCraftConfirm;
 import appeng.container.implementations.ContainerPatternEncoder;
+import appeng.container.implementations.CraftingCPURecord;
 import appeng.crafting.MECraftingInventory;
 import appeng.fluids.parts.PartFluidInterface;
 import appeng.fluids.tile.TileFluidInterface;
 import appeng.helpers.DualityInterface;
 import appeng.helpers.IInterfaceHost;
+import appeng.helpers.WirelessTerminalGuiObject;
 import appeng.me.MachineSet;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.parts.misc.PartInterface;
@@ -25,6 +33,7 @@ import appeng.tile.misc.TileInterface;
 import appeng.util.InventoryAdaptor;
 import appeng.util.inv.BlockingInventoryAdaptor;
 import appeng.util.item.AEItemStack;
+import com.glodblock.github.client.container.ContainerFCCraftConfirm;
 import com.glodblock.github.common.item.ItemFluidCraftEncodedPattern;
 import com.glodblock.github.common.item.ItemFluidEncodedPattern;
 import com.glodblock.github.common.item.ItemFluidPacket;
@@ -32,6 +41,8 @@ import com.glodblock.github.common.item.ItemLargeEncodedPattern;
 import com.glodblock.github.common.item.fake.FakeFluids;
 import com.glodblock.github.common.item.fake.FakeItemRegister;
 import com.glodblock.github.common.part.PartDualInterface;
+import com.glodblock.github.common.part.PartExtendedFluidPatternTerminal;
+import com.glodblock.github.common.part.PartFluidPatternTerminal;
 import com.glodblock.github.common.tile.TileDualInterface;
 import com.glodblock.github.handler.FluidConvertingItemHandler;
 import com.glodblock.github.integration.mek.FCGasItems;
@@ -39,6 +50,8 @@ import com.glodblock.github.integration.mek.FakeGases;
 import com.glodblock.github.inventory.BlockingFluidInventoryAdaptor;
 import com.glodblock.github.inventory.FluidConvertingInventoryAdaptor;
 import com.glodblock.github.inventory.FluidConvertingInventoryCrafting;
+import com.glodblock.github.inventory.GuiType;
+import com.glodblock.github.inventory.InventoryHandler;
 import com.glodblock.github.loader.FCItems;
 import com.glodblock.github.util.Ae2Reflect;
 import com.glodblock.github.util.ModAndClassUtil;
@@ -53,6 +66,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidStack;
@@ -61,6 +75,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -332,6 +347,58 @@ public class CoreModHooks {
             }
         }
         return output;
+    }
+
+    public static boolean startJob(ContainerCraftConfirm ccc, ArrayList<CraftingCPURecord> cpus, ICraftingJob result) {
+        GuiType originalGui = null;
+        if (!(ccc instanceof ContainerFCCraftConfirm)) {
+            return false;
+        }
+        ContainerFCCraftConfirm container = (ContainerFCCraftConfirm) ccc;
+        IActionHost ah = container.getActionHost();
+
+        if (ah instanceof WirelessTerminalGuiObject) {
+            ItemStack tool = ((WirelessTerminalGuiObject) ah).getItemStack();
+            if (tool.getItem() == FCItems.WIRELESS_FLUID_PATTERN_TERMINAL) {
+                originalGui = GuiType.WIRELESS_FLUID_PATTERN_TERMINAL;
+            }
+        }
+
+        if (ah instanceof PartFluidPatternTerminal) {
+            originalGui = GuiType.FLUID_PATTERN_TERMINAL;
+        }
+
+        if (ah instanceof PartExtendedFluidPatternTerminal) {
+            originalGui = GuiType.FLUID_EXTENDED_PATTERN_TERMINAL;
+        }
+
+        if (originalGui == null) {
+            return false;
+        }
+
+        IActionHost h = (IActionHost)container.getTarget();
+        if (h != null) {
+            IGridNode node = h.getActionableNode();
+            IGrid grid = node.getGrid();
+            if (result != null && !container.isSimulation()) {
+                ICraftingGrid cc = grid.getCache(ICraftingGrid.class);
+                ICraftingLink g = cc.submitJob(result, null, container.getSelectedCpu() == -1 ? null : Ae2Reflect.getCraftingCPU(cpus.get(container.getSelectedCpu())), true, container.getActionSrc());
+                container.setAutoStart(false);
+                if (g == null) {
+                    container.setJob(cc.beginCraftingJob(container.getWorld(), grid, container.getActionSrc(), result.getOutput(), null));
+                } else if (container.getOpenContext() != null) {
+                    ContainerOpenContext context = container.getOpenContext();
+                    InventoryHandler.openGui(
+                            container.getInventoryPlayer().player,
+                            container.getInventoryPlayer().player.world,
+                            new BlockPos(Ae2Reflect.getContextX(context), Ae2Reflect.getContextY(context), Ae2Reflect.getContextZ(context)),
+                            container.getOpenContext().getSide().getFacing(),
+                            originalGui
+                    );
+                }
+            }
+        }
+        return true;
     }
 
 }

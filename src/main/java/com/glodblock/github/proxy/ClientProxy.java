@@ -5,6 +5,7 @@ import com.glodblock.github.client.model.DenseEncodedPatternModel;
 import com.glodblock.github.client.render.DropColourHandler;
 import com.glodblock.github.client.render.RenderIngredientBuffer;
 import com.glodblock.github.client.render.RenderLargeIngredientBuffer;
+import com.glodblock.github.client.warn.WarnMessage;
 import com.glodblock.github.common.item.fake.FakeItemRegister;
 import com.glodblock.github.common.tile.TileIngredientBuffer;
 import com.glodblock.github.common.tile.TileLargeIngredientBuffer;
@@ -36,6 +37,7 @@ public class ClientProxy extends CommonProxy {
     public void preInit(FMLPreInitializationEvent event) {
         super.preInit(event);
         MinecraftForge.EVENT_BUS.register(dropColourHandler);
+        MinecraftForge.EVENT_BUS.register(WarnMessage.INSTANCE);
         ClientRegistry.bindTileEntitySpecialRenderer(TileIngredientBuffer.class, new RenderIngredientBuffer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileLargeIngredientBuffer.class, new RenderLargeIngredientBuffer());
     }
