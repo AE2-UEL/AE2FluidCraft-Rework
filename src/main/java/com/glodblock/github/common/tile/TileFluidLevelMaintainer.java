@@ -35,6 +35,7 @@ import com.google.common.collect.ImmutableSet;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -44,6 +45,8 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 
 public class TileFluidLevelMaintainer extends AENetworkTile implements ICraftingRequester, IAEAppEngInventory, ITickable {
+
+    public EnumFacing facing = EnumFacing.NORTH;
 
     public static final int MAX_FLUID = 5;
     private int tick = 0;

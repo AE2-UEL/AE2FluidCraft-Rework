@@ -13,6 +13,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -28,7 +29,6 @@ public class BlockFluidLevelMaintainer extends AEBaseTileBlock {
 
     public BlockFluidLevelMaintainer() {
         super(Material.IRON);
-        setDefaultState(blockState.getBaseState().withProperty(facingProperty,EnumFacing.NORTH));
         setTileEntity(TileFluidLevelMaintainer.class);
     }
 
@@ -49,16 +49,27 @@ public class BlockFluidLevelMaintainer extends AEBaseTileBlock {
         return super.onBlockActivated(world, pos, state, player, hand, facing, hitX, hitY, hitZ);
     }
 
-    /**
-     * @return
-     */
     @Override
     protected BlockStateContainer createBlockState() {
         return new ExtendedBlockState(this, new IProperty[]{facingProperty},new IUnlistedProperty[]{});
     }
 
     @Override
-    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float p_getStateForPlacement_4_, float p_getStateForPlacement_5_, float p_getStateForPlacement_6_, int p_getStateForPlacement_7_, EntityLivingBase entityLivingBase) {
-        return this.getDefaultState().withProperty(facingProperty,entityLivingBase.getHorizontalFacing().getOpposite());
+    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+        TileEntity tileEntity = worldIn.getTileEntity(pos);
+        if (tileEntity instanceof TileFluidLevelMaintainer)
+        {
+            return state.withProperty(facingProperty,((TileFluidLevelMaintainer) tileEntity).facing);
+        }
+        return state;
+    }
+
+    @Override
+    public void onBlockPlacedBy(World w, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack is) {
+        super.onBlockPlacedBy(w, pos, state, placer, is);
+        TileEntity tileEntity = w.getTileEntity(pos);
+        if (tileEntity instanceof TileFluidLevelMaintainer){
+            ((TileFluidLevelMaintainer) tileEntity).facing = placer.getHorizontalFacing().getOpposite();
+        }
     }
 }
