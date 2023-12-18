@@ -179,6 +179,7 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements ICrafting
         }
         config.readFromNBT(data, "configX");
         craftingTracker.readFromNBT(data);
+        facing = EnumFacing.byHorizontalIndex(data.getInteger("facing"));
     }
 
     @Override
@@ -189,6 +190,7 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements ICrafting
         }
         config.writeToNBT(data, "configX");
         craftingTracker.writeToNBT(data);
+        data.setInteger("facing",facing.getHorizontalIndex());
         return data;
     }
 
