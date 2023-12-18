@@ -1,7 +1,6 @@
 package com.glodblock.github.common.block;
 
 import appeng.block.AEBaseTileBlock;
-import com.glodblock.github.FluidCraft;
 import com.glodblock.github.common.tile.TileFluidLevelMaintainer;
 import com.glodblock.github.inventory.GuiType;
 import com.glodblock.github.inventory.InventoryHandler;
@@ -21,7 +20,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
-import org.apache.logging.log4j.Level;
 
 public class BlockFluidLevelMaintainer extends AEBaseTileBlock {
 
@@ -59,7 +57,10 @@ public class BlockFluidLevelMaintainer extends AEBaseTileBlock {
         TileEntity tileEntity = worldIn.getTileEntity(pos);
         if (tileEntity instanceof TileFluidLevelMaintainer)
         {
-            return state.withProperty(facingProperty,((TileFluidLevelMaintainer) tileEntity).facing);
+            if (((TileFluidLevelMaintainer) tileEntity).facing != null)
+            {
+                return state.withProperty(facingProperty,((TileFluidLevelMaintainer) tileEntity).facing);
+            }
         }
         return state;
     }

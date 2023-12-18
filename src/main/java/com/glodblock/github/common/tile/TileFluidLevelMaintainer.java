@@ -46,7 +46,7 @@ import java.io.IOException;
 
 public class TileFluidLevelMaintainer extends AENetworkTile implements ICraftingRequester, IAEAppEngInventory, ITickable {
 
-    public EnumFacing facing = EnumFacing.NORTH;
+    public EnumFacing facing;
 
     public static final int MAX_FLUID = 5;
     private int tick = 0;
@@ -157,6 +157,8 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements ICrafting
         for (int i = 0; i < MAX_FLUID; i ++) {
             request[i] = data.readLong();
         }
+
+        facing = EnumFacing.byHorizontalIndex(data.readInt());
         return changed;
     }
 
@@ -169,6 +171,10 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements ICrafting
         for (int i = 0; i < MAX_FLUID; i ++) {
             data.writeLong(request[i]);
         }
+
+        if (facing != null){
+            data.writeInt(facing.getHorizontalIndex());
+        }
     }
 
     @Override
@@ -179,7 +185,14 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements ICrafting
         }
         config.readFromNBT(data, "configX");
         craftingTracker.readFromNBT(data);
-        facing = EnumFacing.byHorizontalIndex(data.getInteger("facing"));
+        if (data.hasKey("facing")){
+            facing = EnumFacing.byHorizontalIndex(data.getInteger("facing"));
+        }
+        else
+        {
+            facing = EnumFacing.NORTH;
+        }
+
     }
 
     @Override
