@@ -35,6 +35,7 @@ import com.google.common.collect.ImmutableSet;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -44,6 +45,8 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 
 public class TileFluidLevelMaintainer extends AENetworkTile implements ICraftingRequester, IAEAppEngInventory, ITickable {
+
+    public EnumFacing facing;
 
     public static final int MAX_FLUID = 5;
     private int tick = 0;
@@ -154,6 +157,8 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements ICrafting
         for (int i = 0; i < MAX_FLUID; i ++) {
             request[i] = data.readLong();
         }
+
+        facing = EnumFacing.byHorizontalIndex(data.readInt());
         return changed;
     }
 
@@ -166,6 +171,10 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements ICrafting
         for (int i = 0; i < MAX_FLUID; i ++) {
             data.writeLong(request[i]);
         }
+
+        if (facing != null){
+            data.writeInt(facing.getHorizontalIndex());
+        }
     }
 
     @Override
@@ -176,6 +185,14 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements ICrafting
         }
         config.readFromNBT(data, "configX");
         craftingTracker.readFromNBT(data);
+        if (data.hasKey("facing")){
+            facing = EnumFacing.byHorizontalIndex(data.getInteger("facing"));
+        }
+        else
+        {
+            facing = EnumFacing.NORTH;
+        }
+
     }
 
     @Override
@@ -186,6 +203,7 @@ public class TileFluidLevelMaintainer extends AENetworkTile implements ICrafting
         }
         config.writeToNBT(data, "configX");
         craftingTracker.writeToNBT(data);
+        data.setInteger("facing",facing.getHorizontalIndex());
         return data;
     }
 
