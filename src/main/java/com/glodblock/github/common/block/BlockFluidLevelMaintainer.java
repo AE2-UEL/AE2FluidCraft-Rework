@@ -1,6 +1,7 @@
 package com.glodblock.github.common.block;
 
 import appeng.block.AEBaseTileBlock;
+import com.glodblock.github.FluidCraft;
 import com.glodblock.github.common.tile.TileFluidLevelMaintainer;
 import com.glodblock.github.inventory.GuiType;
 import com.glodblock.github.inventory.InventoryHandler;
@@ -20,6 +21,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
+import org.apache.logging.log4j.Level;
 
 public class BlockFluidLevelMaintainer extends AEBaseTileBlock {
 
@@ -72,5 +74,18 @@ public class BlockFluidLevelMaintainer extends AEBaseTileBlock {
         if (tileEntity instanceof TileFluidLevelMaintainer){
             ((TileFluidLevelMaintainer) tileEntity).facing = placer.getHorizontalFacing().getOpposite();
         }
+    }
+
+    @Override
+    public boolean rotateBlock(World w, BlockPos pos, EnumFacing axis) {
+//        FluidCraft.log.log(Level.INFO,axis.getOpposite());
+        TileEntity tileEntity = w.getTileEntity(pos);
+        if (tileEntity instanceof TileFluidLevelMaintainer){
+            EnumFacing facing = ((TileFluidLevelMaintainer) tileEntity).facing;
+            ((TileFluidLevelMaintainer) tileEntity).facing = facing.rotateY();
+            w.setBlockState(pos,this.blockState.getBaseState().withProperty(facingProperty,facing.rotateY()));
+            return true;
+        }
+        return super.rotateBlock(w, pos, axis);
     }
 }
