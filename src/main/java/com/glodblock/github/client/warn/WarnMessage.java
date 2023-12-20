@@ -23,7 +23,7 @@ public class WarnMessage {
         if (!finished && Minecraft.getMinecraft().player != null) {
             EntityPlayer player = Minecraft.getMinecraft().player;
             finished = true;
-            player.sendMessage(new TextComponentString("AE2FC 2.5.0-r is on beta test!"));
+            player.sendMessage(new TextComponentString("AE2FC 2.5.1-r is on beta test!"));
             player.sendMessage(new TextComponentString("If you encounter any bug or something not working"));
             player.sendMessage(new TextComponentString("Please report it to https://github.com/GlodBlock/AE2FluidCraft-Rework"));
             MinecraftForge.EVENT_BUS.unregister(this);
