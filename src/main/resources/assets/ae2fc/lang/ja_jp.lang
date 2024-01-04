@@ -2,6 +2,7 @@
 itemGroup.ae2fc=AE2 Fluid Crafting
 
 tile.ae2fc:fluid_discretizer.name=ME液体離散機
+tile.ae2fc:gas_discretizer.name=MEガス離散機
 tile.ae2fc:fluid_pattern_encoder.name=ME液体パターンエンコーダー
 tile.ae2fc:fluid_packet_decoder.name=ME液体パケットデコーダー
 tile.ae2fc:ingredient_buffer.name=ME材料バッファ
@@ -14,13 +15,16 @@ tile.ae2fc:fluid_assembler.name=ME液体組立機
 tile.ae2fc:ultimate_encoder.name=ME究極エンコーダー
 
 item.ae2fc:fluid_drop.name=%sの雫
+item.ae2fc:gas_drop.name=%sガスの雫
 item.ae2fc:fluid_packet.name=ME液体パケット
+item.ae2fc:gas_packet.name=MEガスパケット
 item.ae2fc:dense_encoded_pattern.name=エンコード済みパターン
 item.ae2fc:dense_craft_encoded_pattern.name=エンコード済みパターン
 item.ae2fc:large_item_encoded_pattern.name=エンコード済みパターン
 item.ae2fc:part_dual_interface.name=ME混合インターフェース
 item.ae2fc:part_fluid_pattern_terminal.name=ME液体パターンターミナル
 item.ae2fc:part_fluid_pattern_ex_terminal.name=ME液体拡張加工パターンターミナル
+item.ae2fc:wireless_fluid_pattern_terminal.name=ME無線液体パターンターミナル
 
 ae2fc.gui.fluid_pattern_encoder=ME液体パターンエンコーダー
 ae2fc.gui.fluid_packet_decoder=ME液体パケットデコーダー
@@ -36,7 +40,8 @@ ae2fc.gui.set=設定
 ae2fc.misc.threshold=しきい値
 ae2fc.misc.request=発注数
 
-ae2fc.tooltip.fluid_packet=ME液体パケットデコーダーから変換される量
+ae2fc.tooltip.fluid_packet=これを液体に戻すにはME液体パケットデコーダーを使用する。
+ae2fc.tooltip.gas_packet=これをガスに戻すにはME液体パケットデコーダーを使用する。
 ae2fc.tooltip.invalid_fluid=無効な液体です
 ae2fc.tooltip.processing_recipe_only=加工レシピではありません
 ae2fc.tooltip.crafting_recipe_only=クラフトレシピではありません
