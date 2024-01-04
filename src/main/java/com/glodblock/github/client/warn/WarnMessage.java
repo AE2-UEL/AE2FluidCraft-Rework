@@ -1,5 +1,6 @@
 package com.glodblock.github.client.warn;
 
+import com.glodblock.github.FluidCraft;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentString;
@@ -20,10 +21,10 @@ public class WarnMessage {
     @SideOnly(Side.CLIENT)
     @SubscribeEvent(receiveCanceled = true)
     public void onTick(TickEvent.ClientTickEvent event) {
-        if (!finished && Minecraft.getMinecraft().player != null) {
+        if (FluidCraft.beta && !finished && Minecraft.getMinecraft().player != null) {
             EntityPlayer player = Minecraft.getMinecraft().player;
             finished = true;
-            player.sendMessage(new TextComponentString("AE2FC 2.5.2-r is on beta test!"));
+            player.sendMessage(new TextComponentString("AE2FC 2.5.3-r is on beta test!"));
             player.sendMessage(new TextComponentString("If you encounter any bug or something not working"));
             player.sendMessage(new TextComponentString("Please report it to https://github.com/GlodBlock/AE2FluidCraft-Rework"));
             MinecraftForge.EVENT_BUS.unregister(this);
