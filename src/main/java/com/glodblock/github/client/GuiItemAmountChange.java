@@ -1,8 +1,8 @@
 package com.glodblock.github.client;
 
 import appeng.api.storage.ITerminalHost;
+import appeng.client.gui.MathExpressionParser;
 import appeng.client.gui.implementations.GuiCraftAmount;
-import appeng.client.gui.widgets.GuiNumberBox;
 import appeng.client.gui.widgets.GuiTabButton;
 import appeng.container.AEBaseContainer;
 import appeng.helpers.WirelessTerminalGuiObject;
@@ -19,6 +19,7 @@ import com.glodblock.github.network.CPacketSwitchGuis;
 import com.glodblock.github.util.Ae2ReflectClient;
 import com.glodblock.github.util.NameConst;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
@@ -28,7 +29,7 @@ public class GuiItemAmountChange extends GuiCraftAmount {
     private GuiType originalGui;
     private GuiTabButton originalGuiBtn;
     private GuiButton next;
-    private GuiNumberBox amountToCraft;
+    private GuiTextField amountToCraft;
     private GuiButton plus1;
     private GuiButton plus10;
     private GuiButton plus100;
@@ -112,7 +113,15 @@ public class GuiItemAmountChange extends GuiCraftAmount {
 
             if( btn == this.next )
             {
-                FluidCraft.proxy.netHandler.sendToServer( new CPacketPatternValueSet(this.originalGui, Integer.parseInt(this.amountToCraft.getText()), ((ContainerItemAmountChange) this.inventorySlots).getValueIndex()));
+                String text = Ae2ReflectClient.getGuiCraftAmountTextBox(this).getText();
+                double resultD = MathExpressionParser.parse(text);
+                int result;
+                if (resultD <= 0 || Double.isNaN(resultD)) {
+                    result = 1;
+                } else {
+                    result = (int) MathExpressionParser.round(resultD, 0);
+                }
+                FluidCraft.proxy.netHandler.sendToServer( new CPacketPatternValueSet(this.originalGui, result, ((ContainerItemAmountChange) this.inventorySlots).getValueIndex()));
             }
         }
         catch( final NumberFormatException e )
