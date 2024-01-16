@@ -10,7 +10,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = FluidCraft.MODID, version = FluidCraft.VERSION, useMetadata = true, dependencies = "required:appliedenergistics2@[v0.55.27,)")
+@Mod(modid = FluidCraft.MODID, version = FluidCraft.VERSION, useMetadata = true, dependencies = "required:appliedenergistics2@[v0.56,)")
 public class FluidCraft {
 
     public static final String MODID = "ae2fc";

@@ -10,7 +10,6 @@ import appeng.client.gui.implementations.GuiMEMonitorable;
 import appeng.client.gui.implementations.GuiPatternTerm;
 import appeng.client.gui.implementations.GuiPriority;
 import appeng.client.gui.implementations.GuiUpgradeable;
-import appeng.client.gui.widgets.GuiNumberBox;
 import appeng.client.gui.widgets.GuiTabButton;
 import appeng.client.render.StackSizeRenderer;
 import appeng.container.implementations.ContainerCraftConfirm;
@@ -20,6 +19,7 @@ import appeng.fluids.client.gui.GuiFluidInterface;
 import com.glodblock.github.client.container.ContainerExtendedFluidPatternTerminal;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.item.ItemStack;
@@ -141,7 +141,7 @@ public class Ae2ReflectClient {
         return Ae2Reflect.readField(gui, fGuiCraftAmount_next);
     }
 
-    public static GuiNumberBox getGuiCraftAmountTextBox(GuiCraftAmount gui) {
+    public static GuiTextField getGuiCraftAmountTextBox(GuiCraftAmount gui) {
         return Ae2Reflect.readField(gui, fGuiCraftAmount_amountToCraft);
     }
 

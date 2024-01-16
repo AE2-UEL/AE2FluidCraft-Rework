@@ -1,6 +1,7 @@
 package com.glodblock.github.client;
 
 import appeng.api.storage.ITerminalHost;
+import appeng.client.gui.MathExpressionParser;
 import appeng.client.gui.implementations.GuiCraftAmount;
 import appeng.client.gui.widgets.GuiTabButton;
 import appeng.container.AEBaseContainer;
@@ -62,7 +63,15 @@ public class GuiFCCraftAmount extends GuiCraftAmount {
         if (btn == this.originalGuiBtn) {
             InventoryHandler.switchGui(this.originGui);
         } else if (btn == this.next) {
-            FluidCraft.proxy.netHandler.sendToServer(new CPacketInventoryAction(CPacketInventoryAction.Action.REQUEST_JOB, isShiftKeyDown() ? 1 : 0, Integer.parseInt(Ae2ReflectClient.getGuiCraftAmountTextBox(this).getText()), null));
+            String text = Ae2ReflectClient.getGuiCraftAmountTextBox(this).getText();
+            double resultD = MathExpressionParser.parse(text);
+            int result;
+            if (resultD <= 0 || Double.isNaN(resultD)) {
+                result = 1;
+            } else {
+                result = (int) MathExpressionParser.round(resultD, 0);
+            }
+            FluidCraft.proxy.netHandler.sendToServer(new CPacketInventoryAction(CPacketInventoryAction.Action.REQUEST_JOB, isShiftKeyDown() ? 1 : 0, result, null));
         } else {
             super.actionPerformed(btn);
         }
