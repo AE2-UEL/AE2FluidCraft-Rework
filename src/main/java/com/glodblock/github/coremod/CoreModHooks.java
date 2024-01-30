@@ -172,7 +172,7 @@ public class CoreModHooks {
 
     public static IAEItemStack[] flattenFluidPackets(IAEItemStack[] stacks) {
         for (int i = 0; i < stacks.length; i++) {
-            if (stacks[i].getItem() instanceof ItemFluidPacket) {
+            if (stacks[i] != null && stacks[i].getItem() instanceof ItemFluidPacket) {
                 stacks[i] = FakeFluids.packFluid2AEDrops((FluidStack) FakeItemRegister.getStack(stacks[i]));
             }
         }
