@@ -10,9 +10,6 @@
     "authorList": ["GlodBlock"],
     "credits":"phantamanta44",
     "logoFile": "",
-    "screenshots": [],
-    "useDependencyInformation": true,
-    "dependencies": ["appliedenergistics2"],
-    "requiredMods": ["appliedenergistics2"]
+    "screenshots": []
   }
 ]
