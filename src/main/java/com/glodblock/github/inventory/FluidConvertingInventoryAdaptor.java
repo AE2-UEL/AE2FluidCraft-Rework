@@ -36,7 +36,6 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -88,12 +87,8 @@ public class FluidConvertingInventoryAdaptor extends InventoryAdaptor {
         this.invItems = facingTE.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite())
                 ? new AdaptorItemHandler(Objects.requireNonNull(facingTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite())))
                 : null;
-        this.invFluids = facingTE.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing.getOpposite())
-                ? Objects.requireNonNull(facingTE.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing.getOpposite()))
-                : null;
-        this.invGases = ModAndClassUtil.GAS && facingTE.hasCapability(Capabilities.GAS_HANDLER_CAPABILITY, facing.getOpposite())
-                ? Objects.requireNonNull(facingTE.getCapability(Capabilities.GAS_HANDLER_CAPABILITY, facing.getOpposite()))
-                : null;
+        this.invFluids = facingTE.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing.getOpposite());
+        this.invGases = ModAndClassUtil.GAS ? facingTE.getCapability(Capabilities.GAS_HANDLER_CAPABILITY, facing.getOpposite()) : null;
         this.facingTE = facingTE;
         this.posInterface = pos;
         this.onmi = isOnmi;
