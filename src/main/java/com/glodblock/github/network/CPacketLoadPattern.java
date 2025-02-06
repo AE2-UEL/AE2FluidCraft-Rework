@@ -1,5 +1,6 @@
 package com.glodblock.github.network;
 
+import appeng.helpers.ItemStackHelper;
 import com.glodblock.github.interfaces.PatternConsumer;
 import com.glodblock.github.util.Util;
 import io.netty.buffer.ByteBuf;
@@ -63,10 +64,8 @@ public class CPacketLoadPattern implements IMessage {
         if (itemList != null) {
             int cnt = 0;
             for (ItemStack item : itemList) {
-                NBTTagCompound itemTag = new NBTTagCompound();
                 if (item != null) {
-                    item.writeToNBT(itemTag);
-                    dict.setTag(cnt + "#", itemTag);
+                    dict.setTag(cnt + "#", ItemStackHelper.stackToNBT(item));
                     cnt ++;
                 }
             }
@@ -83,7 +82,7 @@ public class CPacketLoadPattern implements IMessage {
         } else {
             ItemStack[] itemList = new ItemStack[len];
             for (int i = 0; i < len; i ++) {
-                itemList[i] = new ItemStack(dict.getCompoundTag(i + "#"));
+                itemList[i] = ItemStackHelper.stackFromNBT(dict.getCompoundTag(i + "#"));
             }
             return itemList;
         }

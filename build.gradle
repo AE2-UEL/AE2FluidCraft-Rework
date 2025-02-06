@@ -17,7 +17,7 @@ buildscript {
         }
         maven {
             name "forge"
-            url "http://files.minecraftforge.net/maven"
+            url "https://files.minecraftforge.net/maven"
         }
         mavenLocal()
     }
@@ -26,8 +26,10 @@ buildscript {
     }
 }
 
-apply plugin: 'net.minecraftforge.gradle.forge'
-apply plugin: 'idea'
+plugins {
+    id("net.minecraftforge.gradle.forge") version "2.0.2"
+    id("idea")
+}
 
 version = "2.6.6-r"
 group = "ae2fc"
@@ -42,6 +44,21 @@ repositories {
     maven { url 'https://jitpack.io/' }
     maven { url 'https://cursemaven.com/' }
     maven { url 'https://minecraft.curseforge.com/api/maven/' }
+    maven {
+        url 'https://maven.minecraftforge.net/'
+    }
+    maven {
+        name 'sonatype'
+        url 'https://oss.sonatype.org/content/repositories/snapshots/'
+    }
+    maven {
+        name 'Scala CI dependencies'
+        url 'https://repo1.maven.org/maven2/'
+    }
+    maven {
+        name "forge"
+        url "https://files.minecraftforge.net/maven"
+    }
 }
 
 dependencies {
