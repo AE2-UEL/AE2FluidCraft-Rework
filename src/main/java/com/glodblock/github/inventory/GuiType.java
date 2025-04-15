@@ -64,11 +64,9 @@ import com.glodblock.github.integration.mek.MekGuiType;
 import com.glodblock.github.interfaces.FCPriorityHost;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Loader;
@@ -489,14 +487,30 @@ public enum GuiType {
         @Nullable
         @Override
         protected T getInventory(TileEntity tile, EntityPlayer player, EnumFacing face, BlockPos pos) {
-            ItemStack hold = player.getHeldItem(EnumHand.values()[face.ordinal() % 2]);
-            if (pos.getZ() == Integer.MIN_VALUE && !hold.isEmpty()) {
-                Object holder = getItemGuiObject(hold, player, player.world, pos.getX(), pos.getY(), pos.getZ());
+            if (pos.getZ() == Integer.MIN_VALUE) {
+                ItemStack terminal = ItemStack.EMPTY;
+                if (pos.getY() == 0) { // main inventory
+                    terminal = player.inventory.getStackInSlot(pos.getX());
+                } else if (pos.getY() == 1 && Loader.isModLoaded("baubles")) { // baubles inventory
+                    terminal = getStackInBaubleSlot(player, pos.getX());
+                }
+                if (terminal == null || terminal.isEmpty()) {
+                    return null;
+                }
+                Object holder = getItemGuiObject(terminal, player, player.world, pos.getX(), pos.getY(), pos.getZ());
                 if (invClass.isInstance(holder)) {
                     return invClass.cast(holder);
                 }
             }
             return super.getInventory(tile, player, face, pos);
+        }
+
+        @Optional.Method(modid = "baubles")
+        private static ItemStack getStackInBaubleSlot(EntityPlayer player, int slot) {
+            if (slot >= 0 && slot < BaublesApi.getBaublesHandler(player).getSlots()) {
+                return BaublesApi.getBaublesHandler(player).getStackInSlot(slot);
+            }
+            return null;
         }
 
     }
@@ -510,14 +524,30 @@ public enum GuiType {
         @Nullable
         @Override
         protected T getInventory(TileEntity tile, EntityPlayer player, EnumFacing face, BlockPos pos) {
-            ItemStack hold = player.getHeldItem(EnumHand.values()[face.ordinal() % 2]);
-            if (pos.getZ() == Integer.MIN_VALUE && !hold.isEmpty()) {
-                Object holder = getItemGuiObject(hold, player, player.world, pos.getX(), pos.getY(), pos.getZ());
-                if (invClass.isInstance(holder)) {
-                    return invClass.cast(holder);
+            if (pos.getZ() == Integer.MIN_VALUE) {
+                ItemStack terminal = ItemStack.EMPTY;
+                if (pos.getY() == 0) {
+                    terminal = player.inventory.getStackInSlot(pos.getX());
+                } else if (pos.getY() == 1 && Loader.isModLoaded("baubles")) {
+                    terminal = getStackInBaubleSlot(player, pos.getX());
+                }
+
+                if (terminal == null || terminal.isEmpty()) {
+                    return null;
+                }
+
+                Object holder = GuiType.getItemGuiObject(terminal, player, player.world, pos.getX(), pos.getY(), pos.getZ());
+                if (this.invClass.isInstance(holder)) {
+                    return this.invClass.cast(holder);
                 }
             }
+
             return super.getInventory(tile, player, face, pos);
+        }
+
+        @Optional.Method(modid = "baubles")
+        private static ItemStack getStackInBaubleSlot(EntityPlayer player, int slot) {
+            return slot >= 0 && slot < BaublesApi.getBaublesHandler(player).getSlots() ? BaublesApi.getBaublesHandler(player).getStackInSlot(slot) : null;
         }
 
     }
