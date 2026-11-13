@@ -1,0 +1,51 @@
+package com.yourname.yourmod.util;
+
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+
+public class FluidCraftingUtil {
+
+    /**
+     * Pushes fluid from a pattern provider into an adjacent machine's fluid tank.
+     */
+    public static FluidStack pushFluidToMachine(TileEntity tile, Direction face, FluidStack fluidToPush, boolean simulate) {
+        if (tile == null || tile.getWorld() == null || fluidToPush.isEmpty()) {
+            return fluidToPush;
+        }
+
+        // Find the neighboring machine in the direction the provider is facing
+        TileEntity targetTile = tile.getWorld().getTileEntity(tile.getPos().offset(face));
+        if (targetTile == null) {
+            return fluidToPush;
+        }
+
+        // Get the fluid handler capability on the touching side
+        LazyOptional<IFluidHandler> handlerCap = targetTile.getCapability(
+                CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, 
+                face.getOpposite()
+        );
+
+        if (!handlerCap.isPresent()) {
+            return fluidToPush;
+        }
+
+        // Execute the fill operation
+        return handlerCap.map(handler -> {
+            IFluidHandler.FluidAction action = simulate ? IFluidHandler.FluidAction.SIMULATE : IFluidHandler.FluidAction.EXECUTE;
+            int filledAmount = handler.fill(fluidToPush, action);
+            
+            if (filledAmount <= 0) {
+                return fluidToPush; // Machine refused fluid
+            }
+
+            // Return whatever fluid couldn't fit
+            FluidStack remainder = fluidToPush.copy();
+            remainder.shrink(filledAmount);
+            return remainder;
+        }).orElse(fluidToPush);
+    }
+}
