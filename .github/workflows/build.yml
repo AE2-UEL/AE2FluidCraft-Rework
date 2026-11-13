@@ -1,0 +1,51 @@
+name: Build AE2 Fluid Crafting Jar
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '8'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Clean previous builds
+        run: ./gradlew clean
+
+      - name: Build Mod Jar with Gradle
+        shell: bash
+        run: |
+          set -o pipefail
+          ./gradlew build
+
+      - name: Verify Jar Generation
+        shell: bash
+        run: |
+          if ls build/libs/*.jar 1> /dev/null 2>&1; then
+            echo "Jar built successfully!"
+          else
+            echo "Error: No jar file generated in build/libs!"
+            exit 1
+          fi
+
+      - name: Upload Mod Jar Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ae2-fluid-crafting-1.16.5
+          path: build/libs/*.jar
+          
